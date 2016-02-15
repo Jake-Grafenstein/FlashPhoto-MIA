@@ -16,7 +16,7 @@ public:
   // Checks if the given tool is the active tool
   bool isActive();
 
-private:
+protected:
   float **mask;
   bool active;
 
