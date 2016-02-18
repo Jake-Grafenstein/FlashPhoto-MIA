@@ -7,7 +7,8 @@
 #include "BrushWorkApp.h"
 #include "ColorData.h"
 #include "PixelBuffer.h"
-
+#include "CalligraphyPen.h"
+#include "Highlighter.h"
 #include <cmath>
 #include <iostream>
 

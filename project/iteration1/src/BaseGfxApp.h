@@ -10,6 +10,7 @@
 
 // The GLUI library, which in turn will include gl.h and glut.h
 #include <GL/glui.h>
+#include "Tool.h"
 
 
 /** This is a base class for graphics applications built on top of the GLUT and GLUI toolkits.
