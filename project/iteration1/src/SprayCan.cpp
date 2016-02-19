@@ -28,7 +28,7 @@ SprayCan::SprayCan()
 	{
 		for (j = 0; j < maskSize; j++)
 		{
-			float distance = calculateDistance(i, j)
+			float distance = calculateDistance(i, j);
 			if (distance >= 20.0)
 			{
 				mask[i][j] = 0;
@@ -127,7 +127,7 @@ SprayCan::~SprayCan()
   free(mask);
 }
 
-float** SprayCan::ComputeMask()
+float** SprayCan::computeMask()
 {
   return mask;
 }

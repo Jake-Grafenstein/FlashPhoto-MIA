@@ -15,7 +15,7 @@ class Eraser: public Tool
     Eraser();
     virtual ~Eraser();
     float** computeMask();
-    double calculateDistance(int x, int y);
+    float calculateDistance(int x, int y);
 };
 
 #endif

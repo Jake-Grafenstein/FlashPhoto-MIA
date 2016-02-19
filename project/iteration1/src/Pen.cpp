@@ -29,7 +29,7 @@ Pen::Pen()
     {
       for (j=0;j<maskSize;j++)
       {
-        if ((2 < i < 6) && (2 < j < 6)) {
+        if (((2 < i) && (i < 6)) && ((2 < j) && (j < 6))) {
           mask[i][j] = 1;
         }
         else {
@@ -49,7 +49,7 @@ Pen::~Pen()
   free(mask);
 }
 
-float** Pen::ComputeMask()
+float** Pen::computeMask()
 {
   return mask;
 }
