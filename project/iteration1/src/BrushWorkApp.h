@@ -64,8 +64,7 @@ private:
 
 	// These are used to store the selections from the GLUI user interface
 	int m_curTool;
-	Tool *tools;
-	int tool_count;//for extensibility beyond 6 tools
+	Tool tools[6];
 	float m_curColorRed, m_curColorGreen, m_curColorBlue;
 	GLUI_Spinner *m_spinnerR;
 	GLUI_Spinner *m_spinnerG;
