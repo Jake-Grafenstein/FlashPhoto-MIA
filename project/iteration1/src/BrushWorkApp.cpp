@@ -3,7 +3,6 @@
 //  Originally created by the CSci-3081W TAs.
 //
 
-
 #include "BrushWorkApp.h"
 #include "ColorData.h"
 #include "PixelBuffer.h"
@@ -11,8 +10,12 @@
 #include "Highlighter.h"
 #include "Eraser.h"
 #include "SprayCan.h"
+#include "Pen.h"
+#include "XPen.h"
+#include "Tool.h"
 #include <cmath>
 #include <iostream>
+#include <vector>
 
 using std::cout;
 using std::endl;
@@ -21,7 +24,7 @@ BrushWorkApp::BrushWorkApp(int argc, char* argv[], int width, int height, ColorD
 	BaseGfxApp(argc, argv, width, height, 50, 50, GLUT_RGB|GLUT_DOUBLE|GLUT_DEPTH, true, width+51, 50) {
 	// Set the name of the window
 	setCaption("BrushWork");
-	initializeToolArray();
+	initializeTools();
 
 
 	// Initialize Interface
@@ -67,14 +70,12 @@ void BrushWorkApp::initializeBuffers(ColorData backgroundColor, int width, int h
 }
 
 void BrushWorkApp::initializeTools() {
-	tools = new Tool[6];
-	Tool[0] = new Pen();
-	Tool[1] = new Eraser();
-	Tool[2] = new SprayCan();
-	Tool[3] = new CaligraphyPen();
-	Tool[4] = new Highlighter();
-	
-	// Tool[5] = new SpecialPen(); // Has not been created yet
+	tools.push_back(new Pen());
+	tools.push_back(new Eraser());
+	tools.push_back(new SprayCan());
+	tools.push_back(new CaligraphyPen());
+	tools.push_back(new Highlighter());
+	tools.push_back(new XPen());
 }
 
 void BrushWorkApp::initGlui() {

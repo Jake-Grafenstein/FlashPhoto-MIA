@@ -11,6 +11,10 @@ using std::cerr;
 using std::endl;
 using std::fill;
 
+Tool::Tool() {
+  
+}
+
 bool Tool::isActive() {
   return active;
 }
