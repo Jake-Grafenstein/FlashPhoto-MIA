@@ -9,6 +9,8 @@
 #include "PixelBuffer.h"
 #include "CalligraphyPen.h"
 #include "Highlighter.h"
+#include "Eraser.h"
+#include "SprayCan.h"
 #include <cmath>
 #include <iostream>
 
@@ -67,10 +69,11 @@ void BrushWorkApp::initializeBuffers(ColorData backgroundColor, int width, int h
 void BrushWorkApp::initializeTools() {
 	tools = new Tool[6];
 	Tool[0] = new Pen();
-	// Tool[1] = new Eraser(); //Has not been created yet
-	// Tool[2] = new SprayCan(); //Has not been created yet
+	Tool[1] = new Eraser();
+	Tool[2] = new SprayCan();
 	Tool[3] = new CaligraphyPen();
 	Tool[4] = new Highlighter();
+	
 	// Tool[5] = new SpecialPen(); // Has not been created yet
 }
 
