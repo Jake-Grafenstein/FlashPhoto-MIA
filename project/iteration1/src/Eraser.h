@@ -1,3 +1,6 @@
+#ifndef ERASER_H
+#define ERASER_H
+
 // Eraser.h
 // Created by Stevie Frisbie
 
@@ -5,7 +8,7 @@ class PixelBuffer;
 class ColorData;
 class Tool;
 
-class Eraser: Tool
+class Eraser: public Tool
 {
 
   public:
@@ -14,3 +17,5 @@ class Eraser: Tool
     float** computeMask();
     float calculateDistance();
 };
+
+#endif

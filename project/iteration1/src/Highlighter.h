@@ -1,3 +1,5 @@
+#ifndef HIGHLIGHTER_H
+#define HIGHLIGHTER_H
 //
 // Highlighter.h
 // Created by Jonathon Meyer
@@ -7,7 +9,7 @@ class PixelBuffer;
 class ColorData;
 class Tool;
 
-class Highlighter: Tool
+class Highlighter: public Tool
 {
 public:
   Highlighter();
@@ -17,3 +19,5 @@ public:
   float** computeMask();
 
 };
+
+#endif
