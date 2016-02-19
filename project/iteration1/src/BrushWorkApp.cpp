@@ -11,6 +11,7 @@
 #include "Highlighter.h"
 #include "Eraser.h"
 #include "SprayCan.h"
+#include "Tool.h"
 #include <cmath>
 #include <iostream>
 
@@ -73,7 +74,7 @@ void BrushWorkApp::initializeTools() {
 	Tool[2] = new SprayCan();
 	Tool[3] = new CaligraphyPen();
 	Tool[4] = new Highlighter();
-	
+
 	// Tool[5] = new SpecialPen(); // Has not been created yet
 }
 
