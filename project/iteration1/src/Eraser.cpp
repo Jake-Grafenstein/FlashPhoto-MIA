@@ -53,5 +53,5 @@ float** Eraser::computeMask()
 
 float Eraser::calculateDistance(int x, int y)
 {
-	return sqrt((((float) x - 10.0)^2) + (((float) y - 10.0)^2));
+	return sqrt(pow(((float) x - 10.0), 2) + pow(((float) y - 10.0), 2));
 }

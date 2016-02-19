@@ -133,5 +133,5 @@ float** SprayCan::ComputeMask()
 
 float SprayCan::calculateDistance(int x, int y)
 {
-	return sqrt(((float) x - 20.0)^2 + ((float) y - 20.0)^2);
+	return sqrt(pow(((float) x - 20.0), 2) + pow(((float) y - 20.0), 2));
 }
