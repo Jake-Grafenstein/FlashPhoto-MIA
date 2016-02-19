@@ -16,16 +16,17 @@ using std::fill;
 SprayCan::SprayCan()
 {
 	int i, j;
+	maskSize = 41;
 	//allocate space for mask
-	mask = (float**) malloc(41 * sizeof(float*));
-	for (i = 0; i < 41; i++)
+	mask = (float**) malloc(maskSize * sizeof(float*));
+	for (i = 0; i < maskSize; i++)
 	{
 		mask[i] = (float*) malloc(41 * sizeof(float));
 	}
 
-	for (i = 0; i < 41; i++)
+	for (i = 0; i < maskSize; i++)
 	{
-		for (j = 0; j < 41; j++)
+		for (j = 0; j < maskSize; j++)
 		{
 			float distance = calculateDistance(i, j)
 			if (distance >= 20.0)
@@ -119,7 +120,7 @@ SprayCan::SprayCan()
 SprayCan::~SprayCan()
 {
   int i;
-  for (i=0;i<41;i++)
+  for (i=0;i<maskSize;i++)
   {
       free(mask[i]);
   }

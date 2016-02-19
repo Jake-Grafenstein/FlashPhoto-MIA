@@ -18,3 +18,7 @@ Tool::Tool() {
 bool Tool::isActive() {
   return active;
 }
+
+int Tool::getMaskSize() {
+  return maskSize;
+}

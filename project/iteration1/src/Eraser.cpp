@@ -16,16 +16,17 @@ using std::fill;
 Eraser::Eraser()
 {
 	int i, j;
+	maskSize = 21;
 	//allocate space for mask
-	mask = (float**) malloc(21 * sizeof(float*));
-	for (i = 0; i < 21; i++)
+	mask = (float**) malloc(maskSize * sizeof(float*));
+	for (i = 0; i < maskSize; i++)
 	{
-		mask[i] = (float*) malloc(21 * sizeof(float));
+		mask[i] = (float*) malloc(maskSize * sizeof(float));
 	}
 
-	for (i = 0; i < 21; i++)
+	for (i = 0; i < maskSize; i++)
 	{
-		for (j = 0; j < 21; j++)
+		for (j = 0; j < maskSize; j++)
 		{
 			if (calculateDistance(i, j) <= 10.0)
 			{
@@ -39,7 +40,7 @@ Eraser::Eraser()
 Eraser::~Eraser()
 {
   int i;
-  for (i = 0; i < 21; i++)
+  for (i = 0; i < maskSize; i++)
   {
       free(mask[i]);
   }

@@ -17,18 +17,19 @@ using std::fill;
 CalligraphyPen::CalligraphyPen()
 {
 	int i,j;
+	maskSize = 15;
 	//allocate space for mask
-	mask=(float**) malloc(7*sizeof(float*));
-	for (i=0;i<7;i++)
+	mask=(float**) malloc(maskSize*sizeof(float*));
+	for (i=0;i<maskSize;i++)
 	{
-		mask[i]=(float*) malloc(7*sizeof(float));
+		mask[i]=(float*) malloc(maskSize*sizeof(float));
 	}
 	//setup the mask
-	for (i=0;i<7;i++)
+	for (i=0;i<maskSize;i++)
 	{
-		for (j=0;j<7;j++)
+		for (j=0;j<maskSize;j++)
 		{
-			if ((j<2) || (j>4))
+			if ((j<5) || (j>9))
 			{
 				mask[i][j]=0;
 			}
@@ -38,14 +39,14 @@ CalligraphyPen::CalligraphyPen()
 			}
 		}
 	}
-
+	
 }
 
 CalligraphyPen::~CalligraphyPen()
 {
 	int i;
 	//deallocate mask
-	for (i=0;i<7;i++)
+	for (i=0;i<maskSize;i++)
 	{
 		free(mask[i]);
 	}

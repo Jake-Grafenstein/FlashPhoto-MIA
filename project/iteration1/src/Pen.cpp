@@ -17,16 +17,17 @@ using std::fill;
 Pen::Pen()
 {
     int i, j;
+    maskSize = 7;
     //allocate space for mask, double array
   	mask=(float**) malloc(7*sizeof(float*));
-    for (i=0;i<7;i++)
+    for (i=0;i<maskSize;i++)
     {
-      mask[i]=(float*) malloc(7*sizeof(float));
+      mask[i]=(float*) malloc(maskSize*sizeof(float));
     }
 
-    for (i=0;i<7;i++)
+    for (i=0;i<maskSize;i++)
     {
-      for (j=0;j<7;j++)
+      for (j=0;j<maskSize;j++)
       {
         if ((2 < i < 6) && (2 < j < 6)) {
           mask[i][j] = 1;
@@ -41,7 +42,7 @@ Pen::Pen()
 Pen::~Pen()
 {
   int i;
-  for (i=0;i<7;i++)
+  for (i=0;i<maskSize;i++)
   {
       free(mask[i]);
   }

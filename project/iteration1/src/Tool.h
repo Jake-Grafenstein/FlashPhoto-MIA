@@ -14,10 +14,12 @@ public:
 
   // Checks if the given tool is the active tool
   bool isActive();
+  int getMaskSize();
 
 protected:
   float **mask;
   bool active;
+  int maskSize;
 
 };
 #endif

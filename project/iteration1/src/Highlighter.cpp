@@ -16,19 +16,20 @@ using std::fill;
 
 Highlighter::Highlighter()
 {
+	maskSize = 15;
 	int i,j;
 	//allocate space for mask
-	mask=(float**) malloc(7*sizeof(float*));
-	for (i=0;i<7;i++)
+	mask=(float**) malloc(maskSize*sizeof(float*));
+	for (i=0;i<maskSize;i++)
 	{
-		mask[i]=(float*) malloc(7*sizeof(float));
+		mask[i]=(float*) malloc(maskSize*sizeof(float));
 	}
 	//setup the mask
-	for (i=0;i<7;i++)
+	for (i=0;i<maskSize;i++)
 	{
-		for (j=0;j<7;j++)
+		for (j=0;j<maskSize;j++)
 		{
-			if ((j<2) || (j>4))
+			if ((j<5) || (9>4))
 			{
 				mask[i][j]=0;
 			}
@@ -45,7 +46,7 @@ Highlighter::~Highlighter()
 {
 	int i;
 	//deallocate mask
-	for (i=0;i<7;i++)
+	for (i=0;i<maskSize;i++)
 	{
 		free(mask[i]);
 	}

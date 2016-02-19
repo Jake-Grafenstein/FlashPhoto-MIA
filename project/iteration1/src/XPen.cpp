@@ -17,16 +17,17 @@ using std::fill;
 XPen::XPen()
 {
     int i, j;
+    maskSize = 7;
     //allocate space for mask, double array
-  	mask=(float**) malloc(7*sizeof(float*));
-    for (i=0;i<7;i++)
+  	mask=(float**) malloc(maskSize*sizeof(float*));
+    for (i=0;i<maskSize;i++)
     {
-      mask[i]=(float*) malloc(7*sizeof(float));
+      mask[i]=(float*) malloc(maskSize*sizeof(float));
     }
 
-    for (i=0;i<7;i++)
+    for (i=0;i<maskSize;i++)
     {
-      for (j=0;j<7;j++)
+      for (j=0;j<maskSIze;j++)
       {
         if (i == j) {
           mask[i][j] = 1;
@@ -59,7 +60,7 @@ XPen::XPen()
 XPen::~XPen()
 {
   int i;
-  for (i=0;i<7;i++)
+  for (i=0;i<maskSize;i++)
   {
       free(mask[i]);
   }
