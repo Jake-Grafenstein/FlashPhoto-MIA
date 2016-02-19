@@ -2,9 +2,8 @@
 // Tool.h
 // Created by Jacob Grafenstein
 //
-
-class PixelBuffer;
-class ColorData;
+#ifndef TOOL_H
+#define TOOL_H
 
 class Tool
 {
@@ -21,3 +20,4 @@ protected:
   bool active;
 
 };
+#endif

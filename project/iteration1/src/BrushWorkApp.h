@@ -8,6 +8,7 @@
 #define BRUSHWORKAPP_H
 
 #include "BaseGfxApp.h"
+#include <vector>
 
 class ColorData;
 class PixelBuffer;
@@ -64,8 +65,8 @@ private:
 
 	// These are used to store the selections from the GLUI user interface
 	int m_curTool;
-	Tool *tools;
-	int tool_count;//for extensibility beyond 6 tools
+	std::vector<Tool*> tools;
+
 	float m_curColorRed, m_curColorGreen, m_curColorBlue;
 	GLUI_Spinner *m_spinnerR;
 	GLUI_Spinner *m_spinnerG;
