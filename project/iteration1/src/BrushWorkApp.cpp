@@ -73,7 +73,7 @@ void BrushWorkApp::initializeTools() {
 	tools.push_back(new Pen());
 	tools.push_back(new Eraser());
 	tools.push_back(new SprayCan());
-	tools.push_back(new CaligraphyPen());
+	tools.push_back(new CalligraphyPen());
 	tools.push_back(new Highlighter());
 	tools.push_back(new XPen());
 }

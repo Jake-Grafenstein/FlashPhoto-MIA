@@ -5,8 +5,6 @@
 // Created by Jacob Grafenstein
 //
 
-class PixelBuffer;
-class ColorData;
 class Tool;
 
 class XPen: public Tool
