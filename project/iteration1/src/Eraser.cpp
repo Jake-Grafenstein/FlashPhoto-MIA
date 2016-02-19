@@ -22,7 +22,7 @@ Eraser::Eraser()
 	{
 		mask[i] = (float*) malloc(21 * sizeof(float));
 	}
-	
+
 	for (i = 0; i < 21; i++)
 	{
 		for (j = 0; j < 21; j++)
@@ -51,8 +51,7 @@ float** Eraser::ComputeMask()
   return mask;
 }
 
-float calculateDistance(int x, int y)
+float Eraser::calculateDistance(int x, int y)
 {
 	return sqrt(((float) x - 10.0)^2 + ((float) y - 10.0)^2);
 }
- 
