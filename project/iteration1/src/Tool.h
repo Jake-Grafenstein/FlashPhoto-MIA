@@ -15,6 +15,7 @@ public:
   // Checks if the given tool is the active tool
   bool isActive();
   int getMaskSize();
+  int getPixel(int x,int y);
 
 protected:
   float **mask;

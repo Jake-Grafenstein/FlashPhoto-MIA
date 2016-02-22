@@ -22,3 +22,15 @@ bool Tool::isActive() {
 int Tool::getMaskSize() {
   return maskSize;
 }
+
+int Tool::getPixel(int x,int y)
+{
+	if (x>=0 && y>=0 && x<maskSize && y<maskSize)
+	{
+		return mask[x][y];
+	}
+	else
+	{
+		return -1;
+	}
+}

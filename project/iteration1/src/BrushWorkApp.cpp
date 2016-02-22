@@ -22,6 +22,7 @@ using std::endl;
 
 BrushWorkApp::BrushWorkApp(int argc, char* argv[], int width, int height, ColorData backgroundColor) :
 	BaseGfxApp(argc, argv, width, height, 50, 50, GLUT_RGB|GLUT_DOUBLE|GLUT_DEPTH, true, width+51, 50) {
+	m_curTool = 0;//we'll just set this to the first one on initialization
 	// Set the name of the window
 	setCaption("BrushWork");
 	initializeTools();
@@ -37,6 +38,40 @@ BrushWorkApp::BrushWorkApp(int argc, char* argv[], int width, int height, ColorD
 void BrushWorkApp::display() {
 	// TODO: Update the contents of the display buffer
 	drawPixels(0, 0, m_width, m_height, m_displayBuffer->getData());
+}
+
+void paintMask(int x,int y)
+{
+	int i,j,bufferI,bufferJ;
+	float red,green,blue;
+	int maskSize = tools[m_curTool].getMaskSize();
+	if (m_curTool == 1)
+	{//eraser
+		red = backgroundColor.getRed();
+		green = backgroundColor.getGreen();
+		blue = backgroundColor.getBlue();
+	}
+	else
+	{//everything else
+		red = m_curColorRed;
+		green = m_curColorGreen;
+		blue = m_curColorBlue;
+	}
+	//i,j will be positions in the mask
+	for (i=0;i<maskSize;i++)
+	{
+		for (j=0;j<maskSize;j++)
+		{
+			bufferI = i - (maskSize/2) - 1;
+			bufferJ = j - (maskSize/2) - 1;
+			if ((bufferI > 0) && (bufferI < width) && (bufferJ > 0) && (bufferJ < height))
+			{//make sure width and length are right, be prepared to swap if necessary
+				m_displayBuffer[bufferI*maskSize + bufferJ] *= 1 - tools[m_curTool].getPixel(i,j);
+				m_displayBuffer[bufferI*maskSize + bufferJ] += (new ColorData(red,green,blue))*tools[m_curTool].getPixel(i,j);
+				//not sure if above line is right way to create ColorData object, need verification
+			}
+		}
+	}
 }
 
 
