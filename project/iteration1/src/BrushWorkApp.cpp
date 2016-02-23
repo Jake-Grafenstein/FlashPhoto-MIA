@@ -52,7 +52,9 @@ void BrushWorkApp::display() {
 	drawPixels(0, 0, m_width, m_height, m_displayBuffer->getData());
 }
 
-void BrushWorkApp::paintMask(int x,int y)
+
+//TODO- migrate this into the tool class
+/*void BrushWorkApp::paintMask(int x,int y)
 {
 	int i,j,bufferI,bufferJ,width,height;
 	float red,green,blue;
@@ -78,16 +80,16 @@ void BrushWorkApp::paintMask(int x,int y)
 		{
 			bufferI = i - (maskSize/2) - 1;
 			bufferJ = j - (maskSize/2) - 1;
-if ((bufferI > 0) && (bufferI < width) && (bufferJ > 0) && (bufferJ < height))
+			if ((bufferI > 0) && (bufferI < width) && (bufferJ > 0) && (bufferJ < height))
 			{//make sure width and length are right, be prepared to swap if necessary
-m_displayBuffer[bufferI*maskSize + bufferJ] = m_displayBuffer[bufferI*maskSize + bufferJ] * (1. - tools[m_curTool]->getPixel(i,j));
+				m_displayBuffer[bufferI*maskSize + bufferJ] = m_displayBuffer[bufferI*maskSize + bufferJ] * (1. - tools[m_curTool]->getPixel(i,j));
 				m_displayBuffer[bufferI*maskSize + bufferJ] = m_displayBuffer[bufferI*maskSize + bufferJ]*((ColorData(red,green,blue)) * tools[m_curTool]->getPixel(i,j));
 				//not sure if above line is right way to create ColorData object, need verification
 			}
 		}
 	}
 }
-
+*/
 
 
 BrushWorkApp::~BrushWorkApp() {

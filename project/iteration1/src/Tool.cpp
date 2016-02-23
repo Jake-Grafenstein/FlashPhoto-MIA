@@ -34,3 +34,21 @@ int Tool::getPixel(int x,int y)
 		return -1;
 	}
 }
+
+void Tool::paintMask(int x,int y,ColorData *displayBuffer,int width,int height,ColorData color,ColorData backgroundColor)
+{//default paintMask function, can be overwritten for tools like eraser
+	int i,j,bufferI,bufferJ;
+	for (i=0;i<maskSize;i++)
+	{
+		for (j=0;j<maskSize;j++)
+		{
+			bufferI = i - (maskSize/2) - 1;
+			bufferJ = j - (maskSize/2) - 1;
+                        if ((bufferI > 0) && (bufferI < width) && (bufferJ > 0) && (bufferJ < height))
+                        {//make sure width and length are right, be prepared to swap if necessary
+				displayBuffer[bufferI*maskSize + bufferJ] = displayBuffer[bufferI*maskSize + bufferJ] * (1 - getPixel(x,y));
+				displayBuffer[bufferI*maskSize + bufferJ] = displayBuffer[bufferI*maskSize + bufferJ] + (color * getPixel(x,y));
+			}
+		}
+	}
+}

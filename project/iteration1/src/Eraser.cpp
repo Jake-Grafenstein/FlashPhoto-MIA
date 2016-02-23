@@ -56,3 +56,22 @@ float Eraser::calculateDistance(int x, int y)
 {
 	return sqrt(pow(((float) x - 10.0), 2) + pow(((float) y - 10.0), 2));
 }
+
+void Eraser::paintMask(int x,int y,ColorData *displayBuffer,int width,int height,ColorData color,ColorData backgroundColor)
+{
+	int i,j,bufferI,bufferJ;
+        for (i=0;i<maskSize;i++)
+        {
+                for (j=0;j<maskSize;j++)
+                {
+                        bufferI = i - (maskSize/2) - 1;
+                        bufferJ = j - (maskSize/2) - 1;
+                        if ((bufferI > 0) && (bufferI < width) && (bufferJ > 0) && (bufferJ < height))
+                        {//make sure width and length are right, be prepared to swap if necessary
+                                displayBuffer[bufferI*maskSize + bufferJ] = displayBuffer[bufferI*maskSize + bufferJ] * (1 - getPixel(x,y));
+                                displayBuffer[bufferI*maskSize + bufferJ] = displayBuffer[bufferI*maskSize + bufferJ] + (backgroundColor * getPixel(x,y));
+                        }
+                }
+        }
+
+}
