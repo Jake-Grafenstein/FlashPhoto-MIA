@@ -71,8 +71,8 @@ void Eraser::paintMask(int x,int y,PixelBuffer *displayBuffer,ColorData color,Co
                         bufferJ = j - (maskSize/2) - 1;
                         if ((bufferI > 0) && (bufferI < width) && (bufferJ > 0) && (bufferJ < height))
                         {//make sure width and length are right, be prepared to swap if necessary
-                                tempPixel = (*displayBuffer)->getPixel(bufferI,bufferJ) * (1 - getPixel(x,y));
-                                (*displayBuffer)->setPixel(bufferI,bufferJ,tempPixel + (backgroundColor * getPixel(x,y)));
+                                tempPixel = (*displayBuffer).getPixel(bufferI,bufferJ) * (1 - getPixel(x,y));
+                                (*displayBuffer).setPixel(bufferI,bufferJ,tempPixel + (backgroundColor * getPixel(x,y)));
                         }
                 }
         }
