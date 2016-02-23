@@ -42,43 +42,6 @@ void BrushWorkApp::display() {
 }
 
 
-//TODO- migrate this into the tool class
-/*void BrushWorkApp::paintMask(int x,int y)
-{
-	int i,j,bufferI,bufferJ,width,height;
-	float red,green,blue;
-	int maskSize = tools[m_curTool]->getMaskSize();
-	width = getWidth();
-	height = getHeight();
-	if (m_curTool == 1)
-	{//eraser
-		red = backColor->getRed();
-		green = backColor->getGreen();
-		blue = backColor->getBlue();
-	}
-	else
-	{//everything else
-		red = m_curColorRed;
-		green = m_curColorGreen;
-		blue = m_curColorBlue;
-	}
-	//i,j will be positions in the mask
-	for (i=0;i<maskSize;i++)
-	{
-		for (j=0;j<maskSize;j++)
-		{
-			bufferI = i - (maskSize/2) - 1;
-			bufferJ = j - (maskSize/2) - 1;
-			if ((bufferI > 0) && (bufferI < width) && (bufferJ > 0) && (bufferJ < height))
-			{//make sure width and length are right, be prepared to swap if necessary
-				m_displayBuffer[bufferI*maskSize + bufferJ] = m_displayBuffer[bufferI*maskSize + bufferJ] * (1. - tools[m_curTool]->getPixel(i,j));
-				m_displayBuffer[bufferI*maskSize + bufferJ] = m_displayBuffer[bufferI*maskSize + bufferJ]*((ColorData(red,green,blue)) * tools[m_curTool]->getPixel(i,j));
-				//not sure if above line is right way to create ColorData object, need verification
-			}
-		}
-	}
-}
-*/
 
 
 BrushWorkApp::~BrushWorkApp() {
@@ -127,11 +90,12 @@ void BrushWorkApp::initGlui() {
 	GLUI_RadioGroup *radio = new GLUI_RadioGroup(toolPanel, &m_curTool, UI_TOOLTYPE, s_gluicallback);
 
 	// Create interface buttons for different tools:
-	new GLUI_RadioButton(radio, "Pen");
+	new GLUI_RadioButton(radio, "Pen");//might need more here to add functionality
 	new GLUI_RadioButton(radio, "Eraser");
 	new GLUI_RadioButton(radio, "Spray Can");
 	new GLUI_RadioButton(radio, "Caligraphy Pen");
 	new GLUI_RadioButton(radio, "Highlighter");
+	new GLUI_RadioButton(radio, "XPen");
 
 	GLUI_Panel *colPanel = new GLUI_Panel(m_glui, "Tool Color");
 
@@ -176,6 +140,7 @@ void BrushWorkApp::initGraphics() {
 
 
 void BrushWorkApp::gluiControl(int controlID) {
+	//this might be where the buttons are handled?
 	switch (controlID) {
 		case UI_PRESET_RED:
 			m_curColorRed = 1;
