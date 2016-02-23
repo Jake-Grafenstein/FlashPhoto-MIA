@@ -31,21 +31,10 @@ BrushWorkApp::BrushWorkApp(int argc, char* argv[], int width, int height, ColorD
 	// Initialize Interface
 	initializeBuffers(backgroundColor, width, height);
 	backColor = &backgroundColor;
-	wdth = width;
-	hght = height;
 	initGlui();
 	initGraphics();
 }
 
-int BrushWorkApp::getWidth()
-{
-	return wdth;
-}
-
-int BrushWorkApp::getHeight()
-{
-	return hght;
-}
 
 void BrushWorkApp::display() {
 	// TODO: Update the contents of the display buffer
@@ -99,8 +88,9 @@ BrushWorkApp::~BrushWorkApp() {
 }
 
 
-void BrushWorkApp::mouseDragged(int x, int y) {
-
+void BrushWorkApp::mouseDragged(int x, int y)
+{
+	tools[m_curTool]->paintMask(x,y,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),*backColor);
 }
 
 void BrushWorkApp::mouseMoved(int x, int y) {

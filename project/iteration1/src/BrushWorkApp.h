@@ -24,8 +24,6 @@ public:
 
 	BrushWorkApp(int argc, char* argv[], int width, int height, ColorData backgroundColor);
 	virtual ~BrushWorkApp();
-	int getWidth();
-	int getHeight();
 	// Glut overrided function
 	void mouseDragged(int x, int y) ;
 	void mouseMoved(int x, int y);
@@ -69,7 +67,6 @@ private:
 	std::vector<Tool*> tools;
 
 	float m_curColorRed, m_curColorGreen, m_curColorBlue;
-	int wdth,hght;
 	ColorData* backColor;
 	GLUI_Spinner *m_spinnerR;
 	GLUI_Spinner *m_spinnerG;

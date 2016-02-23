@@ -5,6 +5,7 @@
 #ifndef TOOL_H
 #define TOOL_H
 #include "ColorData.h"
+#include "PixelBuffer.h"
 
 class Tool
 {
@@ -17,7 +18,7 @@ public:
   bool isActive();
   int getMaskSize();
   int getPixel(int x,int y);
-  virtual void paintMask(int x,int y,ColorData *pixelBuffer,int width,int height,ColorData color,ColorData backgroundColor);
+  virtual void paintMask(int x,int y,PixelBuffer *pixelBuffer,ColorData color,ColorData backgroundColor);
 
 protected:
   float **mask;
