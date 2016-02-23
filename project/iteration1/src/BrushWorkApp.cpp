@@ -30,9 +30,21 @@ BrushWorkApp::BrushWorkApp(int argc, char* argv[], int width, int height, ColorD
 
 	// Initialize Interface
 	initializeBuffers(backgroundColor, width, height);
-
+	backColor = &backgroundColor;
+	wdth = width;
+	hght = height;
 	initGlui();
 	initGraphics();
+}
+
+int BrushWorkApp::getWidth()
+{
+	return wdth;
+}
+
+int BrushWorkApp::getHeight()
+{
+	return hght;
 }
 
 void BrushWorkApp::display() {
@@ -40,16 +52,18 @@ void BrushWorkApp::display() {
 	drawPixels(0, 0, m_width, m_height, m_displayBuffer->getData());
 }
 
-void paintMask(int x,int y)
+void BrushWorkApp::paintMask(int x,int y)
 {
-	int i,j,bufferI,bufferJ;
+	int i,j,bufferI,bufferJ,width,height;
 	float red,green,blue;
-	int maskSize = tools[m_curTool].getMaskSize();
+	int maskSize = tools[m_curTool]->getMaskSize();
+	width = getWidth();
+	height = getHeight();
 	if (m_curTool == 1)
 	{//eraser
-		red = backgroundColor.getRed();
-		green = backgroundColor.getGreen();
-		blue = backgroundColor.getBlue();
+		red = backColor->getRed();
+		green = backColor->getGreen();
+		blue = backColor->getBlue();
 	}
 	else
 	{//everything else
@@ -64,10 +78,10 @@ void paintMask(int x,int y)
 		{
 			bufferI = i - (maskSize/2) - 1;
 			bufferJ = j - (maskSize/2) - 1;
-			if ((bufferI > 0) && (bufferI < width) && (bufferJ > 0) && (bufferJ < height))
+if ((bufferI > 0) && (bufferI < width) && (bufferJ > 0) && (bufferJ < height))
 			{//make sure width and length are right, be prepared to swap if necessary
-				m_displayBuffer[bufferI*maskSize + bufferJ] *= 1 - tools[m_curTool].getPixel(i,j);
-				m_displayBuffer[bufferI*maskSize + bufferJ] += (new ColorData(red,green,blue))*tools[m_curTool].getPixel(i,j);
+m_displayBuffer[bufferI*maskSize + bufferJ] = m_displayBuffer[bufferI*maskSize + bufferJ] * (1. - tools[m_curTool]->getPixel(i,j));
+				m_displayBuffer[bufferI*maskSize + bufferJ] = m_displayBuffer[bufferI*maskSize + bufferJ]*((ColorData(red,green,blue)) * tools[m_curTool]->getPixel(i,j));
 				//not sure if above line is right way to create ColorData object, need verification
 			}
 		}
