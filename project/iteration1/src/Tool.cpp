@@ -54,4 +54,23 @@ void Tool::paintMask(int x,int y,PixelBuffer **displayBuffer,ColorData color,Col
 			}
 		}
 	}
+	if (previousX == NULL || previousY == NULL) {
+		previousX = x;
+		previouxY = y;
+	} else {
+		fillLine(x,y);
+		previouxX = x;
+		previouxY = y;
+	}
+}
+
+void Tool::fillLine(int x, int y) {
+	float slope = (previousX - x)/(previousY - y);
+	int newX = x++;
+	
+}
+
+void Tool::setPreviousPointToNull() {
+	previousX = NULL;
+	previousY = NULL;
 }

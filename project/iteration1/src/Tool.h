@@ -24,6 +24,7 @@ protected:
   float **mask;
   bool active;
   int maskSize;
-
+  int previousX;
+  int previousY;
 };
 #endif
