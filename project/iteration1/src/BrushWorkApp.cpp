@@ -53,8 +53,9 @@ BrushWorkApp::~BrushWorkApp() {
 
 void BrushWorkApp::mouseDragged(int x, int y)
 {
-	std::cout <<"mouseDragged" << x << " " << y << std::endl;
-	(*tools[m_curTool]).paintMask(x,y,m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),*backColor);
+//	std::cout << "mouseDragged" << x << " " << y << " " << (*m_displayBuffer).getPixel(3,3).getGreen() << std::endl;
+	(*tools[m_curTool]).paintMask(x,y,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),*backColor);
+//	std::cout << " val in buffer now " << (*m_displayBuffer).getPixel(3,3).getGreen() << std::endl;
 	display();
 }
 
