@@ -23,7 +23,7 @@ int Tool::getMaskSize() {
   return maskSize;
 }
 
-int Tool::getPixel(int x,int y)
+float Tool::getPixel(int x,int y)
 {
 	if (x>=0 && y>=0 && x<maskSize && y<maskSize)
 	{
@@ -49,8 +49,8 @@ void Tool::paintMask(int x,int y,PixelBuffer **displayBuffer,ColorData color,Col
 			bufferJ = y + j - (maskSize/2) - 1;
                         if ((bufferI > 0) && (bufferI < width) && (bufferJ > 0) && (bufferJ < height))
                         {//make sure width and length are right, be prepared to swap if necessary
-				tempPixel = (**displayBuffer).getPixel(bufferI,bufferJ) * (1 - getPixel(i,j));
-				(**displayBuffer).setPixel(bufferI,bufferJ,tempPixel + (color * getPixel(i,j)));
+				tempPixel = (**displayBuffer).getPixel(bufferI,height - bufferJ) * (1 - getPixel(i,j));
+				(**displayBuffer).setPixel(bufferI,height - bufferJ,tempPixel + (color * getPixel(i,j)));
 			}
 		}
 	}

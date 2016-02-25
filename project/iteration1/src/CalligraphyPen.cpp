@@ -29,7 +29,7 @@ CalligraphyPen::CalligraphyPen()
 	{
 		for (j=0;j<maskSize;j++)
 		{
-			if ((j<5) || (j>9))
+			if ((i<5) || (i>9))
 			{
 				mask[i][j]=0;
 			}

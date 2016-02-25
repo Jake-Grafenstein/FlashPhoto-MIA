@@ -29,7 +29,7 @@ Highlighter::Highlighter()
 	{
 		for (j=0;j<maskSize;j++)
 		{
-			if ((j<5) || (9>4))
+			if ((i<5) || (i>9))
 			{
 				mask[i][j]=0;
 			}

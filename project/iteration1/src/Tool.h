@@ -17,7 +17,7 @@ public:
   // Checks if the given tool is the active tool
   bool isActive();
   int getMaskSize();
-  int getPixel(int x,int y);
+  float getPixel(int x,int y);
   virtual void paintMask(int x,int y,PixelBuffer **pixelBuffer,ColorData color,ColorData backgroundColor);
 
 protected:

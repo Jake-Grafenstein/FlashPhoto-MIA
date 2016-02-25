@@ -19,7 +19,7 @@
 
 using std::cout;
 using std::endl;
-//test
+
 BrushWorkApp::BrushWorkApp(int argc, char* argv[], int width, int height, ColorData backgroundColor) :
 	BaseGfxApp(argc, argv, width, height, 50, 50, GLUT_RGB|GLUT_DOUBLE|GLUT_DEPTH, true, width+51, 50) {
 	m_curTool = 0;//we'll just set this to the first one on initialization
@@ -30,7 +30,7 @@ BrushWorkApp::BrushWorkApp(int argc, char* argv[], int width, int height, ColorD
 
 	// Initialize Interface
 	initializeBuffers(backgroundColor, width, height);
-	backColor = &backgroundColor;
+	backColor = backgroundColor;
 	initGlui();
 	initGraphics();
 }
@@ -54,7 +54,7 @@ BrushWorkApp::~BrushWorkApp() {
 void BrushWorkApp::mouseDragged(int x, int y)
 {
 //	std::cout << "mouseDragged" << x << " " << y << " " << (*m_displayBuffer).getPixel(3,3).getGreen() << std::endl;
-	(*tools[m_curTool]).paintMask(x,y,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),*backColor);
+	(*tools[m_curTool]).paintMask(x,y,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
 //	std::cout << " val in buffer now " << (*m_displayBuffer).getPixel(3,3).getGreen() << std::endl;
 	display();
 }

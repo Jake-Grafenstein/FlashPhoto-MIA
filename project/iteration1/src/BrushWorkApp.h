@@ -1,3 +1,4 @@
+
 //
 //  BrushWorkApp.h
 //  Originally created by the CSci-3081W TAs.
@@ -67,7 +68,7 @@ private:
 	std::vector<Tool*> tools;
 
 	float m_curColorRed, m_curColorGreen, m_curColorBlue;
-	ColorData* backColor;
+	ColorData backColor;
 	GLUI_Spinner *m_spinnerR;
 	GLUI_Spinner *m_spinnerG;
 	GLUI_Spinner *m_spinnerB;
