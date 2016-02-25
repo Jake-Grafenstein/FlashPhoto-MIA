@@ -53,7 +53,9 @@ BrushWorkApp::~BrushWorkApp() {
 
 void BrushWorkApp::mouseDragged(int x, int y)
 {
+	std::cout <<"mouseDragged" << x << " " << y << std::endl;
 	(*tools[m_curTool]).paintMask(x,y,m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),*backColor);
+	display();
 }
 
 void BrushWorkApp::mouseMoved(int x, int y) {
@@ -141,6 +143,7 @@ void BrushWorkApp::initGraphics() {
 
 void BrushWorkApp::gluiControl(int controlID) {
 	//this might be where the buttons are handled?
+	std::cout << controlID << std::endl;
 	switch (controlID) {
 		case UI_PRESET_RED:
 			m_curColorRed = 1;
