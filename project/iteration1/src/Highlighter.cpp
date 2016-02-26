@@ -1,5 +1,5 @@
 //
-// CalligraphyPen.cpp
+// Highlighter.cpp
 // Created by Jonathon Meyer
 //
 
@@ -57,3 +57,43 @@ float** Highlighter::computeMask()
 {//is this supposed to be an accessor for mask?
 	return mask;
 }
+
+
+void Highlighter::paintMask(int x,int y,PixelBuffer **displayBuffer,ColorData color,ColorData backgroundColor)
+{//overwritten to allow for dark colors to show through
+        int i,j,bufferI,bufferJ,width,height,r,g,b,newR,newG,newB;
+        width = (*displayBuffer)->getWidth();
+        height = (*displayBuffer)->getHeight();
+        ColorData tempPixel;
+        for (i=0;i<maskSize;i++)
+        {
+                for (j=0;j<maskSize;j++)
+                {
+                        bufferI = x + i - (maskSize/2) - 1;
+                        bufferJ = y + j - (maskSize/2) - 1;
+                        if ((bufferI > 0) && (bufferI < width) && (bufferJ > 0) && (bufferJ < height))
+                        {//make sure width and length are right, be prepared to swap if necessary
+                                tempPixel = (**displayBuffer).getPixel(bufferI,height - bufferJ);
+				r = tempPixel.getRed();
+				g = tempPixel.getGreen();
+				b = tempPixel.getBlue();
+				tempPixel = tempPixel * (1 - getPixel(i,j));
+				tempPixel = tempPixel + (color * getPixel(i,j));
+				newR = tempPixel.getRed();
+				newG = tempPixel.getGreen();
+				newB = tempPixel.getBlue();
+				if (r < newR)
+				{ newR = r; }
+				if (g < newG)
+				{ newG = g; }
+				if (b < newB)
+				{ newB = b; }
+				tempPixel.setRed(newR);
+				tempPixel.setGreen(newG);
+				tempPixel.setBlue(newB);
+                                (**displayBuffer).setPixel(bufferI,height - bufferJ,tempPixel);
+                        }
+                }
+        }
+}
+
