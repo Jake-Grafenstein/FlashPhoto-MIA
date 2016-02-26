@@ -70,7 +70,7 @@ void BrushWorkApp::leftMouseDown(int x, int y) {
 
 void BrushWorkApp::leftMouseUp(int x, int y) {
 	std::cout << "mouseReleased " << x << " " << y << std::endl;
-	(*tools[m_curTool]).setPreviousPointToNull();
+//	(*tools[m_curTool]).setPreviousPointToNull();
 }
 
 void BrushWorkApp::initializeBuffers(ColorData backgroundColor, int width, int height) {
