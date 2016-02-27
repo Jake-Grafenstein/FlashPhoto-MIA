@@ -207,7 +207,6 @@ void BrushWorkApp::initGraphics() {
 
 void BrushWorkApp::gluiControl(int controlID) {
 	//this might be where the buttons are handled?
-	std::cout << controlID << std::endl;
 	switch (controlID) {
 		case UI_PRESET_RED:
 			m_curColorRed = 1;
