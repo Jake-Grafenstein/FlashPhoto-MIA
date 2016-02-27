@@ -31,6 +31,8 @@ BrushWorkApp::BrushWorkApp(int argc, char* argv[], int width, int height, ColorD
 	// Initialize Interface
 	initializeBuffers(backgroundColor, width, height);
 	backColor = backgroundColor;
+	previousX = -1;
+	previousY = -1;
 	initGlui();
 	initGraphics();
 }
@@ -53,10 +55,23 @@ BrushWorkApp::~BrushWorkApp() {
 
 void BrushWorkApp::mouseDragged(int x, int y)
 {
+	float slope;
 //	std::cout << "mouseDragged" << x << " " << y << " " << (*m_displayBuffer).getPixel(3,3).getGreen() << std::endl;
 	(*tools[m_curTool]).paintMask(x,y,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
-//	std::cout << " val in buffer now " << (*m_displayBuffer).getPixel(3,3).getGreen() << std::endl;
 	display();
+	if ((previousX == -1) || (previousY == -1)) {
+		// Do Nothing
+	} else if ((previousX != -1) && (previousY != -1)) {
+		if ((previousX-x) == 0) {
+			slope = NULL;
+		} else {
+			slope = (float)(-1.0*(previousY-y)/(previousX-x));
+			std::cout << "This is my slope: " << slope << std::endl;
+			fillLine(slope, previousX, previousY, x, y);
+		}
+		previousX = x;
+		previousY = y;
+	}
 }
 
 void BrushWorkApp::mouseMoved(int x, int y) {
@@ -66,11 +81,36 @@ void BrushWorkApp::mouseMoved(int x, int y) {
 
 void BrushWorkApp::leftMouseDown(int x, int y) {
 	std::cout << "mousePressed " << x << " " << y << std::endl;
+	previousX = x;
+	previousY = y;
 }
 
 void BrushWorkApp::leftMouseUp(int x, int y) {
 	std::cout << "mouseReleased " << x << " " << y << std::endl;
-//	(*tools[m_curTool]).setPreviousPointToNull();
+	previousX = -1;
+	previousY = -1;
+}
+
+void BrushWorkApp::fillLine(float slope, int previousX, int previousY, int x, int y) {
+//	std::cout << "PreviousX: " << previousX << " | previousY: " << previousY << " | newX: " << x << " | newY: " << y << std::endl;
+		int i;
+		int nextY;
+		if ((x < 2) && (x > -2)) {
+			for (i = previousX; i > x; i--) {
+				nextY = getNextYValue(slope, previousX, i, previousY);
+				(*tools[m_curTool]).paintMask(i,nextY,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
+			}
+			for (i = previousX; i < x; i++) {
+				nextY = getNextYValue(slope, previousX, i, previousY);
+				(*tools[m_curTool]).paintMask(i,nextY,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
+			}
+		} else {
+			// how do we calculate the slope if it is undefined?
+		}
+}
+
+int BrushWorkApp::getNextYValue(float slope, int previousX, int newX, int previousY) {
+	return (int)(-1.0*((slope*newX)-(slope*previousX)-previousY));
 }
 
 void BrushWorkApp::initializeBuffers(ColorData backgroundColor, int width, int height) {

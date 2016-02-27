@@ -59,6 +59,8 @@ private:
 	void initGraphics();
 	void initializeBuffers(ColorData initialColor, int width, int height);
 	void initializeTools();
+	void fillLine(float slope, int previousX, int previousY, int x, int y);
+	int getNextYValue(float slope, int previousX, int previousY, int newX);
 
 	// This is the pointer to the buffer where the display PixelBuffer is stored
 	PixelBuffer* m_displayBuffer;
@@ -66,6 +68,8 @@ private:
 	// These are used to store the selections from the GLUI user interface
 	int m_curTool;
 	std::vector<Tool*> tools;
+	int previousX;
+	int previousY;
 
 	float m_curColorRed, m_curColorGreen, m_curColorBlue;
 	ColorData backColor;
