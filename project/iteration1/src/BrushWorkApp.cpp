@@ -56,6 +56,7 @@ BrushWorkApp::~BrushWorkApp() {
 void BrushWorkApp::mouseDragged(int x, int y)
 {
 	float slope;
+	int xy;//to determine which slope to use, 0 is y/x, 1 is x/y
 //	std::cout << "mouseDragged" << x << " " << y << " " << (*m_displayBuffer).getPixel(3,3).getGreen() << std::endl;
 	(*tools[m_curTool]).paintMask(x,y,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
 	display();
@@ -63,12 +64,19 @@ void BrushWorkApp::mouseDragged(int x, int y)
 		// Do Nothing
 	} else if ((previousX != -1) && (previousY != -1)) {
 		if ((previousX-x) == 0) {
-			slope = NULL;
-		} else {
-			slope = (float)(-1.0*(previousY-y)/(previousX-x));
-			std::cout << "This is my slope: " << slope << std::endl;
-			fillLine(slope, previousX, previousY, x, y);
+			xy = 1;
+			slope = 0;
 		}
+		else {
+			slope = (float)(-1.0*(previousY-y)/(previousX-x));
+			xy = 0;
+			if (slope > 1 || slope < -1)
+			{
+				slope = 1.0/slope;
+				xy = 1;
+			}
+		}
+		fillLine(slope,previousX,previousY,x,y,xy);
 		previousX = x;
 		previousY = y;
 	}
@@ -91,25 +99,37 @@ void BrushWorkApp::leftMouseUp(int x, int y) {
 	previousY = -1;
 }
 
-void BrushWorkApp::fillLine(float slope, int previousX, int previousY, int x, int y) {
-//	std::cout << "PreviousX: " << previousX << " | previousY: " << previousY << " | newX: " << x << " | newY: " << y << std::endl;
+void BrushWorkApp::fillLine(float slope, int previousX, int previousY, int x, int y,int xy) {
 		int i;
-		int nextY;
-		if ((x < 2) && (x > -2)) {
+		int nextCoord;
+		if (xy==0)
+		{//use the y/x slope
 			for (i = previousX; i > x; i--)
 			{//moving left
-				nextY = getNextYValue(slope, previousX, i, previousY);
-				(*tools[m_curTool]).paintMask(i,nextY,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
+				nextCoord = getNextYValue(slope, previousX, i, previousY);
+				(*tools[m_curTool]).paintMask(i,nextCoord,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
 			}
 			for (i = previousX; i < x; i++)
 			{//moving right
-				nextY = getNextYValue(slope, previousX, i, previousY);
-				(*tools[m_curTool]).paintMask(i,nextY,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
+				nextCoord = getNextYValue(slope, previousX, i, previousY);
+				(*tools[m_curTool]).paintMask(i,nextCoord,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
 			}
-		} else {
-			// how do we calculate the slope if it is undefined?
-			// the slope we used above is y/x, we can use x/y for this case
 		}
+		else if (xy==1)
+		{
+			for (i = previousY; i > y; i--)
+                        {//moving left
+                                nextCoord = getNextYValue(slope, previousY, i, previousX);
+                                (*tools[m_curTool]).paintMask(nextCoord,i,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
+                        }
+                        for (i = previousY; i < y; i++)
+                        {//moving right
+                                nextCoord = getNextYValue(slope, previousY, i, previousX);
+                                (*tools[m_curTool]).paintMask(nextCoord,i,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
+                        }
+
+		}
+
 }
 
 int BrushWorkApp::getNextYValue(float slope, int previousX, int newX, int previousY) {

@@ -59,7 +59,7 @@ private:
 	void initGraphics();
 	void initializeBuffers(ColorData initialColor, int width, int height);
 	void initializeTools();
-	void fillLine(float slope, int previousX, int previousY, int x, int y);
+	void fillLine(float slope, int previousX, int previousY, int x, int y,int xy);
 	int getNextYValue(float slope, int previousX, int previousY, int newX);
 
 	// This is the pointer to the buffer where the display PixelBuffer is stored
