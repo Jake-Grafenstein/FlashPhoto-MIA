@@ -61,7 +61,8 @@ float** Highlighter::computeMask()
 
 void Highlighter::paintMask(int x,int y,PixelBuffer **displayBuffer,ColorData color,ColorData backgroundColor)
 {//overwritten to allow for dark colors to show through
-        int i,j,bufferI,bufferJ,width,height,r,g,b,newR,newG,newB;
+        int i,j,bufferI,bufferJ,width,height;
+	float r,g,b,newR,newG,newB;
         width = (*displayBuffer)->getWidth();
         height = (*displayBuffer)->getHeight();
         ColorData tempPixel;

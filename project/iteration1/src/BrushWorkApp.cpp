@@ -87,6 +87,7 @@ void BrushWorkApp::mouseMoved(int x, int y) {
 
 void BrushWorkApp::leftMouseDown(int x, int y) {
 //	std::cout << "mousePressed " << x << " " << y << std::endl;
+        (*tools[m_curTool]).paintMask(x,y,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
 	previousX = x;
 	previousY = y;
 }
