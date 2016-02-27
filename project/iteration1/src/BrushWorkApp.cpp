@@ -57,9 +57,7 @@ void BrushWorkApp::mouseDragged(int x, int y)
 {
 	float slope;
 	int xy;//to determine which slope to use, 0 is y/x, 1 is x/y
-//	std::cout << "mouseDragged" << x << " " << y << " " << (*m_displayBuffer).getPixel(3,3).getGreen() << std::endl;
 	(*tools[m_curTool]).paintMask(x,y,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
-	display();
 	if ((previousX == -1) || (previousY == -1)) {
 		// Do Nothing
 	} else if ((previousX != -1) && (previousY != -1)) {
@@ -88,28 +86,28 @@ void BrushWorkApp::mouseMoved(int x, int y) {
 
 
 void BrushWorkApp::leftMouseDown(int x, int y) {
-	std::cout << "mousePressed " << x << " " << y << std::endl;
+//	std::cout << "mousePressed " << x << " " << y << std::endl;
 	previousX = x;
 	previousY = y;
 }
 
 void BrushWorkApp::leftMouseUp(int x, int y) {
-	std::cout << "mouseReleased " << x << " " << y << std::endl;
+//	std::cout << "mouseReleased " << x << " " << y << std::endl;
 	previousX = -1;
 	previousY = -1;
 }
 
 void BrushWorkApp::fillLine(float slope, int previousX, int previousY, int x, int y,int xy) {
-		int i;
-		int nextCoord;
+		int i,nextCoord,stepSize;
+		stepSize = (int) (  ((float) (*tools[m_curTool]).getMaskSize()) * 2.0/7.0);
 		if (xy==0)
 		{//use the y/x slope
-			for (i = previousX; i > x; i--)
+			for (i = previousX; i > x; i-=stepSize)
 			{//moving left
 				nextCoord = getNextYValue(slope, previousX, i, previousY);
 				(*tools[m_curTool]).paintMask(i,nextCoord,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
 			}
-			for (i = previousX; i < x; i++)
+			for (i = previousX; i < x; i+=stepSize)
 			{//moving right
 				nextCoord = getNextYValue(slope, previousX, i, previousY);
 				(*tools[m_curTool]).paintMask(i,nextCoord,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
@@ -117,12 +115,12 @@ void BrushWorkApp::fillLine(float slope, int previousX, int previousY, int x, in
 		}
 		else if (xy==1)
 		{
-			for (i = previousY; i > y; i--)
+			for (i = previousY; i > y; i-=stepSize)
                         {//moving left
                                 nextCoord = getNextYValue(slope, previousY, i, previousX);
                                 (*tools[m_curTool]).paintMask(nextCoord,i,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
                         }
-                        for (i = previousY; i < y; i++)
+                        for (i = previousY; i < y; i+=stepSize)
                         {//moving right
                                 nextCoord = getNextYValue(slope, previousY, i, previousX);
                                 (*tools[m_curTool]).paintMask(nextCoord,i,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
