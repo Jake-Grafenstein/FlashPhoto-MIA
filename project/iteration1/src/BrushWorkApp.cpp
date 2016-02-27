@@ -96,16 +96,19 @@ void BrushWorkApp::fillLine(float slope, int previousX, int previousY, int x, in
 		int i;
 		int nextY;
 		if ((x < 2) && (x > -2)) {
-			for (i = previousX; i > x; i--) {
+			for (i = previousX; i > x; i--)
+			{//moving left
 				nextY = getNextYValue(slope, previousX, i, previousY);
 				(*tools[m_curTool]).paintMask(i,nextY,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
 			}
-			for (i = previousX; i < x; i++) {
+			for (i = previousX; i < x; i++)
+			{//moving right
 				nextY = getNextYValue(slope, previousX, i, previousY);
 				(*tools[m_curTool]).paintMask(i,nextY,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
 			}
 		} else {
 			// how do we calculate the slope if it is undefined?
+			// the slope we used above is y/x, we can use x/y for this case
 		}
 }
 
