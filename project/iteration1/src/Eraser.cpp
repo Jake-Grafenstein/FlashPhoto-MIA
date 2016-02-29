@@ -47,11 +47,6 @@ Eraser::~Eraser()
   free(mask);
 }
 
-float** Eraser::computeMask()
-{
-  return mask;
-}
-
 float Eraser::calculateDistance(int x, int y)
 {
 	return sqrt(pow(((float) x - 10.0), 2) + pow(((float) y - 10.0), 2));

@@ -11,11 +11,7 @@ class XPen: public Tool
 {
 public:
   XPen();
-
   virtual ~XPen();
-
-  float** computeMask();
-
 };
 
 #endif

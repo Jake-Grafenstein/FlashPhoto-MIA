@@ -53,12 +53,6 @@ Highlighter::~Highlighter()
 	free(mask);
 }
 
-float** Highlighter::computeMask()
-{//is this supposed to be an accessor for mask?
-	return mask;
-}
-
-
 void Highlighter::paintMask(int x,int y,PixelBuffer **displayBuffer,ColorData color,ColorData backgroundColor)
 {//overwritten to allow for dark colors to show through
         int i,j,bufferI,bufferJ,width,height;

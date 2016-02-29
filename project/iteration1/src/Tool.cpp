@@ -11,12 +11,8 @@ using std::cerr;
 using std::endl;
 using std::fill;
 
-/*Tool::Tool() {
-  //we won't need this unless it does something, right now it just causes an error
-}*/
-
-bool Tool::isActive() {
-  return active;
+float** Tool::getMask() {
+	return mask;
 }
 
 int Tool::getMaskSize() {
@@ -54,23 +50,4 @@ void Tool::paintMask(int x,int y,PixelBuffer **displayBuffer,ColorData color,Col
 			}
 		}
 	}
-//	if (previousX == NULL || previousY == NULL) {
-//		previousX = x;
-//		previouxY = y;
-//	} else {
-//		fillLine(x,y);
-//		previouxX = x;
-//		previouxY = y;
-//	}
 }
-
-//void Tool::fillLine(int x, int y) {
-//	float slope = (previousX - x)/(previousY - y);
-//	int newX = x++;
-	
-//}
-
-//void Tool::setPreviousPointToNull() {
-//	previousX = NULL;
-//	previousY = NULL;
-//}

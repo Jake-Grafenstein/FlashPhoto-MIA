@@ -11,11 +11,7 @@ class Pen: public Tool
 {
 public:
   Pen();
-
   virtual ~Pen();
-
-  float** computeMask();
-
 };
 
 #endif

@@ -12,10 +12,9 @@ class Tool
 public:
 
   // This function will always be overwritten by the Tool subclass
-  virtual float** computeMask() = 0;
+  float** getMask();
 
   // Checks if the given tool is the active tool
-  bool isActive();
   int getMaskSize();
   float getPixel(int x,int y);
   virtual void paintMask(int x,int y,PixelBuffer **pixelBuffer,ColorData color,ColorData backgroundColor);

@@ -14,7 +14,6 @@ class Eraser: public Tool
   public:
     Eraser();
     virtual ~Eraser();
-    float** computeMask();
     float calculateDistance(int x, int y);
     void paintMask(int x,int y,PixelBuffer **displayBuffer,ColorData color,ColorData backgroundColor);
 };

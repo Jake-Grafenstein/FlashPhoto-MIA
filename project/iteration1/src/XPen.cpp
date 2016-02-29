@@ -31,31 +31,7 @@ XPen::XPen()
       {
         if (i == j) {
           mask[i][j] = 1;
-          switch (i) {
-            case 1:
-              mask[i][j+6] = 1;
-	      break;
-            case 2:
-              mask[i][j+4] = 1;
-	      break;
-            case 3:
-              mask[i][j+2] = 1;
-	      break;
-            case 4:
-              break;
-            case 5:
-              mask[i][j-2] = 1;
-	      break;
-            case 6:
-              mask[i][j-4] = 1;
-	      break;
-            case 7:
-              mask[i][j-6] = 1;
-              break;
-            default:
-              // do nothing
-	      break;
-          }
+          mask[i][maskSize-j+1] = 1;
         }
         else {
           mask[i][j] = 0;
@@ -72,9 +48,4 @@ XPen::~XPen()
       free(mask[i]);
   }
   free(mask);
-}
-
-float** XPen::computeMask()
-{
-  return mask;
 }

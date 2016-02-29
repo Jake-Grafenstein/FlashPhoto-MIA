@@ -13,10 +13,7 @@ class Highlighter: public Tool
 {
 public:
   Highlighter();
-
   virtual ~Highlighter();
-  // Instantiates abstract function from Tool
-  float** computeMask();
   void paintMask(int x,int y,PixelBuffer **pixelBuffer,ColorData color,ColorData backgroundColor);
 };
 

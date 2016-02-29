@@ -52,8 +52,3 @@ CalligraphyPen::~CalligraphyPen()
 	}
 	free(mask);
 }
-
-float** CalligraphyPen::computeMask()
-{//is this supposed to be an accessor for mask?
-	return mask;
-}

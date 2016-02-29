@@ -48,8 +48,3 @@ Pen::~Pen()
   }
   free(mask);
 }
-
-float** Pen::computeMask()
-{
-  return mask;
-}

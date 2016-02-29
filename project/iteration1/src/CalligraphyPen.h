@@ -14,11 +14,7 @@ class CalligraphyPen: public Tool
 {
 public:
   CalligraphyPen();
-
   virtual ~CalligraphyPen();
-  // Instantiates abstract function from Tool
-  float** computeMask();
-
 };
 
 #endif
