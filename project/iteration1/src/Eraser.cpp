@@ -28,7 +28,7 @@ Eraser::Eraser()
 	{
 		for (j = 0; j < maskSize; j++)
 		{
-			if (calculateDistance(i, j) <= 10.0)
+			if (calculateDistance(i, j, 10.0) <= 10.0)
 			{
 				mask[i][j] = 1;
 			}
@@ -45,11 +45,6 @@ Eraser::~Eraser()
       free(mask[i]);
   }
   free(mask);
-}
-
-float Eraser::calculateDistance(int x, int y)
-{
-	return sqrt(pow(((float) x - 10.0), 2) + pow(((float) y - 10.0), 2));
 }
 
 void Eraser::paintMask(int x,int y,PixelBuffer **displayBuffer,ColorData color,ColorData backgroundColor)

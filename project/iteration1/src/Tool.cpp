@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <cstring>
+#include <cmath>
 #include "Tool.h"
 
 using std::cerr;
@@ -17,6 +18,10 @@ float** Tool::getMask() {
 
 int Tool::getMaskSize() {
   return maskSize;
+}
+
+float Tool::calculateDistance(int x, int y, float mid) {
+  return sqrt(pow(((float) x - mid), 2) + pow(((float) y - mid), 2));
 }
 
 float Tool::getPixel(int x,int y)

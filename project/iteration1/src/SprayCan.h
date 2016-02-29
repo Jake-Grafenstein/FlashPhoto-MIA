@@ -13,7 +13,6 @@ class SprayCan: public Tool
   public:
     SprayCan();
     virtual ~SprayCan();
-    float calculateDistance(int x,int y);
 };
 
 #endif
