@@ -14,40 +14,33 @@ using std::cerr;
 using std::endl;
 using std::fill;
 
-CalligraphyPen::CalligraphyPen()
-{
+CalligraphyPen::CalligraphyPen() {
 	int i,j;
 	maskSize = 15;
-	//allocate space for mask
+	
+	// Allocate space for mask
 	mask=(float**) malloc(maskSize*sizeof(float*));
-	for (i=0;i<maskSize;i++)
-	{
+	for (i=0;i<maskSize;i++) {
 		mask[i]=(float*) malloc(maskSize*sizeof(float));
 	}
-	//setup the mask
-	for (i=0;i<maskSize;i++)
-	{
-		for (j=0;j<maskSize;j++)
-		{
-			if ((i<5) || (i>9))
-			{
+	
+	// Store the float values for the mask
+	for (i=0;i<maskSize;i++) {
+		for (j=0;j<maskSize;j++) {
+			if ((i<5) || (i>9)) {
 				mask[i][j]=0;
 			}
-			else
-			{
+			else {
 				mask[i][j]=1;
 			}
 		}
 	}
-	
 }
 
-CalligraphyPen::~CalligraphyPen()
-{
+CalligraphyPen::~CalligraphyPen() {
 	int i;
-	//deallocate mask
-	for (i=0;i<maskSize;i++)
-	{
+	// Deallocate space created for mask
+	for (i=0;i<maskSize;i++) {
 		free(mask[i]);
 	}
 	free(mask);

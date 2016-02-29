@@ -14,38 +14,35 @@ using std::cerr;
 using std::endl;
 using std::fill;
 
-XPen::XPen()
-{
-    int i, j;
-    maskSize = 7;
-    //allocate space for mask, double array
+XPen::XPen() {
+	int i, j;
+    	maskSize = 7;
+    
+	// Allocate space for mask, double array
   	mask=(float**) malloc(maskSize*sizeof(float*));
-    for (i=0;i<maskSize;i++)
-    {
-      mask[i]=(float*) malloc(maskSize*sizeof(float));
-    }
-
-    for (i=0;i<maskSize;i++)
-    {
-      for (j=0;j<maskSize;j++)
-      {
-        if (i == j) {
-          mask[i][j] = 1;
-          mask[i][maskSize-j+1] = 1;
-        }
-        else {
-          mask[i][j] = 0;
-        }
-      }
-    }
+    	for (i=0;i<maskSize;i++) {
+      		mask[i]=(float*) malloc(maskSize*sizeof(float));
+    	}
+	
+	// Stores the float values inside the mask
+    	for (i=0;i<maskSize;i++) {
+      		for (j=0;j<maskSize;j++) {
+        		if (i == j) {
+          			mask[i][j] = 1;
+          			mask[i][maskSize-j+1] = 1;
+        		}
+        		else {
+          			mask[i][j] = 0;
+        		}
+      		}
+    	}
 }
 
-XPen::~XPen()
-{
-  int i;
-  for (i=0;i<maskSize;i++)
-  {
-      free(mask[i]);
-  }
-  free(mask);
+// Deallocates the space created by the mask
+XPen::~XPen() {
+  	int i;
+  	for (i=0;i<maskSize;i++) {
+      		free(mask[i]);
+  	}
+  	free(mask);
 }
