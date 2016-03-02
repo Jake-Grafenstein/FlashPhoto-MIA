@@ -16,14 +16,14 @@ using std::fill;
 
 XPen::XPen() {
 	int i, j;
-    	maskSize = 7;
-    
+  maskSize = 21;
+
 	// Allocate space for mask, double array
   	mask=(float**) malloc(maskSize*sizeof(float*));
     	for (i=0;i<maskSize;i++) {
       		mask[i]=(float*) malloc(maskSize*sizeof(float));
     	}
-	
+
 	// Stores the float values inside the mask
     	for (i=0;i<maskSize;i++) {
       		for (j=0;j<maskSize;j++) {
