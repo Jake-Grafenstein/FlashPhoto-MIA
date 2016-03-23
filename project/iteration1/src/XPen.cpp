@@ -25,17 +25,19 @@ XPen::XPen() {
     	}
 
 	// Stores the float values inside the mask
-    	for (i=0;i<maskSize;i++) {
-      		for (j=0;j<maskSize;j++) {
-        		if (i == j) {
-          			mask[i][j] = 1;
-          			mask[i][maskSize-j+1] = 1;
-        		}
-        		else {
-          			mask[i][j] = 0;
-        		}
-      		}
-    	}
+	for (i=0;i<maskSize;i++) {
+			for (j=0;j<maskSize;j++) {
+				mask[i][j] = 0.0;
+			}
+	}
+  for (i=0;i<maskSize;i++) {
+      for (j=0;j<maskSize;j++) {
+        	if (i == j) {
+          		mask[i][j] = 1.0;
+          		mask[i][maskSize-j-1] = 1.0;
+        	}
+      }
+  }
 }
 
 // Deallocates the space created by the mask

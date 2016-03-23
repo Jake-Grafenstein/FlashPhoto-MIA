@@ -25,7 +25,7 @@ BrushWorkApp::BrushWorkApp(int argc, char* argv[], int width, int height, ColorD
 	m_curTool = 0;//we'll just set this to the first one on initialization
 	// Set the name of the window
 	setCaption("BrushWork");
-	
+
 	// Initialize an array of Tools to be used to modify the canvas
 	initializeTools();
 
@@ -50,9 +50,16 @@ void BrushWorkApp::display() {
 
 
 BrushWorkApp::~BrushWorkApp() {
+	int i;
+	int toolSize = (int) tools.size();
 	if (m_displayBuffer) {
 		delete m_displayBuffer;
 	}
+	for (i=0;i<toolSize;i++) {
+		delete tools[i];
+		std::cout << "Deleted all the tools" << std::endl;
+	}
+	tools.clear();
 }
 
 // This function first applies the current tool to the canvas, then connects the points to form a continuous line
@@ -62,9 +69,9 @@ void BrushWorkApp::mouseDragged(int x, int y)
 
 	// XY is used to determine which slope is used, 0 is y/x, 1 is x/y
 	int xy;
-	
+
 	(*tools[m_curTool]).paintMask(x,y,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
-	
+
 	if ((previousX == -1) || (previousY == -1)) {
 		// Do Nothing
 	} else if ((previousX != -1) && (previousY != -1)) {
@@ -95,7 +102,7 @@ void BrushWorkApp::mouseMoved(int x, int y) {
 void BrushWorkApp::leftMouseDown(int x, int y) {
 	// If the leftMouseDown is clicked without moving, the tool should be applied to the pixelBuffer once
         (*tools[m_curTool]).paintMask(x,y,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
-	
+
 	// Set the previous x and y values to fill the line
 	previousX = x;
 	previousY = y;
@@ -111,7 +118,7 @@ void BrushWorkApp::leftMouseUp(int x, int y) {
 void BrushWorkApp::fillLine(float slope, int previousX, int previousY, int x, int y,int xy) {
 	int i,nextCoord,stepSize;
 	stepSize = (int) (  ((float) (*tools[m_curTool]).getMaskSize()) * 2.0/7.0);
-		
+
 	// Use the y/x slope
 	if (xy==0) {
 		// Moving left on the canvas
