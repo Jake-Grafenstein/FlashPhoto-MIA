@@ -115,24 +115,24 @@ void BrushWorkApp::fillLine(float slope, int previousX, int previousY, int x, in
 	// Use the y/x slope
 	if (xy==0) {
 		// Moving left on the canvas
-		for (i = previousX; i > x; i-=stepSize) {
+		for (i = previousX-stepSize; i > x; i-=stepSize) {
 			nextCoord = getNextYValue(slope, previousX, i, previousY);
 			(*tools[m_curTool]).paintMask(i,nextCoord,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
 		}
 		// Moving right on the canvas
-		for (i = previousX; i < x; i+=stepSize) {
+		for (i = previousX+stepSize; i < x; i+=stepSize) {
 			nextCoord = getNextYValue(slope, previousX, i, previousY);
 			(*tools[m_curTool]).paintMask(i,nextCoord,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
 		}
 	}
 	else if (xy==1) {
 		// Moving left on the canvas
-		for (i = previousY; i > y; i-=stepSize) {
+		for (i = previousY-stepSize; i > y; i-=stepSize) {
                         nextCoord = getNextYValue(slope, previousY, i, previousX);
                         (*tools[m_curTool]).paintMask(nextCoord,i,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
                 }
 		// Moving right on the canvas
-                for (i = previousY; i < y; i+=stepSize) {
+                for (i = previousY+stepSize; i < y; i+=stepSize) {
                         nextCoord = getNextYValue(slope, previousY, i, previousX);
                         (*tools[m_curTool]).paintMask(nextCoord,i,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
                 }
