@@ -12,6 +12,7 @@
 #include "SprayCan.h"
 #include "Pen.h"
 #include "XPen.h"
+#include "Blur.h"
 #include "Tool.h"
 #include <cmath>
 #include <iostream>
@@ -163,6 +164,7 @@ void BrushWorkApp::initializeTools() {
 	tools.push_back(new CalligraphyPen());
 	tools.push_back(new Highlighter());
 	tools.push_back(new XPen());
+	tools.push_back(new Blur());
 }
 
 void BrushWorkApp::initGlui() {
@@ -179,6 +181,7 @@ void BrushWorkApp::initGlui() {
 	new GLUI_RadioButton(radio, "Caligraphy Pen");
 	new GLUI_RadioButton(radio, "Highlighter");
 	new GLUI_RadioButton(radio, "XPen");
+	new GLUI_RadioButton(radio, "Blur");
 
 	GLUI_Panel *colPanel = new GLUI_Panel(m_glui, "Tool Color");
 
