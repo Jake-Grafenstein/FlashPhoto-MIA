@@ -3,6 +3,7 @@
 #include "PixelBuffer.h"
 
 #include <cmath>
+#include <iostream>
 
 using std::cout;
 using std::endl;
@@ -232,6 +233,19 @@ void FlashPhotoApp::initGlui()
         saveCanvasEnabled(false);
     }
     return;
+}
+
+void FlashPhotoApp::initGraphics() {
+	// Initialize OpenGL for 2D graphics as used in the BrushWork app
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f );
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	gluOrtho2D(0, m_width, 0, m_height);
+	glViewport(0, 0, m_width, m_height);
 }
 
 void FlashPhotoApp::gluiControl(int controlID)

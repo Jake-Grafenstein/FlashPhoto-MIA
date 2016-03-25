@@ -20,19 +20,19 @@ BaseGfxApp::BaseGfxApp(int argc, char* argv[], int width, int height, int x, int
 	m_drag = false;
 	m_width = width;
 	m_height = height;
-	
+
 	// Set window size and position
 	glutInitWindowSize(width, height);
 	glutInitWindowPosition(x, y);
 	glutInitDisplayMode(glutFlags);
-	
+
 	if (! s_glutInitialized) {
 		glutInit(&argc, argv);
 		s_glutInitialized = true;
 	}
-	
+
 	m_glutWindowHandle = glutCreateWindow("Graphics Window");
-	
+
 	glutReshapeFunc(s_reshape);
 	glutKeyboardFunc(s_keyboard);
 	glutKeyboardUpFunc(s_keyboardup);
@@ -43,7 +43,7 @@ BaseGfxApp::BaseGfxApp(int argc, char* argv[], int width, int height, int x, int
 	glutMouseFunc(s_mousebtn);
 	glutDisplayFunc(s_draw);
 	glutIdleFunc(s_idle);
-	
+
 	if (createGLUIWin) {
 		m_glui = GLUI_Master.create_glui("Controls", 0, gluiWinX, gluiWinY);
 		m_glui->set_main_gfx_window(m_glutWindowHandle);
@@ -87,7 +87,7 @@ void BaseGfxApp::renderOneFrame() {
 void BaseGfxApp::drawPixels(int start_x, int start_y, int width, int height, void const * const pixels) {
 	glRasterPos2i(start_x, start_y);
 	glDrawPixels(width, height, GL_RGBA, GL_FLOAT, pixels);
-	
+
 	int err;
 	if ((err = glGetError()) != GL_NO_ERROR)
 	{
@@ -95,7 +95,7 @@ void BaseGfxApp::drawPixels(int start_x, int start_y, int width, int height, voi
 		std::cerr << "(GL error code " << err << ")\n";
 		assert(0);
 	}
-	
+
 }
 
 
@@ -190,4 +190,3 @@ void BaseGfxApp::setWindowDimensions(int width, int height) {
     m_width = width;
     glutReshapeWindow(m_width, m_height);
 }
-
