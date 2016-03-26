@@ -1,9 +1,17 @@
 #include "FlashPhotoApp.h"
 #include "ColorData.h"
 #include "PixelBuffer.h"
-
+#include "CalligraphyPen.h"
+#include "Highlighter.h"
+#include "Eraser.h"
+#include "SprayCan.h"
+#include "Pen.h"
+#include "XPen.h"
+#include "Blur.h"
+#include "Tool.h"
 #include <cmath>
 #include <iostream>
+#include <vector>
 
 using std::cout;
 using std::endl;
@@ -18,6 +26,8 @@ FlashPhotoApp::FlashPhotoApp(int argc, char* argv[], int width, int height, Colo
     
     initGlui();
     initGraphics();
+    previousX = -1;
+    previousY = -1;
 }
 
 void FlashPhotoApp::display()
@@ -27,15 +37,24 @@ void FlashPhotoApp::display()
 
 FlashPhotoApp::~FlashPhotoApp()
 {
+    int i;
+    int toolSize = (int) tools.size();
     if (m_displayBuffer) {
         delete m_displayBuffer;
     }
+    for (i=0;i<toolSize;i++)
+    {
+	delete tools[i];
+    }
+    tools.clear();
 }
 
 
 void FlashPhotoApp::mouseDragged(int x, int y)
 {
-       
+	float slope;
+	int xy;
+
 }
 
 void FlashPhotoApp::mouseMoved(int x, int y)

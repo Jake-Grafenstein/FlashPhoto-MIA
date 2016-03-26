@@ -96,6 +96,9 @@ private:
 
     void initGlui();
     void initializeBuffers(ColorData initialColor, int width, int height);
+    void initializeTools();
+    void fillLine(float slope, int previousX,int previousY,int x,int y,int xy);
+    int getNextYValue(float slope,int previousX,int previousY,int newX);
 
     enum UIMotionBlurDirections {
         DIR_N_S,
@@ -144,6 +147,12 @@ private:
 
     // These are used to store the selections from the GLUI user interface
     int m_curTool;
+
+    std::vector<Tool*> tools;
+    int previousX;
+    int previousY;
+    ColorData backColor;
+
     float m_curColorRed, m_curColorGreen, m_curColorBlue;
     std::string m_fileName;
 
