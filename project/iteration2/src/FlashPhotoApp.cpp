@@ -54,7 +54,28 @@ void FlashPhotoApp::mouseDragged(int x, int y)
 {
 	float slope;
 	int xy;
+	(*tools[m_curTool]).paintMask(x,y,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
 
+	if ((previousX == -1) || (previousY == -1)) {
+		// Do Nothing
+	} else if ((previousX != -1) && (previousY != -1)) {
+		if ((previousX-x) == 0) {
+			xy = 1;
+			slope = 0;
+		}
+		else {
+			slope = (float)(-1.0*(previousY-y)/(previousX-x));
+			xy = 0;
+			if (slope > 1 || slope < -1)
+			{
+				slope = 1.0/slope;
+				xy = 1;
+			}
+		}
+		fillLine(slope,previousX,previousY,x,y,xy);
+		previousX = x;
+		previousY = y;
+	}
 }
 
 void FlashPhotoApp::mouseMoved(int x, int y)
@@ -64,16 +85,69 @@ void FlashPhotoApp::mouseMoved(int x, int y)
 
 void FlashPhotoApp::leftMouseDown(int x, int y)
 {
-    std::cout << "mousePressed " << x << " " << y << std::endl;
+	// If the leftMouseDown is clicked without moving, the tool should be applied to the pixelBuffer once
+        (*tools[m_curTool]).paintMask(x,y,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
+
+	// Set the previous x and y values to fill the line
+	previousX = x;
+	previousY = y;
 }
 
 void FlashPhotoApp::leftMouseUp(int x, int y)
 {
-    std::cout << "mouseReleased " << x << " " << y << std::endl;
+    previousX = -1;
+    previousY = -1;
+}
+
+// The fillLine function connects two points by applying the mask to the pixelBuffer for all points in between
+void FlashPhotoApp::fillLine(float slope, int previousX, int previousY, int x, int y,int xy) {
+	int i,nextCoord,stepSize;
+	stepSize = (int) (  ((float) (*tools[m_curTool]).getMaskSize()) * 2.0/7.0);
+
+	// Use the y/x slope
+	if (xy==0) {
+		// Moving left on the canvas
+		for (i = previousX-stepSize; i > x; i-=stepSize) {
+			nextCoord = getNextYValue(slope, previousX, i, previousY);
+			(*tools[m_curTool]).paintMask(i,nextCoord,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
+		}
+		// Moving right on the canvas
+		for (i = previousX+stepSize; i < x; i+=stepSize) {
+			nextCoord = getNextYValue(slope, previousX, i, previousY);
+			(*tools[m_curTool]).paintMask(i,nextCoord,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
+		}
+	}
+	else if (xy==1) {
+		// Moving left on the canvas
+		for (i = previousY-stepSize; i > y; i-=stepSize) {
+                        nextCoord = getNextYValue(slope, previousY, i, previousX);
+                        (*tools[m_curTool]).paintMask(nextCoord,i,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
+                }
+		// Moving right on the canvas
+                for (i = previousY+stepSize; i < y; i+=stepSize) {
+                        nextCoord = getNextYValue(slope, previousY, i, previousX);
+                        (*tools[m_curTool]).paintMask(nextCoord,i,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
+                }
+	}
+}
+
+// Finds the next Y value given the slope of the line, the previous x and y values, and the new x value
+int FlashPhotoApp::getNextYValue(float slope, int previousX, int newX, int previousY) {
+	return (int)(-1.0*((slope*newX)-(slope*previousX)-previousY));
 }
 
 void FlashPhotoApp::initializeBuffers(ColorData backgroundColor, int width, int height) {
     m_displayBuffer = new PixelBuffer(width, height, backgroundColor);
+}
+
+void FlashPhotoApp::initializeTools() {
+	tools.push_back(new Pen());
+	tools.push_back(new Eraser());
+	tools.push_back(new SprayCan());
+	tools.push_back(new CalligraphyPen());
+	tools.push_back(new Highlighter());
+	tools.push_back(new XPen());
+	tools.push_back(new Blur());
 }
 
 void FlashPhotoApp::initGlui()
@@ -90,8 +164,9 @@ void FlashPhotoApp::initGlui()
         new GLUI_RadioButton(radio, "Spray Can");
         new GLUI_RadioButton(radio, "Caligraphy Pen");
         new GLUI_RadioButton(radio, "Highlighter");
-        new GLUI_RadioButton(radio, "Stamp");
+        new GLUI_RadioButton(radio, "XPen");
         new GLUI_RadioButton(radio, "Blur");
+        new GLUI_RadioButton(radio, "Stamp");//will implement later
     }
     
     GLUI_Panel *colorPanel = new GLUI_Panel(m_glui, "Tool Color");
