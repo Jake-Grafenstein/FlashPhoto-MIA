@@ -8,8 +8,6 @@
 
 #include "BaseGfxApp.h"
 #include <string>
-#include <GL/glui.h>
-#include "Tool.h"
 
 class ColorData;
 class PixelBuffer;

@@ -20,12 +20,13 @@ FlashPhotoApp::FlashPhotoApp(int argc, char* argv[], int width, int height, Colo
 {
     // Set the name of the window
     setCaption("FlashPhoto");
-    
+    initializeTools();
     // Initialize Interface
     initializeBuffers(backgroundColor, width, height);
     
     initGlui();
     initGraphics();
+    backColor = backgroundColor;
     previousX = -1;
     previousY = -1;
 }
@@ -166,7 +167,7 @@ void FlashPhotoApp::initGlui()
         new GLUI_RadioButton(radio, "Highlighter");
         new GLUI_RadioButton(radio, "XPen");
         new GLUI_RadioButton(radio, "Blur");
-        new GLUI_RadioButton(radio, "Stamp");//will implement later
+//        new GLUI_RadioButton(radio, "Stamp");//will implement later
     }
     
     GLUI_Panel *colorPanel = new GLUI_Panel(m_glui, "Tool Color");
