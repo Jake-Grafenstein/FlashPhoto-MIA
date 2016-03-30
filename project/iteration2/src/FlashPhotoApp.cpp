@@ -149,6 +149,7 @@ void FlashPhotoApp::initializeTools() {
 	tools.push_back(new Highlighter());
 	tools.push_back(new XPen());
 	tools.push_back(new Blur());
+	thresh = Threshold();
 }
 
 void FlashPhotoApp::initGlui()
@@ -480,6 +481,8 @@ void FlashPhotoApp::saveCanvasToFile()
 
 void FlashPhotoApp::applyFilterThreshold()
 {
+	thresh.setValue(m_filterParameters.threshold_amount);
+	thresh.applyFilter(m_displayBuffer);
     cout << "Apply has been clicked for Threshold has been clicked with amount =" << m_filterParameters.threshold_amount << endl;
 }
 

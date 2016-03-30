@@ -7,6 +7,8 @@
 #define FLASHPHOTOAPP_H
 
 #include "BaseGfxApp.h"
+#include "Filter.h"
+#include "Threshold.h"
 #include <string>
 
 class ColorData;
@@ -147,6 +149,7 @@ private:
     int m_curTool;
 
     std::vector<Tool*> tools;
+    Threshold thresh;
     int previousX;
     int previousY;
     ColorData backColor;

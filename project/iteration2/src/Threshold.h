@@ -12,7 +12,7 @@ class Threshold: public Filter
 public:
 	Threshold();
 	~Threshold();
-	ColorData modifyPixel(int x,int y,ColorData pixel);
+	ColorData modifyPixel(ColorData pixel);
 	void setValue(float value);
 private:
 	float value;

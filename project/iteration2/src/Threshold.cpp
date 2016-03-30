@@ -21,12 +21,36 @@ void Threshold::setValue(float value)
 	this->value = value;
 }
 
-ColorData Threshold::modifyPixel(int x,int y,ColorData pixel)
+ColorData Threshold::modifyPixel(ColorData pixel)
 {
 	float r,g,b;
-	r = pixel.getRed() > value;
-	g = pixel.getGreen() > value;
-	b = pixel.getBlue() > value;
+	r = pixel.getRed();
+	g = pixel.getGreen();
+	b = pixel.getBlue();
+	if (r < value)
+	{
+		r = 0;
+	}
+	else 
+	{
+		r = 1;
+	}
+	if (g < value)
+	{
+		g = 0;
+	}
+	else
+	{
+		g = 1;
+	}
+	if (b < value)
+	{
+		b = 0;
+	}
+	else
+	{
+		b = 1;
+	}
 	return ColorData(r,g,b);
 }
 
