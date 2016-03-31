@@ -7,6 +7,7 @@
 #define FLASHPHOTOAPP_H
 
 #include "BaseGfxApp.h"
+#include "PixelBuffer.h"
 #include "Filter.h"
 #include "Threshold.h"
 #include "Saturate.h"
