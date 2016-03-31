@@ -87,12 +87,12 @@ void FlashPhotoApp::mouseMoved(int x, int y)
 void FlashPhotoApp::leftMouseDown(int x, int y)
 {
 	// Store the current pixelBuffer in the undoStack
-	tempPixelBuffer = new PixelBuffer(width,height,backgroundColor);
-	m_displayBuffer->copyPixelBuffer(&m_displayBuffer, &tempPixelBuffer);
+	PixelBuffer *tempPixelBuffer;
+	m_displayBuffer->copyPixelBuffer(m_displayBuffer, tempPixelBuffer);
 	undoStack.push_back(tempPixelBuffer);
 
 	// Empty the redoStack
-	redoStack.erase();
+	redoStack.clear();
 
 	// If the leftMouseDown is clicked without moving, the tool should be applied to the pixelBuffer once
         (*tools[m_curTool]).paintMask(x,y,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
@@ -295,7 +295,7 @@ void FlashPhotoApp::initGlui()
             new GLUI_Button(channelPanel, "Apply", UI_APPLY_CHANNEL, s_gluicallback);
         }
         
-        GLUI_Panel *quantPanel = new GLUI_PaBnel(filterPanel, "Quantize");
+        GLUI_Panel *quantPanel = new GLUI_Panel(filterPanel, "Quantize");
         {
             GLUI_Spinner * filterQuantizeBins = new GLUI_Spinner(quantPanel, "Bins:", &m_filterParameters.quantize_bins);
             filterQuantizeBins->set_int_limits(2, 256);
