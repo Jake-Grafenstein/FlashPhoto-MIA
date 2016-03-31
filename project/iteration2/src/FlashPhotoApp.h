@@ -9,6 +9,8 @@
 #include "BaseGfxApp.h"
 #include "Filter.h"
 #include "Threshold.h"
+#include "Saturate.h"
+#include "Channels.h"
 #include <string>
 
 class ColorData;
@@ -150,6 +152,8 @@ private:
 
     std::vector<Tool*> tools;
     Threshold thresh;
+    Saturate saturate;
+    Channels channels;
     int previousX;
     int previousY;
     ColorData backColor;

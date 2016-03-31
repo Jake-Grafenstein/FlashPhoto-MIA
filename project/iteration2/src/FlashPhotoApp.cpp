@@ -150,6 +150,8 @@ void FlashPhotoApp::initializeTools() {
 	tools.push_back(new XPen());
 	tools.push_back(new Blur());
 	thresh = Threshold();
+	saturate = Saturate();
+	channels = Channels();
 }
 
 void FlashPhotoApp::initGlui()
@@ -488,6 +490,10 @@ void FlashPhotoApp::applyFilterThreshold()
 
 void FlashPhotoApp::applyFilterChannel()
 {
+	channels.setR(m_filterParameters.channel_colorRed);
+	channels.setG(m_filterParameters.channel_colorGreen);
+	channels.setB(m_filterParameters.channel_colorBlue);
+	channels.applyFilter(m_displayBuffer);
     cout << "Apply has been clicked for Channels with red = " << m_filterParameters.channel_colorRed
     << ", green = " << m_filterParameters.channel_colorGreen
     << ", blue = " << m_filterParameters.channel_colorBlue << endl;
@@ -495,6 +501,8 @@ void FlashPhotoApp::applyFilterChannel()
 
 void FlashPhotoApp::applyFilterSaturate()
 {
+	saturate.setValue(m_filterParameters.saturation_amount);
+	saturate.applyFilter(m_displayBuffer);
     cout << "Apply has been clicked for Saturate with amount = " << m_filterParameters.saturation_amount << endl;
 }
 
