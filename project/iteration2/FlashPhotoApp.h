@@ -7,31 +7,25 @@
 #define FLASHPHOTOAPP_H
 
 #include "BaseGfxApp.h"
-#include "Filter.h"
-#include "Threshold.h"
-#include "Saturate.h"
-#include "Channels.h"
-#include <string>
 
 class ColorData;
 class PixelBuffer;
 
 class FlashPhotoApp : public BaseGfxApp {
 public:
-
+    
     FlashPhotoApp(int argc, char* argv[], int width, int height, ColorData backgroundColor);
     virtual ~FlashPhotoApp();
-
+    
     void mouseDragged(int x, int y) ;
     void mouseMoved(int x, int y);
     void leftMouseDown(int x, int y);
     void leftMouseUp(int x, int y);
     void display();
-    void initGraphics();
     void gluiControl(int controlID);
-
+    
 private:
-
+    
     // GLUI INTERFACE ELEMENTS
     enum UIControlType {
         UI_TOOLTYPE,
@@ -76,11 +70,11 @@ private:
     void loadCanvasEnabled(bool enabled);
     void loadStampEnabled(bool enabled);
     void updateColors();
-
+    
     void loadImageToCanvas();
     void loadImageToStamp();
     void saveCanvasToFile();
-
+    
     void applyFilterBlur();
     void applyFilterSharpen();
     void applyFilterMotionBlur();
@@ -90,25 +84,22 @@ private:
     void applyFilterSaturate();
     void applyFilterQuantize();
     void applyFilterSpecial();
-
+    
     void undoOperation();
     void redoOperation();
-
-
+    
+    
 
     void initGlui();
     void initializeBuffers(ColorData initialColor, int width, int height);
-    void initializeTools();
-    void fillLine(float slope, int previousX,int previousY,int x,int y,int xy);
-    int getNextYValue(float slope,int previousX,int previousY,int newX);
-
+    
     enum UIMotionBlurDirections {
         DIR_N_S,
         DIR_E_W,
         DIR_NE_SW,
         DIR_NW_SE
     };
-
+    
     struct {
         float channel_colorRed;
         float channel_colorGreen;
@@ -121,7 +112,7 @@ private:
         int motionBlur_direction;
         int quantize_bins;
     } m_filterParameters;
-
+    
     struct {
         GLUI_FileBrowser* fileBrowser;
         GLUI_Button *loadCanvasButton;
@@ -132,34 +123,23 @@ private:
         GLUI_StaticText * currentFileLabel;
         GLUI_EditText* fileNameBox;
         GLUI_StaticText * saveFileLabel;
-
+        
         GLUI_Spinner *spinnerRed;
         GLUI_Spinner *spinnerGreen;
         GLUI_Spinner *spinnerBlue;
-
-
-
+        
+        
+        
     } m_gluiControlHooks;
+    
+    
 
-
-
-
+    
     // This is the pointer to the buffer where the display PixelBuffer is stored
     PixelBuffer* m_displayBuffer;
-
+    
     // These are used to store the selections from the GLUI user interface
     int m_curTool;
-
-    std::vector<Tool*> tools;
-    std::vector<PixelBuffer*> undoStack;
-    std::vector<PixelBuffer*> redoStack;
-    Threshold thresh;
-    Saturate saturate;
-    Channels channels;
-    int previousX;
-    int previousY;
-    ColorData backColor;
-
     float m_curColorRed, m_curColorGreen, m_curColorBlue;
     std::string m_fileName;
 

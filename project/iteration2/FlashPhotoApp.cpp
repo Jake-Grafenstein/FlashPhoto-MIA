@@ -1,17 +1,8 @@
 #include "FlashPhotoApp.h"
 #include "ColorData.h"
 #include "PixelBuffer.h"
-#include "CalligraphyPen.h"
-#include "Highlighter.h"
-#include "Eraser.h"
-#include "SprayCan.h"
-#include "Pen.h"
-#include "XPen.h"
-#include "Blur.h"
-#include "Tool.h"
+
 #include <cmath>
-#include <iostream>
-#include <vector>
 
 using std::cout;
 using std::endl;
@@ -20,15 +11,12 @@ FlashPhotoApp::FlashPhotoApp(int argc, char* argv[], int width, int height, Colo
 {
     // Set the name of the window
     setCaption("FlashPhoto");
-    initializeTools();
+    
     // Initialize Interface
     initializeBuffers(backgroundColor, width, height);
     
     initGlui();
     initGraphics();
-    backColor = backgroundColor;
-    previousX = -1;
-    previousY = -1;
 }
 
 void FlashPhotoApp::display()
@@ -38,45 +26,15 @@ void FlashPhotoApp::display()
 
 FlashPhotoApp::~FlashPhotoApp()
 {
-    int i;
-    int toolSize = (int) tools.size();
     if (m_displayBuffer) {
         delete m_displayBuffer;
     }
-    for (i=0;i<toolSize;i++)
-    {
-	delete tools[i];
-    }
-    tools.clear();
 }
 
 
 void FlashPhotoApp::mouseDragged(int x, int y)
 {
-	float slope;
-	int xy;
-	(*tools[m_curTool]).paintMask(x,y,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
-
-	if ((previousX == -1) || (previousY == -1)) {
-		// Do Nothing
-	} else if ((previousX != -1) && (previousY != -1)) {
-		if ((previousX-x) == 0) {
-			xy = 1;
-			slope = 0;
-		}
-		else {
-			slope = (float)(-1.0*(previousY-y)/(previousX-x));
-			xy = 0;
-			if (slope > 1 || slope < -1)
-			{
-				slope = 1.0/slope;
-				xy = 1;
-			}
-		}
-		fillLine(slope,previousX,previousY,x,y,xy);
-		previousX = x;
-		previousY = y;
-	}
+       
 }
 
 void FlashPhotoApp::mouseMoved(int x, int y)
@@ -86,80 +44,16 @@ void FlashPhotoApp::mouseMoved(int x, int y)
 
 void FlashPhotoApp::leftMouseDown(int x, int y)
 {
-	// Store the current pixelBuffer in the undoStack
-	tempPixelBuffer = new PixelBuffer(width,height,backgroundColor);
-	m_displayBuffer->copyPixelBuffer(&m_displayBuffer, &tempPixelBuffer);
-	undoStack.push_back(tempPixelBuffer);
-
-	// Empty the redoStack
-	redoStack.erase();
-
-	// If the leftMouseDown is clicked without moving, the tool should be applied to the pixelBuffer once
-        (*tools[m_curTool]).paintMask(x,y,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
-
-	// Set the previous x and y values to fill the line
-	previousX = x;
-	previousY = y;
+    std::cout << "mousePressed " << x << " " << y << std::endl;
 }
 
 void FlashPhotoApp::leftMouseUp(int x, int y)
 {
-    previousX = -1;
-    previousY = -1;
-}
-
-// The fillLine function connects two points by applying the mask to the pixelBuffer for all points in between
-void FlashPhotoApp::fillLine(float slope, int previousX, int previousY, int x, int y,int xy) {
-	int i,nextCoord,stepSize;
-	stepSize = (int) (  ((float) (*tools[m_curTool]).getMaskSize()) * 2.0/7.0);
-
-	// Use the y/x slope
-	if (xy==0) {
-		// Moving left on the canvas
-		for (i = previousX-stepSize; i > x; i-=stepSize) {
-			nextCoord = getNextYValue(slope, previousX, i, previousY);
-			(*tools[m_curTool]).paintMask(i,nextCoord,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
-		}
-		// Moving right on the canvas
-		for (i = previousX+stepSize; i < x; i+=stepSize) {
-			nextCoord = getNextYValue(slope, previousX, i, previousY);
-			(*tools[m_curTool]).paintMask(i,nextCoord,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
-		}
-	}
-	else if (xy==1) {
-		// Moving left on the canvas
-		for (i = previousY-stepSize; i > y; i-=stepSize) {
-                        nextCoord = getNextYValue(slope, previousY, i, previousX);
-                        (*tools[m_curTool]).paintMask(nextCoord,i,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
-                }
-		// Moving right on the canvas
-                for (i = previousY+stepSize; i < y; i+=stepSize) {
-                        nextCoord = getNextYValue(slope, previousY, i, previousX);
-                        (*tools[m_curTool]).paintMask(nextCoord,i,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
-                }
-	}
-}
-
-// Finds the next Y value given the slope of the line, the previous x and y values, and the new x value
-int FlashPhotoApp::getNextYValue(float slope, int previousX, int newX, int previousY) {
-	return (int)(-1.0*((slope*newX)-(slope*previousX)-previousY));
+    std::cout << "mouseReleased " << x << " " << y << std::endl;
 }
 
 void FlashPhotoApp::initializeBuffers(ColorData backgroundColor, int width, int height) {
     m_displayBuffer = new PixelBuffer(width, height, backgroundColor);
-}
-
-void FlashPhotoApp::initializeTools() {
-	tools.push_back(new Pen());
-	tools.push_back(new Eraser());
-	tools.push_back(new SprayCan());
-	tools.push_back(new CalligraphyPen());
-	tools.push_back(new Highlighter());
-	tools.push_back(new XPen());
-	tools.push_back(new Blur());
-	thresh = Threshold();
-	saturate = Saturate();
-	channels = Channels();
 }
 
 void FlashPhotoApp::initGlui()
@@ -176,9 +70,8 @@ void FlashPhotoApp::initGlui()
         new GLUI_RadioButton(radio, "Spray Can");
         new GLUI_RadioButton(radio, "Caligraphy Pen");
         new GLUI_RadioButton(radio, "Highlighter");
-        new GLUI_RadioButton(radio, "XPen");
+        new GLUI_RadioButton(radio, "Stamp");
         new GLUI_RadioButton(radio, "Blur");
-//        new GLUI_RadioButton(radio, "Stamp");//will implement later
     }
     
     GLUI_Panel *colorPanel = new GLUI_Panel(m_glui, "Tool Color");
@@ -295,7 +188,7 @@ void FlashPhotoApp::initGlui()
             new GLUI_Button(channelPanel, "Apply", UI_APPLY_CHANNEL, s_gluicallback);
         }
         
-        GLUI_Panel *quantPanel = new GLUI_PaBnel(filterPanel, "Quantize");
+        GLUI_Panel *quantPanel = new GLUI_Panel(filterPanel, "Quantize");
         {
             GLUI_Spinner * filterQuantizeBins = new GLUI_Spinner(quantPanel, "Bins:", &m_filterParameters.quantize_bins);
             filterQuantizeBins->set_int_limits(2, 256);
@@ -339,19 +232,6 @@ void FlashPhotoApp::initGlui()
         saveCanvasEnabled(false);
     }
     return;
-}
-
-void FlashPhotoApp::initGraphics() {
-	// Initialize OpenGL for 2D graphics as used in the BrushWork app
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f );
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	gluOrtho2D(0, m_width, 0, m_height);
-	glViewport(0, 0, m_width, m_height);
 }
 
 void FlashPhotoApp::gluiControl(int controlID)
@@ -491,17 +371,11 @@ void FlashPhotoApp::saveCanvasToFile()
 
 void FlashPhotoApp::applyFilterThreshold()
 {
-	thresh.setValue(m_filterParameters.threshold_amount);
-	thresh.applyFilter(m_displayBuffer);
     cout << "Apply has been clicked for Threshold has been clicked with amount =" << m_filterParameters.threshold_amount << endl;
 }
 
 void FlashPhotoApp::applyFilterChannel()
 {
-	channels.setR(m_filterParameters.channel_colorRed);
-	channels.setG(m_filterParameters.channel_colorGreen);
-	channels.setB(m_filterParameters.channel_colorBlue);
-	channels.applyFilter(m_displayBuffer);
     cout << "Apply has been clicked for Channels with red = " << m_filterParameters.channel_colorRed
     << ", green = " << m_filterParameters.channel_colorGreen
     << ", blue = " << m_filterParameters.channel_colorBlue << endl;
@@ -509,8 +383,6 @@ void FlashPhotoApp::applyFilterChannel()
 
 void FlashPhotoApp::applyFilterSaturate()
 {
-	saturate.setValue(m_filterParameters.saturation_amount);
-	saturate.applyFilter(m_displayBuffer);
     cout << "Apply has been clicked for Saturate with amount = " << m_filterParameters.saturation_amount << endl;
 }
 
@@ -545,22 +417,11 @@ void FlashPhotoApp::applyFilterSpecial() {
 void FlashPhotoApp::undoOperation()
 {
     cout << "Undoing..." << endl;
-	// Pull tempPixelBuffer off the undostack
-
-	// Put m_displayBuffer on redoStack
-
-	// Set m_displayBuffer to tempPixelBuffer
 }
 
 void FlashPhotoApp::redoOperation()
 {
     cout << "Redoing..." << endl;
-	// Pull displayBuffer off of redoStack
-
-	// Put m_displayBuffer on undoStack
-
-	// Set m_displayBuffer to displayBuffer
-
 }
 // ** END OF CALLBACKS **
 // **********************
