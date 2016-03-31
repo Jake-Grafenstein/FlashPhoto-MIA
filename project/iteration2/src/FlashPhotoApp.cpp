@@ -27,8 +27,11 @@ FlashPhotoApp::FlashPhotoApp(int argc, char* argv[], int width, int height, Colo
     initGlui();
     initGraphics();
     backColor = backgroundColor;
+    canvasWidth = width;
+    canvasHeight = height;
     previousX = -1;
     previousY = -1;
+	
 }
 
 void FlashPhotoApp::display()
@@ -87,7 +90,7 @@ void FlashPhotoApp::mouseMoved(int x, int y)
 void FlashPhotoApp::leftMouseDown(int x, int y)
 {
 	// Store the current pixelBuffer in the undoStack
-	PixelBuffer *tempPixelBuffer;
+	PixelBuffer *tempPixelBuffer = new PixelBuffer(canvasWidth,canvasHeight,backColor);
 	m_displayBuffer->copyPixelBuffer(m_displayBuffer, tempPixelBuffer);
 	undoStack.push_back(tempPixelBuffer);
 

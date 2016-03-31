@@ -158,6 +158,8 @@ private:
     Channels channels;
     int previousX;
     int previousY;
+    int canvasWidth;
+    int canvasHeight;
     ColorData backColor;
 
     float m_curColorRed, m_curColorGreen, m_curColorBlue;
