@@ -30,15 +30,24 @@ ColorData Saturate::modifyPixel(ColorData pixel)
 		g = pixel.getGreen() * value;
 		b = pixel.getBlue() * value;
 	}
-	else
+	else if (value < 0)
 	{
-		r = 1 - pixel.getRed() * value;
-                g = 1 - pixel.getGreen() * value;
-                b = 1 - pixel.getBlue() * value;
+		r = 1.0 + pixel.getRed() * value;
+		g = 1.0 + pixel.getGreen() * value;
+		b = 1.0 + pixel.getBlue() * value;
 	}
+	else
+	{//value = 0
+		float avg = (pixel.getRed() + pixel.getGreen() + pixel.getBlue()) / 3.0;
+		r = avg;
+		g = avg;
+		b = avg;
+	}
+	r = r > 1 ? 1.0 : r;
+	g = g > 1 ? 1.0 : g;
+	b = b > 1 ? 1.0 : b;
 	return ColorData(r,g,b);
 }
 
 // really just convention
 Saturate::~Saturate() {}
-
