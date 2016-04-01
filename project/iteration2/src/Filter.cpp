@@ -8,7 +8,7 @@
 #include "Filter.h"
 
 
-void Filter::applyFilter(PixelBuffer *buf)
+virtual void Filter::applyFilter(PixelBuffer *buf)
 {
 	int i,j,width,height;
 	ColorData tempPixel;

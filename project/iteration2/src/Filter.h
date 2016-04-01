@@ -11,7 +11,7 @@ class Filter
 {
 public:
 
-	void applyFilter(PixelBuffer *buf);
+	virtual void applyFilter(PixelBuffer *buf);
 	virtual ColorData modifyPixel(ColorData pixel)=0;
 
 protected:
