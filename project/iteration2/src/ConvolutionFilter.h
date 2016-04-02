@@ -1,23 +1,25 @@
 //
 // ConvolutionFilter.h
-// Created by Jacob Grafenstein
+// Created by Jonathon Meyer
 //
-
-#ifndef CONVOLUTIONFILTER_H
-#define CONVOLUTIONFILTER_H
-
+#ifndef CON_FILTER_H
+#define CON_FILTER_H
 #include "Filter.h"
-#include "PixelBuffer.h"
-#include "ColorData.h"
 
-class ConvolutionFilter : public Filter {
+class ConvolutionFilter: public Filter
+{
 public:
-  virtual void applyKernelToBuffer();
-  virtual void setKernelValues(int kernelSize);
 
-private:
-  float** kernel;
+	virtual void applyFilter(PixelBuffer *buf);
+	virtual ColorData modifyPixel(ColorData pixel)=0;
 
+protected:
+	float **mask;
+	int size;
 };
+#endif
 
-#endif 
+
+
+
+
