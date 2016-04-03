@@ -7,8 +7,8 @@
 #include <cstring>
 #include "ConvolutionFilter.h"
 
-//applies mask over whole canvas, should just need to define mask in subclasses
-void ConvolutionFilter::applyFilter(PixelBuffer *buf)
+//applies kernel over whole canvas, should just need to define kernel in subclasses
+void ConvolutionFilter::applyFilter(PixelBuffer *buf, float amount)
 {
 	int i,j,width,height;
 	ColorData tempPixel;
@@ -20,7 +20,7 @@ void ConvolutionFilter::applyFilter(PixelBuffer *buf)
 	{
 		for (j = 0; j < height; j++)
 		{
-			applyMask(i,j,buf, tempBuffer);
+			applyKernel(i,j,buf, tempBuffer);
 		}
 	}
 	PixelBuffer::copyPixelBuffer(tempBuffer,buf);
@@ -28,20 +28,20 @@ void ConvolutionFilter::applyFilter(PixelBuffer *buf)
 }
 
 
-//applies mask to one pixel, modifies temporary buffer
-void ConvolutionFilter::applyMask(int x, int y,PixelBuffer *buf, PixelBuffer *temp)
+//applies kernel to one pixel, modifies temporary buffer
+void ConvolutionFilter::applyKernel(int x, int y,PixelBuffer *buf, PixelBuffer *temp)
 {
 	float r=0,g=0,b=0;
 	int i,j;
 	ColorData pixel;
-	for (i = 0; i < size; i++)
+	for (i = 0; i < kernelSize; i++)
 	{
-		for (j = 0; j < size; j++)
+		for (j = 0; j < kernelSize; j++)
 		{
-			pixel = buf -> getPixel(x + i - (size/2),y + j - (size/2));
-			r += (mask[i][j] * pixel.getRed());
-			g += (mask[i][j] * pixel.getGreen());
-			b += (mask[i][j] * pixel.getBlue());
+			pixel = buf -> getPixel(x + i - (kernelSize/2),y + j - (kernelSize/2));
+			r += (kernel[i][j] * pixel.getRed());
+			g += (kernel[i][j] * pixel.getGreen());
+			b += (kernel[i][j] * pixel.getBlue());
 		}
 	}
 	temp -> setPixel(x,y,ColorData(r,g,b));

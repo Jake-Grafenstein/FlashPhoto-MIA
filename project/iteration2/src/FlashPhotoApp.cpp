@@ -164,6 +164,8 @@ void FlashPhotoApp::initializeTools() {
 	saturate = Saturate();
 	channels = Channels();
 	quantize = Quantize();
+  edgeDet = new EdgeDetection();
+  sharpen = new Sharpen();
 }
 
 void FlashPhotoApp::initGlui()
@@ -259,7 +261,6 @@ void FlashPhotoApp::initGlui()
             new GLUI_Button(sharpenPanel, "Apply", UI_APPLY_SHARP, s_gluicallback);
         }
         GLUI_Panel *edgeDetPanel = new GLUI_Panel(filterPanel, "Edge Detect");
-
         {
             new GLUI_Button(edgeDetPanel, "Apply", UI_APPLY_EDGE, s_gluicallback);
         }
@@ -525,6 +526,7 @@ void FlashPhotoApp::applyFilterBlur()
 
 void FlashPhotoApp::applyFilterSharpen()
 {
+  sharpen->applyFilter(m_displayBuffer, m_filterParameters.sharpen_amount);
     cout << "Apply has been clicked for Sharpen with amount = " << m_filterParameters.sharpen_amount << endl;
 }
 
@@ -535,10 +537,11 @@ void FlashPhotoApp::applyFilterMotionBlur()
 }
 
 void FlashPhotoApp::applyFilterEdgeDetect() {
-    cout << "Apply has been clicked for Edge Detect" << endl;
+  edgeDet->applyFilter(m_displayBuffer, 0);
+  cout << "Apply has been clicked for Edge Detect" << endl;
 }
 
-void FlashPhotoApp::applyFilterQuantize() 
+void FlashPhotoApp::applyFilterQuantize()
 {
 	quantize.setBins(m_filterParameters.quantize_bins);
 	quantize.applyFilter(m_displayBuffer);

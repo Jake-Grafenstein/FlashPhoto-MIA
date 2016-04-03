@@ -13,6 +13,9 @@
 #include "Saturate.h"
 #include "Channels.h"
 #include "Quantize.h"
+#include "ConvolutionFilter.h"
+#include "EdgeDetection.h"
+#include "Sharpen.h"
 #include <string>
 
 class ColorData;
@@ -159,6 +162,8 @@ private:
     Saturate saturate;
     Channels channels;
     Quantize quantize;
+    EdgeDetection* edgeDet;
+    Sharpen* sharpen;
     int previousX;
     int previousY;
     int canvasWidth;
