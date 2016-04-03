@@ -12,6 +12,7 @@ public:
 
 	virtual void applyFilter(PixelBuffer *buf);
 	virtual ColorData modifyPixel(ColorData pixel)=0;
+	virtual void applyMask(int x,int y,PixelBuffer *buf,PixelBuffer *temp);
 
 protected:
 	float **mask;
