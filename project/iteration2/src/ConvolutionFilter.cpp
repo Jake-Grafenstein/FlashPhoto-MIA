@@ -7,7 +7,7 @@
 #include <cstring>
 #include "ConvolutionFilter.h"
 
-
+//applies mask over whole canvas, should just need to define mask in subclasses
 void ConvolutionFilter::applyFilter(PixelBuffer *buf)
 {
 	int i,j,width,height;
@@ -27,6 +27,8 @@ void ConvolutionFilter::applyFilter(PixelBuffer *buf)
 	delete tempBuffer;
 }
 
+
+//applies mask to one pixel, modifies temporary buffer
 void ConvolutionFilter::applyMask(int x, int y,PixelBuffer *buf, PixelBuffer *temp)
 {
 	float r=0,g=0,b=0;
