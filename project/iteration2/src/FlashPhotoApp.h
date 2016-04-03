@@ -12,6 +12,7 @@
 #include "Threshold.h"
 #include "Saturate.h"
 #include "Channels.h"
+#include "Quantize.h"
 #include <string>
 
 class ColorData;
@@ -157,6 +158,7 @@ private:
     Threshold thresh;
     Saturate saturate;
     Channels channels;
+    Quantize quantize;
     int previousX;
     int previousY;
     int canvasWidth;

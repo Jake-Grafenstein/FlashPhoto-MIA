@@ -163,6 +163,7 @@ void FlashPhotoApp::initializeTools() {
 	thresh = Threshold();
 	saturate = Saturate();
 	channels = Channels();
+	quantize = Quantize();
 }
 
 void FlashPhotoApp::initGlui()
@@ -496,7 +497,7 @@ void FlashPhotoApp::applyFilterThreshold()
 {
 	thresh.setValue(m_filterParameters.threshold_amount);
 	thresh.applyFilter(m_displayBuffer);
-    cout << "Apply has been clicked for Threshold has been clicked with amount =" << m_filterParameters.threshold_amount << endl;
+//    cout << "Apply has been clicked for Threshold has been clicked with amount =" << m_filterParameters.threshold_amount << endl;
 }
 
 void FlashPhotoApp::applyFilterChannel()
@@ -505,16 +506,16 @@ void FlashPhotoApp::applyFilterChannel()
 	channels.setG(m_filterParameters.channel_colorGreen);
 	channels.setB(m_filterParameters.channel_colorBlue);
 	channels.applyFilter(m_displayBuffer);
-    cout << "Apply has been clicked for Channels with red = " << m_filterParameters.channel_colorRed
+/*    cout << "Apply has been clicked for Channels with red = " << m_filterParameters.channel_colorRed
     << ", green = " << m_filterParameters.channel_colorGreen
-    << ", blue = " << m_filterParameters.channel_colorBlue << endl;
+    << ", blue = " << m_filterParameters.channel_colorBlue << endl;*/
 }
 
 void FlashPhotoApp::applyFilterSaturate()
 {
 	saturate.setValue(m_filterParameters.saturation_amount);
 	saturate.applyFilter(m_displayBuffer);
-    cout << "Apply has been clicked for Saturate with amount = " << m_filterParameters.saturation_amount << endl;
+//    cout << "Apply has been clicked for Saturate with amount = " << m_filterParameters.saturation_amount << endl;
 }
 
 void FlashPhotoApp::applyFilterBlur()
@@ -537,7 +538,10 @@ void FlashPhotoApp::applyFilterEdgeDetect() {
     cout << "Apply has been clicked for Edge Detect" << endl;
 }
 
-void FlashPhotoApp::applyFilterQuantize() {
+void FlashPhotoApp::applyFilterQuantize() 
+{
+	quantize.setBins(m_filterParameters.quantize_bins);
+	quantize.applyFilter(m_displayBuffer);
     cout << "Apply has been clicked for Quantize with bins = " << m_filterParameters.quantize_bins << endl;
 }
 
