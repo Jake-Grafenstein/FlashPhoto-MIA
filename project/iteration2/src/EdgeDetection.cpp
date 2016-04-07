@@ -27,7 +27,7 @@ EdgeDetection::EdgeDetection() {
     for (int k = 0; k < kernelSize; k++) {
       if ((j == k) == midPoint) {
         // Do Nothing
-      } if (((j == 0) || (j== kernelSize-1)) && ((k == 0) || (k == kernelSize-1))) {
+      } else if (((j == 0) || (j== kernelSize-1)) && ((k == 0) || (k == kernelSize-1))) {
         kernel[j][k] = 0.0;
       } else {
         kernel[j][k] = -1.0;
