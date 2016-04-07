@@ -115,7 +115,10 @@ void FlashPhotoApp::leftMouseUp(int x, int y)
 void FlashPhotoApp::fillLine(float slope, int previousX, int previousY, int x, int y,int xy) {
 	int i,nextCoord,stepSize;
 	stepSize = (int) (  ((float) (*tools[m_curTool]).getMaskSize()) * 2.0/7.0);
-
+	// Changes stepsize to 1 if the highlighter is in use
+	if (m_curTool == 4) {
+		stepSize = 1;
+	}
 	// Use the y/x slope
 	if (xy==0) {
 		// Moving left on the canvas

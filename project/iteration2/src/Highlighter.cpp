@@ -29,8 +29,11 @@ Highlighter::Highlighter() {
 		for (j=0;j<maskSize;j++) {
 			if ((i<5) || (i>9)) {
 				mask[i][j]=0;
-			}
-			else {
+			} else if ((i == 5) || (i == 9)) {
+				mask[i][j]=0.2;	
+			} else if ((i == 6) || (i == 8)) {
+				mask[i][j]=0.3;
+			} else {
 				// Set float values such that the highlighter has 40% opacity
 				mask[i][j]=0.4;
 			}
