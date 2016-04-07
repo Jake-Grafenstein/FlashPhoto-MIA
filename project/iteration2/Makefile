@@ -35,6 +35,17 @@ INCLUDE += -I$(GLUI_PATH)/include
 LINK_LIBS +=  -L$(GLUI_PATH)/lib/ -lglui -lpthread
 GLUI_LIB = $(GLUI_PATH)/lib/libglui.a
 
+JPEG_PATH += ./jpeg
+INCLUDE += -I$(JPEG_PATH)/include
+LINK_LIBS += -L$(JPEG_PATH)/lib/libjpeg.a
+JPEG_LIB = $(JPEG_PATH)/lib/libjpeg.a
+
+PNG_PATH += ./png
+INCLUDE += -I$(PNG_PATH)/include
+LINK_LIBS += -L$(PNG_PATH)/lib/libpng.a
+PNG_LIB += $(PNG_PATH)/lib/libpng.a
+
+
 
 # For graphics support, we also need to link with the Glut and OpenGL libraries.
 # This is specified differently depending on whether we are on linux or OSX.
@@ -86,3 +97,9 @@ clean:
 
 $(GLUI_LIB): 
 	$(MAKE) -C $(GLUI_PATH) all
+
+$(JPEG_LIB):
+	$(MAKE) -C $(JPEG_PATH) all
+
+$(PNG_LIB):
+	$(MAKE) -C $(PNG_PATH) all
