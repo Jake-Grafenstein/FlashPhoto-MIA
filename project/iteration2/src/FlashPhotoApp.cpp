@@ -486,7 +486,14 @@ void FlashPhotoApp::gluiControl(int controlID)
 
 void FlashPhotoApp::loadImageToCanvas()
 {
-    cout << "Load Canvas has been clicked for file " << m_fileName << endl;
+  if (m_fileName.substr(m_fileName.find_last_of(".") + 1) == "jpg")
+  {
+    cout << "jpeg file" << endl;
+  }
+  else if (m_fileName.substr(m_fileName.find_last_of(".") + 1) == "png")
+  {
+    cout << "png file" << endl;
+  }
 }
 
 void FlashPhotoApp::loadImageToStamp()
