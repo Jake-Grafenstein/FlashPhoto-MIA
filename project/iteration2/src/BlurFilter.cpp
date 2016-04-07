@@ -46,7 +46,7 @@ void BlurFilter::adjustKernel(float amount) {
   }
 }
 
-void BlurFilter::applyFilter(PixelBuffer *buf, float amount) {
+void BlurFilter::applyFilter(PixelBuffer *buf, float amount, int direction) {
   adjustKernel(amount);
 	int i,j,width,height;
 	ColorData tempPixel;

@@ -169,6 +169,8 @@ void FlashPhotoApp::initializeTools() {
 	quantize = Quantize();
   edgeDet = new EdgeDetection();
   sharpen = new Sharpen();
+  motionBlur = new MotionBlur();
+  blur = new BlurFilter();
 }
 
 void FlashPhotoApp::initGlui()
@@ -524,23 +526,25 @@ void FlashPhotoApp::applyFilterSaturate()
 
 void FlashPhotoApp::applyFilterBlur()
 {
+  blur->applyFilter(m_displayBuffer, m_filterParameters.blur_amount, -1);
     cout << "Apply has been clicked for Blur with amount = " << m_filterParameters.blur_amount << endl;
 }
 
 void FlashPhotoApp::applyFilterSharpen()
 {
-  sharpen->applyFilter(m_displayBuffer, m_filterParameters.sharpen_amount);
+  sharpen->applyFilter(m_displayBuffer, m_filterParameters.sharpen_amount, -1);
     cout << "Apply has been clicked for Sharpen with amount = " << m_filterParameters.sharpen_amount << endl;
 }
 
 void FlashPhotoApp::applyFilterMotionBlur()
 {
+  motionBlur->applyFilter(m_displayBuffer, m_filterParameters.motionBlur_amount, m_filterParameters.motionBlur_direction);
     cout << "Apply has been clicked for Sharpen with amount = " << m_filterParameters.motionBlur_amount
     << " and direction " << m_filterParameters.motionBlur_direction << endl;
 }
 
 void FlashPhotoApp::applyFilterEdgeDetect() {
-  edgeDet->applyFilter(m_displayBuffer, 0);
+  edgeDet->applyFilter(m_displayBuffer, -1, -1);
   cout << "Apply has been clicked for Edge Detect" << endl;
 }
 

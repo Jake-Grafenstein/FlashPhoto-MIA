@@ -8,7 +8,7 @@
 #include "ConvolutionFilter.h"
 
 //applies kernel over whole canvas, should just need to define kernel in subclasses
-void ConvolutionFilter::applyFilter(PixelBuffer *buf, float amount)
+void ConvolutionFilter::applyFilter(PixelBuffer *buf, float amount, int direction)
 {
 	int i,j,width,height;
 	ColorData tempPixel;

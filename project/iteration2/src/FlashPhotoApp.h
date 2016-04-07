@@ -16,6 +16,8 @@
 #include "ConvolutionFilter.h"
 #include "EdgeDetection.h"
 #include "Sharpen.h"
+#include "MotionBlur.h"
+#include "BlurFilter.h"
 #include <string>
 
 class ColorData;
@@ -164,6 +166,8 @@ private:
     Quantize quantize;
     EdgeDetection* edgeDet;
     Sharpen* sharpen;
+    MotionBlur* motionBlur;
+    BlurFilter* blur;
     int previousX;
     int previousY;
     int canvasWidth;

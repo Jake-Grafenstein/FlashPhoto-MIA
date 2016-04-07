@@ -38,7 +38,7 @@ Sharpen::~Sharpen() {
   free(kernel);
 }
 
-void Sharpen::applyFilter(PixelBuffer *buf, float amount)
+void Sharpen::applyFilter(PixelBuffer *buf, float amount, int direction)
 {
   kernel[midPoint][midPoint] = amount;
 	int i,j,width,height;

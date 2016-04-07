@@ -13,7 +13,7 @@ public:
   BlurFilter();
   ~BlurFilter();
   void adjustKernel(float amount);
-  void applyFilter(PixelBuffer *buf, float amount);
+  void applyFilter(PixelBuffer *buf, float amount, int direction);
 private:
 
 };
