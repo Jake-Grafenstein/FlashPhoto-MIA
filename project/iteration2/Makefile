@@ -37,12 +37,12 @@ GLUI_LIB = $(GLUI_PATH)/lib/libglui.a
 
 JPEG_PATH += ./jpeg
 INCLUDE += -I$(JPEG_PATH)/include
-LINK_LIBS += -L$(JPEG_PATH)/lib/libjpeg.a -ljpeg
+LINK_LIBS += -L$(JPEG_PATH)/lib/ -ljpeg
 JPEG_LIB = $(JPEG_PATH)/lib/libjpeg.a
 
 PNG_PATH += ./png
 INCLUDE += -I$(PNG_PATH)/include
-LINK_LIBS += -L$(PNG_PATH)/lib/libpng.a -lpng
+LINK_LIBS += -L$(PNG_PATH)/lib/ -lpng
 PNG_LIB += $(PNG_PATH)/lib/libpng.a
 
 LINK_LIBS += -lz
