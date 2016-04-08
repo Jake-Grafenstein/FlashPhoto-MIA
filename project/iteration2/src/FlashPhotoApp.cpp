@@ -12,6 +12,8 @@
 #include <cmath>
 #include <iostream>
 #include <vector>
+#include <png.h>
+#include <zlib.h>
 
 using std::cout;
 using std::endl;
@@ -486,14 +488,64 @@ void FlashPhotoApp::gluiControl(int controlID)
 
 void FlashPhotoApp::loadImageToCanvas()
 {
+  int imageWidth, imageHeight, i, j;
+  png_byte color_type, bit_depth;
+  png_bytep * row_pointers;
+
   if (m_fileName.substr(m_fileName.find_last_of(".") + 1) == "jpg")
   {
     cout << "jpeg file" << endl;
+
   }
   else if (m_fileName.substr(m_fileName.find_last_of(".") + 1) == "png")
   {
     cout << "png file" << endl;
-  }
+    const char *myFileName = m_fileName.c_str();
+    FILE *fp = fopen(myFileName, "wb");
+    if (!fp) {
+
+    }
+    // Create the .png structure
+    png_structp png_structure = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+    // Create the .png information structure
+    png_infop png_information = png_create_info_struct(png_structure);
+    png_infop end_info = png_create_info_struct(png_structure);
+    if (!end_info) {
+     png_destroy_read_struct(&png_structure, &png_information,(png_infopp)NULL);
+
+    }
+    // initialize reading of png
+    png_init_io(png_structure, fp);
+    // Read png information
+    png_read_info(png_structure, png_information);
+
+    imageWidth = png_get_image_width(png_structure, png_information);
+    imageHeight = png_get_image_height(png_structure, png_information);
+    color_type = png_get_color_type(png_structure, png_information);
+    bit_depth = png_get_bit_depth(png_structure, png_information);
+    PixelBuffer *temp_buffer = new PixelBuffer(imageWidth, imageHeight, backColor);
+
+    row_pointers = (png_bytep *) malloc(imageHeight * sizeof(png_bytep));
+    for (i = 0; i < imageHeight; i++) {
+      row_pointers[i] = (png_byte *) malloc(png_get_rowbytes(png_structure, png_information));
+    }
+
+    png_read_image(png_structure, row_pointers);
+
+    if (png_get_color_type(png_structure, png_information) != PNG_COLOR_TYPE_RGB_ALPHA) {
+
+    } else {
+      for (i = 0; i < imageHeight; i++) {
+         png_byte* myRow = row_pointers[i];
+         for (j = 0; j < imageWidth; j++) {
+           png_byte* myByte = &(myRow[i*4]);
+           ColorData myColorData = ColorData(myByte[0], myByte[1], myByte[2], myByte[3]);
+           temp_buffer->setPixel(i, j, myColorData);
+         }
+       }
+       m_displayBuffer = temp_buffer;
+     }
+   }
 }
 
 void FlashPhotoApp::loadImageToStamp()
@@ -503,7 +555,30 @@ void FlashPhotoApp::loadImageToStamp()
 
 void FlashPhotoApp::saveCanvasToFile()
 {
-    cout << "Save Canvas been clicked for file " << m_fileName << endl;
+  // png_bytep * row_pointers;
+  // int imageWidth, imageHeight, i, j;
+  //
+  // const char *myFileName = m_fileName.c_str();
+  // FILE *fp = fopen(myFileName, "wb");
+  // if (!fp) {
+  //
+  // }
+  //
+  //   cout << "Save Canvas been clicked for file " << m_fileName << endl;
+  //   if (m_fileName.substr(m_fileName.find_last_of(".") + 1) == "jpg")
+  //   {
+  //     cout << "jpeg file" << endl;
+  //
+  //   }
+  //   else if (m_fileName.substr(m_fileName.find_last_of(".") + 1) == "png")
+  //   {
+  //      png_structure = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+  //      png_information = png_create_info_struct(png_structure);
+  //
+  //      png_init_io(png_structure, fp);
+  //      png_write_info(png_structure, png_information);
+  //
+  //   }
 }
 
 void FlashPhotoApp::applyFilterThreshold()

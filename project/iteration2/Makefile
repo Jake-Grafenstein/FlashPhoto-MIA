@@ -13,7 +13,7 @@ OBJECT_DIR = build
 # of the .cpp files in the source directory.
 CPPFILES = $(wildcard $(SOURCE_DIR)/*.cpp)
 
-# For each of the .cpp files found above, determine the name of the 
+# For each of the .cpp files found above, determine the name of the
 # corresponding .o file to create.
 OBJFILES = $(addprefix $(OBJECT_DIR)/,  $(notdir $(CPPFILES:.cpp=.o)))
 
@@ -42,15 +42,16 @@ JPEG_LIB = $(JPEG_PATH)/lib/libjpeg.a
 
 PNG_PATH += ./png
 INCLUDE += -I$(PNG_PATH)/include
-LINK_LIBS += -L$(PNG_PATH)/lib/libpng.a
+LINK_LIBS += -L$(PNG_PATH)/lib/libpng.a -lz
 PNG_LIB += $(PNG_PATH)/lib/libpng.a
 
+LINK_LIBS += -lz
 
 
 # For graphics support, we also need to link with the Glut and OpenGL libraries.
 # This is specified differently depending on whether we are on linux or OSX.
 UNAME = $(shell uname)
-ifeq ($(UNAME), Darwin) # Mac OSX 
+ifeq ($(UNAME), Darwin) # Mac OSX
 	LINK_LIBS += -framework glut -framework opengl
 else # LINUX
 	LINK_LIBS += -lglut -lGL -lGLU
@@ -70,7 +71,7 @@ endif
 ### Rules Section ###
 
 
-# Note, other than each .o depending upon a corresponding .cpp there is no automatic 
+# Note, other than each .o depending upon a corresponding .cpp there is no automatic
 # dependency checking here.  You can add individual dependency rules for .h files
 # (e.g., build/ColorData.o:  src/ColorData.h src/SomethingElse.h) by hand if you want
 # or just remember to run "make rebuild" if you change a .h file.
@@ -80,10 +81,10 @@ all: setup $(EXECUTABLE)
 
 rebuild: clean all
 
-# Create the object_files directory only if it does not exist. 
+# Create the object_files directory only if it does not exist.
 setup: | $(OBJECT_DIR)
 
-$(OBJECT_DIR): 
+$(OBJECT_DIR):
 	mkdir -p $(OBJECT_DIR)
 
 $(EXECUTABLE): $(OBJFILES) $(GLUI_LIB)
@@ -93,9 +94,9 @@ $(OBJECT_DIR)/%.o: $(SOURCE_DIR)/%.cpp
 	$(CC) $(CFLAGS) $(INCLUDE)  -o $@ $<
 
 clean:
-	\rm -rf $(OBJECT_DIR) $(EXECUTABLE) 
+	\rm -rf $(OBJECT_DIR) $(EXECUTABLE)
 
-$(GLUI_LIB): 
+$(GLUI_LIB):
 	$(MAKE) -C $(GLUI_PATH) all
 
 $(JPEG_LIB):
