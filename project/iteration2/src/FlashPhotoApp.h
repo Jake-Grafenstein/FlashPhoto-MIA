@@ -19,6 +19,7 @@
 #include "MotionBlur.h"
 #include "BlurFilter.h"
 #include <string>
+#include <png.h>
 
 class ColorData;
 class PixelBuffer;
@@ -106,8 +107,12 @@ private:
     void initGlui();
     void initializeBuffers(ColorData initialColor, int width, int height);
     void initializeTools();
+    void initializeImageVars();
     void fillLine(float slope, int previousX,int previousY,int x,int y,int xy);
     int getNextYValue(float slope,int previousX,int previousY,int newX);
+
+    void storePixelBuffer();
+    void removePixelBuffer();
 
     enum UIMotionBlurDirections {
         DIR_N_S,
@@ -172,6 +177,10 @@ private:
     int previousY;
     int canvasWidth;
     int canvasHeight;
+    int imageWidth;
+    int imageHeight;
+    png_byte color_type;
+    png_byte bit_depth;
     ColorData backColor;
 
     float m_curColorRed, m_curColorGreen, m_curColorBlue;

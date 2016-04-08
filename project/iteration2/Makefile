@@ -42,7 +42,7 @@ JPEG_LIB = $(JPEG_PATH)/lib/libjpeg.a
 
 PNG_PATH += ./png
 INCLUDE += -I$(PNG_PATH)/include
-LINK_LIBS += -L$(PNG_PATH)/lib/libpng.a -lz
+LINK_LIBS += -L$(PNG_PATH)/lib/libpng.a -lpng
 PNG_LIB += $(PNG_PATH)/lib/libpng.a
 
 LINK_LIBS += -lz

@@ -12,7 +12,6 @@
 #include <cmath>
 #include <iostream>
 #include <vector>
-#include <png.h>
 #include <zlib.h>
 
 using std::cout;
@@ -25,6 +24,8 @@ FlashPhotoApp::FlashPhotoApp(int argc, char* argv[], int width, int height, Colo
     initializeTools();
     // Initialize Interface
     initializeBuffers(backgroundColor, width, height);
+    // Initialize Image Helper Variables
+    initializeImageVars();
 
     initGlui();
     initGraphics();
@@ -91,14 +92,7 @@ void FlashPhotoApp::mouseMoved(int x, int y)
 
 void FlashPhotoApp::leftMouseDown(int x, int y)
 {
-	// Store the current pixelBuffer in the undoStack
-	PixelBuffer *tempPixelBuffer = new PixelBuffer(canvasWidth,canvasHeight,backColor);
-	m_displayBuffer->copyPixelBuffer(m_displayBuffer, tempPixelBuffer);
-	undoStack.push_back(tempPixelBuffer);
-
-	// Empty the redoStack
-	redoStack.clear();
-
+  storePixelBuffer();
 	// If the leftMouseDown is clicked without moving, the tool should be applied to the pixelBuffer once
         (*tools[m_curTool]).paintMask(x,y,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
 
@@ -153,6 +147,16 @@ int FlashPhotoApp::getNextYValue(float slope, int previousX, int newX, int previ
 	return (int)(-1.0*((slope*newX)-(slope*previousX)-previousY));
 }
 
+void FlashPhotoApp::storePixelBuffer() {
+  // Store the current pixelBuffer in the undoStack
+	PixelBuffer *tempPixelBuffer = new PixelBuffer(canvasWidth,canvasHeight,backColor);
+	m_displayBuffer->copyPixelBuffer(m_displayBuffer, tempPixelBuffer);
+	undoStack.push_back(tempPixelBuffer);
+
+	// Empty the redoStack
+	redoStack.clear();
+}
+
 void FlashPhotoApp::initializeBuffers(ColorData backgroundColor, int width, int height) {
     m_displayBuffer = new PixelBuffer(width, height, backgroundColor);
 }
@@ -173,6 +177,10 @@ void FlashPhotoApp::initializeTools() {
   sharpen = new Sharpen();
   motionBlur = new MotionBlur();
   blur = new BlurFilter();
+}
+
+void FlashPhotoApp::initializeImageVars() {
+
 }
 
 void FlashPhotoApp::initGlui()
@@ -488,8 +496,7 @@ void FlashPhotoApp::gluiControl(int controlID)
 
 void FlashPhotoApp::loadImageToCanvas()
 {
-  int imageWidth, imageHeight, i, j;
-  png_byte color_type, bit_depth;
+  int i, j;
   png_bytep * row_pointers;
 
   if (m_fileName.substr(m_fileName.find_last_of(".") + 1) == "jpg")
@@ -545,6 +552,7 @@ void FlashPhotoApp::loadImageToCanvas()
        }
        m_displayBuffer = temp_buffer;
      }
+    fclose(fp);
    }
 }
 
@@ -555,34 +563,59 @@ void FlashPhotoApp::loadImageToStamp()
 
 void FlashPhotoApp::saveCanvasToFile()
 {
-  // png_bytep * row_pointers;
-  // int imageWidth, imageHeight, i, j;
-  //
-  // const char *myFileName = m_fileName.c_str();
-  // FILE *fp = fopen(myFileName, "wb");
-  // if (!fp) {
-  //
-  // }
-  //
-  //   cout << "Save Canvas been clicked for file " << m_fileName << endl;
-  //   if (m_fileName.substr(m_fileName.find_last_of(".") + 1) == "jpg")
-  //   {
-  //     cout << "jpeg file" << endl;
-  //
-  //   }
-  //   else if (m_fileName.substr(m_fileName.find_last_of(".") + 1) == "png")
-  //   {
-  //      png_structure = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-  //      png_information = png_create_info_struct(png_structure);
-  //
-  //      png_init_io(png_structure, fp);
-  //      png_write_info(png_structure, png_information);
-  //
-  //   }
+  png_bytep * row_pointers;
+  int i, j;
+
+  const char *myFileName = m_fileName.c_str();
+  FILE *fp = fopen(myFileName, "wb");
+  if (!fp) {
+
+  }
+
+    cout << "Save Canvas been clicked for file " << m_fileName << endl;
+    if (m_fileName.substr(m_fileName.find_last_of(".") + 1) == "jpg")
+    {
+      cout << "jpeg file" << endl;
+
+    }
+    else if (m_fileName.substr(m_fileName.find_last_of(".") + 1) == "png")
+    {
+       png_structp png_structure = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+       png_infop png_information = png_create_info_struct(png_structure);
+
+       png_init_io(png_structure, fp);
+
+       png_set_IHDR(png_structure, png_information, imageWidth, imageHeight, bit_depth, color_type, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
+
+       png_write_info(png_structure, png_information);
+
+       row_pointers = (png_bytep *) malloc(imageHeight * sizeof(png_bytep));
+       for (i = 0; i < imageHeight; i++) {
+         row_pointers[i] = (png_byte *) malloc(png_get_rowbytes(png_structure, png_information));
+       }
+
+       for (i = 0; i < imageHeight; i++) {
+         png_byte* myRow = row_pointers[i];
+         for (j = 0; j < imageWidth; j++) {
+           png_byte* myPtr = &(myRow[i*4]);
+           myPtr[0] = m_displayBuffer->getPixel(i,j).getRed();
+           myPtr[1] = m_displayBuffer->getPixel(i,j).getGreen();
+           myPtr[2] = m_displayBuffer->getPixel(i,j).getBlue();
+           myPtr[3] = m_displayBuffer->getPixel(i,j).getAlpha();
+         }
+       }
+
+       png_write_image(png_structure, row_pointers);
+
+       png_write_end(png_structure, NULL);
+
+    }
+  fclose(fp);
 }
 
 void FlashPhotoApp::applyFilterThreshold()
 {
+  storePixelBuffer();
 	thresh.setValue(m_filterParameters.threshold_amount);
 	thresh.applyFilter(m_displayBuffer);
 //    cout << "Apply has been clicked for Threshold has been clicked with amount =" << m_filterParameters.threshold_amount << endl;
@@ -590,6 +623,7 @@ void FlashPhotoApp::applyFilterThreshold()
 
 void FlashPhotoApp::applyFilterChannel()
 {
+  storePixelBuffer();
 	channels.setR(m_filterParameters.channel_colorRed);
 	channels.setG(m_filterParameters.channel_colorGreen);
 	channels.setB(m_filterParameters.channel_colorBlue);
@@ -601,6 +635,7 @@ void FlashPhotoApp::applyFilterChannel()
 
 void FlashPhotoApp::applyFilterSaturate()
 {
+  storePixelBuffer();
 	saturate.setValue(m_filterParameters.saturation_amount);
 	saturate.applyFilter(m_displayBuffer);
 //    cout << "Apply has been clicked for Saturate with amount = " << m_filterParameters.saturation_amount << endl;
@@ -608,36 +643,42 @@ void FlashPhotoApp::applyFilterSaturate()
 
 void FlashPhotoApp::applyFilterBlur()
 {
+  storePixelBuffer();
   blur->applyFilter(m_displayBuffer, m_filterParameters.blur_amount, -1);
     cout << "Apply has been clicked for Blur with amount = " << m_filterParameters.blur_amount << endl;
 }
 
 void FlashPhotoApp::applyFilterSharpen()
 {
+  storePixelBuffer();
   sharpen->applyFilter(m_displayBuffer, m_filterParameters.sharpen_amount, -1);
     cout << "Apply has been clicked for Sharpen with amount = " << m_filterParameters.sharpen_amount << endl;
 }
 
 void FlashPhotoApp::applyFilterMotionBlur()
 {
+  storePixelBuffer();
   motionBlur->applyFilter(m_displayBuffer, m_filterParameters.motionBlur_amount, m_filterParameters.motionBlur_direction);
     cout << "Apply has been clicked for Sharpen with amount = " << m_filterParameters.motionBlur_amount
     << " and direction " << m_filterParameters.motionBlur_direction << endl;
 }
 
 void FlashPhotoApp::applyFilterEdgeDetect() {
+  storePixelBuffer();
   edgeDet->applyFilter(m_displayBuffer, -1, -1);
   cout << "Apply has been clicked for Edge Detect" << endl;
 }
 
 void FlashPhotoApp::applyFilterQuantize()
 {
+  storePixelBuffer();
 	quantize.setBins(m_filterParameters.quantize_bins);
 	quantize.applyFilter(m_displayBuffer);
     cout << "Apply has been clicked for Quantize with bins = " << m_filterParameters.quantize_bins << endl;
 }
 
 void FlashPhotoApp::applyFilterSpecial() {
+  storePixelBuffer();
     cout << "Apply has been clicked for Special" << endl;
 }
 
