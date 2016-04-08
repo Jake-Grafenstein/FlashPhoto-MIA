@@ -13,6 +13,7 @@
 #include "Saturate.h"
 #include "Channels.h"
 #include "Quantize.h"
+#include "ComicBook.h"
 #include "ConvolutionFilter.h"
 #include "EdgeDetection.h"
 #include "Sharpen.h"
@@ -169,6 +170,7 @@ private:
     Saturate saturate;
     Channels channels;
     Quantize quantize;
+    ComicBook comicBook;
     EdgeDetection* edgeDet;
     Sharpen* sharpen;
     MotionBlur* motionBlur;
