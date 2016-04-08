@@ -35,7 +35,7 @@ INCLUDE += -I$(GLUI_PATH)/include
 LINK_LIBS +=  -L$(GLUI_PATH)/lib/ -lglui -lpthread
 GLUI_LIB = $(GLUI_PATH)/lib/libglui.a
 
-JPEG_PATH += ./jpeg/jpeg-9b
+JPEG_PATH += ./jpeg
 INCLUDE += -I$(JPEG_PATH)/include
 LINK_LIBS += -L$(JPEG_PATH)/lib/ -ljpeg
 JPEG_LIB = $(JPEG_PATH)/lib/libjpeg.a
