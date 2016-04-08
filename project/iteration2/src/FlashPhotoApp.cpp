@@ -13,6 +13,7 @@
 #include <iostream>
 #include <vector>
 #include <zlib.h>
+#include "jpeglib.h"
 
 using std::cout;
 using std::endl;
@@ -499,16 +500,41 @@ void FlashPhotoApp::loadImageToCanvas()
 {
   int i, j;
   png_bytep * row_pointers;
+  const char *myFileName = m_fileName.c_str();
 
   if (m_fileName.substr(m_fileName.find_last_of(".") + 1) == "jpg")
   {
     cout << "jpeg file" << endl;
+    struct jpeg_decompress_struct cinfo;
+    struct jpeg_error_mgr jerr;
+    FILE * infile;
+    JSAMPARRAY buffer;
+    int row_stride;
+    if ((infile = fopen(myFileName, "rb")) == NULL)
+    {
+      fprintf(stderr, "can't open %s\n", myFileName);
+      exit(1);
+    }
+    cinfo.err = jpeg_std_error(&jerr);
+    jpeg_create_decompress(&cinfo);
+    jpeg_stdio_src(&cinfo, infile);
+    (void) jpeg_read_header(&cinfo, TRUE);
+    (void) jpeg_start_decompress(&cinfo);
+    row_stride = cinfo.output_width * cinfo.output_components;
+    buffer = (*cinfo.mem->alloc_sarray)
+  		((j_common_ptr) &cinfo, JPOOL_IMAGE, row_stride, 1);
+    while (cinfo.output_scanline < cinfo.output_height)
+    {
+      (void) jpeg_read_scanlines(&cinfo, buffer, 1);
+      //put_scanline_someplace(buffer[0], row_stride); <--- THIS
+    }
+      jpeg_destroy_decompress(&cinfo);
+      fclose(infile);
 
   }
   else if (m_fileName.substr(m_fileName.find_last_of(".") + 1) == "png")
   {
     cout << "png file" << endl;
-    const char *myFileName = m_fileName.c_str();
     FILE *fp = fopen(myFileName, "wb");
     if (!fp) {
 
