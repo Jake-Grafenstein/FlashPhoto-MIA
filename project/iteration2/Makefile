@@ -40,7 +40,7 @@ INCLUDE += -I$(JPEG_PATH)/include
 LINK_LIBS += -L$(JPEG_PATH)/lib/ -ljpeg
 JPEG_LIB = $(JPEG_PATH)/lib/libjpeg.a
 
-PNG_PATH += ./png
+PNG_PATH += ./png/libpng-1.6.21
 INCLUDE += -I$(PNG_PATH)/include
 LINK_LIBS += -L$(PNG_PATH)/lib/ -lpng
 PNG_LIB += $(PNG_PATH)/lib/libpng.a
@@ -87,7 +87,7 @@ setup: | $(OBJECT_DIR)
 $(OBJECT_DIR):
 	mkdir -p $(OBJECT_DIR)
 
-$(EXECUTABLE): $(OBJFILES) $(GLUI_LIB)
+$(EXECUTABLE): $(OBJFILES) $(GLUI_LIB) $(PNG_LIB) $(JPEG_LIB)
 	$(CC) $(LDFLAGS) $(OBJFILES) $(LINK_LIBS) -o $@
 
 $(OBJECT_DIR)/%.o: $(SOURCE_DIR)/%.cpp
@@ -100,7 +100,21 @@ $(GLUI_LIB):
 	$(MAKE) -C $(GLUI_PATH) all
 
 $(JPEG_LIB):
+	cd $(JPEG_PATH); \
+	./configure --enable-shared=no --prefix=$(abspath $(JPEG_PATH))
 	$(MAKE) -C $(JPEG_PATH) all
+	$(MAKE) -C $(JPEG_PATH) install
 
 $(PNG_LIB):
+	cd $(PNG_PATH); \
+	./configure --enable-shared=no --prefix=$(abspath $(PNG_PATH))
 	$(MAKE) -C $(PNG_PATH) all
+	$(MAKE) -C $(PNG_PATH) install
+
+cleanpng:
+	$(MAKE) -C $(PNG_PATH) distclean
+	rm -rf $(PNG_PATH)/lib $(PNG_PATH)/bin $(PNG_PATH)/share
+
+cleanjpeg:
+	$(MAKE) -C $(JPEG_PATH) distclean 
+	rm -rf $(JPEG_PATH)/lib $(JPEG_PATH)/bin $(JPEG_PATH)/share 

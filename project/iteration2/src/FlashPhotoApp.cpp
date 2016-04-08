@@ -499,8 +499,11 @@ void FlashPhotoApp::gluiControl(int controlID)
 void FlashPhotoApp::loadImageToCanvas()
 {
   int i, j;
+  std::string tempName;
   png_bytep * row_pointers;
-  const char *myFileName = m_fileName.c_str();
+
+  tempName = "./" + m_fileName;
+  const char *myFileName = tempName.c_str();
 
   if (m_fileName.substr(m_fileName.find_last_of(".") + 1) == "jpg")
   {
@@ -534,52 +537,58 @@ void FlashPhotoApp::loadImageToCanvas()
   }
   else if (m_fileName.substr(m_fileName.find_last_of(".") + 1) == "png")
   {
-    cout << "png file" << endl;
-    FILE *fp = fopen(myFileName, "wb");
-    if (!fp) {
+    PixelBuffer * newBuf;
+    cout << "Png image" << endl;
+      png_image image;
 
-    }
-    // Create the .png structure
-    png_structp png_structure = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-    // Create the .png information structure
-    png_infop png_information = png_create_info_struct(png_structure);
-    png_infop end_info = png_create_info_struct(png_structure);
-    if (!end_info) {
-     png_destroy_read_struct(&png_structure, &png_information,(png_infopp)NULL);
+      /* Only the image structure version number needs to be set. */
+      memset(&image, 0, (sizeof image) );
+      image.version = PNG_IMAGE_VERSION;
+      cout << myFileName << endl;
+      if (png_image_begin_read_from_file(&image, myFileName))
+      {
+         png_bytep buffer;
+         /* Change this to try different formats!  If you set a colormap format
+          * then you must also supply a colormap below.
+          */
+         image.format = PNG_FORMAT_RGBA;
+         buffer = new png_byte[PNG_IMAGE_SIZE(image)];
+         if (buffer != NULL)
+         {
+            if (png_image_finish_read(&image, NULL/*background*/, buffer,
+               0/*row_stride*/, NULL/*colormap for PNG_FORMAT_FLAG_COLORMAP */))
+            {
+              ColorData temp;
+              int w = image.width;
+              int h = image.height;
+              newBuf = new PixelBuffer(w,h,ColorData(1,1,1));
+               for (i=0;i<w;i++)
+               {
+                  for (j=0;j<h;j++)
+                   temp = ColorData(buffer[i+j],buffer[i+j+1],buffer[i+j+2],buffer[i+j+3]);
+                   newBuf->setPixel(i,j,temp);
+               }
+               free(buffer);
+               canvasWidth = w;
+               canvasHeight = h;
+               setWindowDimensions(w,h);
+               m_displayBuffer = newBuf;
+               cout << "success?" << endl;
+            }
 
-    }
-    // initialize reading of png
-    png_init_io(png_structure, fp);
-    // Read png information
-    png_read_info(png_structure, png_information);
+            else
+            {
+               fprintf(stderr, "pngtopng: read %s: %s\n", myFileName,
+                   image.message);
 
-    imageWidth = png_get_image_width(png_structure, png_information);
-    imageHeight = png_get_image_height(png_structure, png_information);
-    color_type = png_get_color_type(png_structure, png_information);
-    bit_depth = png_get_bit_depth(png_structure, png_information);
-    PixelBuffer *temp_buffer = new PixelBuffer(imageWidth, imageHeight, backColor);
-
-    row_pointers = (png_bytep *) malloc(imageHeight * sizeof(png_bytep));
-    for (i = 0; i < imageHeight; i++) {
-      row_pointers[i] = (png_byte *) malloc(png_get_rowbytes(png_structure, png_information));
-    }
-
-    png_read_image(png_structure, row_pointers);
-
-    if (png_get_color_type(png_structure, png_information) != PNG_COLOR_TYPE_RGB_ALPHA) {
-
-    } else {
-      for (i = 0; i < imageHeight; i++) {
-         png_byte* myRow = row_pointers[i];
-         for (j = 0; j < imageWidth; j++) {
-           png_byte* myByte = &(myRow[i*4]);
-           ColorData myColorData = ColorData(myByte[0], myByte[1], myByte[2], myByte[3]);
-           temp_buffer->setPixel(i, j, myColorData);
+               /* This is the only place where a 'free' is required; libpng does
+                * the cleanup on error and success, but in this case we couldn't
+                * complete the read because of running out of memory.
+                */
+               png_image_free(&image);
+            }
          }
        }
-       m_displayBuffer = temp_buffer;
-     }
-    fclose(fp);
    }
 }
 
@@ -828,7 +837,7 @@ void FlashPhotoApp::setImageFile(const std::string & fileName)
     if (!isValidImageFileName(imageFile)) {
         imageFile = m_fileName;
     }
-
+    // We might need to do stuff here to enable folders-- if we have time
 
     // TOGGLE SAVE FEATURE
     // If no file is selected or typed,
