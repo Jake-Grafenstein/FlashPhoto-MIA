@@ -35,7 +35,7 @@ INCLUDE += -I$(GLUI_PATH)/include
 LINK_LIBS +=  -L$(GLUI_PATH)/lib/ -lglui -lpthread
 GLUI_LIB = $(GLUI_PATH)/lib/libglui.a
 
-JPEG_PATH += ./jpeg
+JPEG_PATH += ./jpeg/jpeg-9b
 INCLUDE += -I$(JPEG_PATH)/include
 LINK_LIBS += -L$(JPEG_PATH)/lib/ -ljpeg
 JPEG_LIB = $(JPEG_PATH)/lib/libjpeg.a
@@ -116,5 +116,5 @@ cleanpng:
 	rm -rf $(PNG_PATH)/lib $(PNG_PATH)/bin $(PNG_PATH)/share
 
 cleanjpeg:
-	$(MAKE) -C $(JPEG_PATH) distclean 
-	rm -rf $(JPEG_PATH)/lib $(JPEG_PATH)/bin $(JPEG_PATH)/share 
+	$(MAKE) -C $(JPEG_PATH) distclean
+	rm -rf $(JPEG_PATH)/lib $(JPEG_PATH)/bin $(JPEG_PATH)/share
