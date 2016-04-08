@@ -552,7 +552,8 @@ void FlashPhotoApp::loadImageToCanvas()
           * then you must also supply a colormap below.
           */
          image.format = PNG_FORMAT_RGBA;
-         buffer = new png_byte[PNG_IMAGE_SIZE(image)];
+	 int imageSize = PNG_IMAGE_SIZE(image);
+         buffer = new png_byte[imageSize];
          if (buffer != NULL)
          {
             if (png_image_finish_read(&image, NULL/*background*/, buffer,
@@ -562,11 +563,10 @@ void FlashPhotoApp::loadImageToCanvas()
               int w = image.width;
               int h = image.height;
               newBuf = new PixelBuffer(w,h,ColorData(1,1,1));
-               for (i=0;i<w;i++)
+               for (i=0;i<(imageSize/4);i++)
                {
-                  for (j=0;j<h;j++)
-                   temp = ColorData(buffer[i+j],buffer[i+j+1],buffer[i+j+2],buffer[i+j+3]);
-                   newBuf->setPixel(i,j,temp);
+                   temp = ColorData(((float) buffer[4*i])/255.0,((float) buffer[4*i+1])/255.0,((float) buffer[4*i+2])/255.0,buffer[4*i+3]);
+                   newBuf->setPixel(i%w,i/w,temp);
                }
                free(buffer);
                canvasWidth = w;
@@ -574,6 +574,8 @@ void FlashPhotoApp::loadImageToCanvas()
                setWindowDimensions(w,h);
                m_displayBuffer = newBuf;
                cout << "success?" << endl;
+		cout << imageSize << " " << w << " " << h << endl;
+
             }
 
             else
