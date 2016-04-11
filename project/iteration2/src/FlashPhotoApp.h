@@ -159,6 +159,7 @@ private:
     // This is the pointer to the buffer where the display PixelBuffer is stored
     PixelBuffer* m_displayBuffer;
 
+    PixelBuffer* stampBuffer;
     // These are used to store the selections from the GLUI user interface
     int m_curTool;
 
@@ -178,6 +179,8 @@ private:
     int previousY;
     int canvasWidth;
     int canvasHeight;
+    int stampWidth;
+    int stampHeight;
     ColorData backColor;
 
     float m_curColorRed, m_curColorGreen, m_curColorBlue;
