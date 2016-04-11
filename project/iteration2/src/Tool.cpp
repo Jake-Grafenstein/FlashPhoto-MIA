@@ -58,8 +58,3 @@ void Tool::paintMask(int x,int y,PixelBuffer **displayBuffer,ColorData color,Col
 		}
 	}
 }
-
-void Tool::updateStamp(PixelBuffer* newStamp)
-{
-
-}

@@ -55,6 +55,13 @@ FlashPhotoApp::~FlashPhotoApp()
 
 void FlashPhotoApp::mouseDragged(int x, int y)
 {
+  // if the current Tool is the stamp tool
+  if (m_curTool == 7)
+  {
+    //do nothing
+  }
+  else
+  {
 	float slope;
 	int xy;
 	(*tools[m_curTool]).paintMask(x,y,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
@@ -78,6 +85,7 @@ void FlashPhotoApp::mouseDragged(int x, int y)
 		fillLine(slope,previousX,previousY,x,y,xy);
 		previousX = x;
 		previousY = y;
+  }
 	}
 }
 
@@ -88,9 +96,31 @@ void FlashPhotoApp::mouseMoved(int x, int y) {
 void FlashPhotoApp::leftMouseDown(int x, int y)
 {
   storePixelBuffer();
-	// If the leftMouseDown is clicked without moving, the tool should be applied to the pixelBuffer once
-  (*tools[m_curTool]).paintMask(x,y,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
-
+  // if the current tool is the stamp tool
+  if (m_curTool == 7)
+  {
+    int height = m_displayBuffer->getHeight();
+    int width = m_displayBuffer->getWidth();
+    ColorData tempPixel;
+    int bufferI, bufferJ;
+    for (int i = 0; i < stampWidth; i++)
+    {
+      for (int j = 0; j < stampHeight; j++)
+      {
+        bufferI = x + i - (stampWidth/2);
+        bufferJ = (height-y) + j - (stampHeight/2);
+        if (bufferI > 0 && bufferI < width && bufferJ > 0 && bufferJ < height)
+        {
+          tempPixel = stampBuffer->getPixel(i, j);
+          m_displayBuffer->setPixel(bufferI, bufferJ, tempPixel);
+        }
+      }
+    }
+  }
+	else// If the leftMouseDown is clicked without moving, the tool should be applied to the pixelBuffer once
+  {
+    (*tools[m_curTool]).paintMask(x,y,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
+  }
 	// Set the previous x and y values to fill the line
 	previousX = x;
 	previousY = y;
@@ -582,7 +612,7 @@ void FlashPhotoApp::loadImageToCanvas()
 
 void FlashPhotoApp::loadImageToStamp()
 {
-    cout << "Load Stamp has been clicked for file " << m_fileName << endl;
+    //cout << "Load Stamp has been clicked for file " << m_fileName << endl;
     int i;
     PixelBuffer *newBuf;
     std::string tempName;
@@ -592,7 +622,7 @@ void FlashPhotoApp::loadImageToStamp()
 
     // If we are dealing with a JPEG, image
     if (m_fileName.substr(m_fileName.find_last_of(".") + 1) == "jpg") {
-      cout << "jpeg file" << endl;
+      //cout << "jpeg file" << endl;
       struct jpeg_decompress_struct cinfo;
       struct jpeg_error_mgr jerr;
       FILE * infile;
@@ -623,9 +653,9 @@ void FlashPhotoApp::loadImageToStamp()
       }
 
       // Modify the main display PixleBuffer
-      canvasWidth = cinfo.output_width;
-      canvasHeight = cinfo.output_height;
-      tools[7]->updateStamp(newBuf);
+      stampWidth = cinfo.output_width;
+      stampHeight = cinfo.output_height;
+      stampBuffer = newBuf;
       (void) jpeg_finish_decompress(&cinfo);
       jpeg_destroy_decompress(&cinfo);
       fclose(infile);
@@ -660,10 +690,11 @@ void FlashPhotoApp::loadImageToStamp()
             free(buffer);
 
             // Modify the main display PixleBuffer
-            canvasWidth = w;
-            canvasHeight = h;
-            tools[7]->updateStamp(newBuf);
-          } else {
+            stampWidth = w;
+            stampHeight = h;
+            stampBuffer = newBuf;
+            }
+            else {
             fprintf(stderr, "pngtopng: read %s: %s\n", myFileName, image.message);
             png_image_free(&image);
           }
