@@ -55,6 +55,13 @@ FlashPhotoApp::~FlashPhotoApp()
 
 void FlashPhotoApp::mouseDragged(int x, int y)
 {
+  // if the current Tool is the stamp tool
+  if (m_curTool == 7)
+  {
+    //do nothing
+  }
+  else
+  {
 	float slope;
 	int xy;
 	(*tools[m_curTool]).paintMask(x,y,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
@@ -78,6 +85,7 @@ void FlashPhotoApp::mouseDragged(int x, int y)
 		fillLine(slope,previousX,previousY,x,y,xy);
 		previousX = x;
 		previousY = y;
+  }
 	}
 }
 
