@@ -96,6 +96,7 @@ void FlashPhotoApp::mouseMoved(int x, int y) {
 void FlashPhotoApp::leftMouseDown(int x, int y)
 {
   storePixelBuffer();
+  // if the current tool is the stamp tool
   if (m_curTool == 7)
   {
     int height = m_displayBuffer->getHeight();
@@ -611,7 +612,7 @@ void FlashPhotoApp::loadImageToCanvas()
 
 void FlashPhotoApp::loadImageToStamp()
 {
-    cout << "Load Stamp has been clicked for file " << m_fileName << endl;
+    //cout << "Load Stamp has been clicked for file " << m_fileName << endl;
     int i;
     PixelBuffer *newBuf;
     std::string tempName;
@@ -621,7 +622,7 @@ void FlashPhotoApp::loadImageToStamp()
 
     // If we are dealing with a JPEG, image
     if (m_fileName.substr(m_fileName.find_last_of(".") + 1) == "jpg") {
-      cout << "jpeg file" << endl;
+      //cout << "jpeg file" << endl;
       struct jpeg_decompress_struct cinfo;
       struct jpeg_error_mgr jerr;
       FILE * infile;
@@ -654,7 +655,6 @@ void FlashPhotoApp::loadImageToStamp()
       // Modify the main display PixleBuffer
       stampWidth = cinfo.output_width;
       stampHeight = cinfo.output_height;
-      //tools[7]->updateStamp(newBuf);
       stampBuffer = newBuf;
       (void) jpeg_finish_decompress(&cinfo);
       jpeg_destroy_decompress(&cinfo);
@@ -692,7 +692,6 @@ void FlashPhotoApp::loadImageToStamp()
             // Modify the main display PixleBuffer
             stampWidth = w;
             stampHeight = h;
-            //tools[7]->updateStamp(newBuf);
             stampBuffer = newBuf;
             }
             else {
