@@ -24,7 +24,7 @@ Emboss::Emboss() {
   kernel[0][1] = -1.0;
   kernel[0][2] = 0.0;
   kernel[1][0] = -1.0;
-  kernel[1][1] = 1.0;
+  kernel[1][1] = 0.0;
   kernel[1][2] = 1.0;
   kernel[2][0] = 0.0;
   kernel[2][1] = 1.0;

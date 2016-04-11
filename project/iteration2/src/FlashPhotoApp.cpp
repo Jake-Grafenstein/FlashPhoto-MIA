@@ -206,6 +206,7 @@ void FlashPhotoApp::initializeTools() {
   sharpen = new Sharpen();
   motionBlur = new MotionBlur();
   blur = new BlurFilter();
+  emboss = new Emboss();
 }
 
 void FlashPhotoApp::initGlui() {
@@ -865,7 +866,7 @@ void FlashPhotoApp::applyFilterQuantize()
 
 void FlashPhotoApp::applyFilterSpecial() {
   storePixelBuffer();
-  comicBook.applyFilter(m_displayBuffer);
+  emboss->applyFilter(m_displayBuffer,-1,-1);
   cout << "Apply has been clicked for Special" << endl;
 }
 
