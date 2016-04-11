@@ -32,7 +32,7 @@ void ComicBook::applyFilter(PixelBuffer *buf) {
 	width = buf -> getWidth();
 	height = buf -> getHeight();
   Quantize *myQuantize = new Quantize();
-  myQuantize->setBins(8);
+  myQuantize->setBins(2);
   myQuantize->applyFilter(buf);
   for (i = 0; i < width; i+=8) {
     for (j = 0; j < height; j+=8) {
