@@ -14,6 +14,7 @@
 #include <vector>
 #include <zlib.h>
 #include "jpeglib.h"
+#include <setjmp.h>
 
 using std::cout;
 using std::endl;
@@ -499,6 +500,7 @@ void FlashPhotoApp::gluiControl(int controlID)
 void FlashPhotoApp::loadImageToCanvas()
 {
   int i, j;
+  PixelBuffer *newBuf;
   std::string tempName;
   png_bytep * row_pointers;
 
@@ -512,32 +514,42 @@ void FlashPhotoApp::loadImageToCanvas()
     struct jpeg_error_mgr jerr;
     FILE * infile;
     JSAMPARRAY buffer;
-    int row_stride;
+    int row_width;
+    cinfo.err = jpeg_std_error(&jerr);
+
     if ((infile = fopen(myFileName, "rb")) == NULL)
     {
       fprintf(stderr, "can't open %s\n", myFileName);
-      exit(1);
+      return;
     }
-    cinfo.err = jpeg_std_error(&jerr);
     jpeg_create_decompress(&cinfo);
     jpeg_stdio_src(&cinfo, infile);
-    (void) jpeg_read_header(&cinfo, TRUE);
+    (void) jpeg_read_header(&cinfo, FALSE);
     (void) jpeg_start_decompress(&cinfo);
-    row_stride = cinfo.output_width * cinfo.output_components;
+    row_width = cinfo.output_width * cinfo.output_components;
     buffer = (*cinfo.mem->alloc_sarray)
-  		((j_common_ptr) &cinfo, JPOOL_IMAGE, row_stride, 1);
+  		((j_common_ptr) &cinfo, JPOOL_IMAGE, row_width, 1);
+    newBuf = new PixelBuffer(cinfo.output_width,cinfo.output_height,ColorData(1,1,1));
     while (cinfo.output_scanline < cinfo.output_height)
     {
       (void) jpeg_read_scanlines(&cinfo, buffer, 1);
-      //put_scanline_someplace(buffer[0], row_stride); <--- THIS
+      for (i=0;i<cinfo.output_width;i++)
+      {
+//cout << "Line: " << cinfo.output_scanline << endl;
+	newBuf->setPixel(i,cinfo.output_height-cinfo.output_scanline,ColorData(((float) buffer[0][3*i])/255,((float) buffer[0][3*i+1])/255,((float) buffer[0][3*i+2])/255));
+      }
     }
-      jpeg_destroy_decompress(&cinfo);
-      fclose(infile);
+    canvasWidth = row_width;
+    canvasHeight = cinfo.output_height;
+    setWindowDimensions(cinfo.output_width,cinfo.output_height);
+    m_displayBuffer = newBuf;
+    (void) jpeg_finish_decompress(&cinfo);
+    jpeg_destroy_decompress(&cinfo);
+    fclose(infile);
 
   }
   else if (m_fileName.substr(m_fileName.find_last_of(".") + 1) == "png")
   {
-    PixelBuffer * newBuf;
     cout << "Png image" << endl;
       png_image image;
 
