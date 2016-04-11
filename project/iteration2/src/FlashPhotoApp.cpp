@@ -45,8 +45,8 @@ void FlashPhotoApp::display()
 
 FlashPhotoApp::~FlashPhotoApp()
 {
-    int i;
-    int toolSize = (int) tools.size();
+    //int i;
+    //int toolSize = (int) tools.size();
     if (m_displayBuffer) {
         delete m_displayBuffer;
     }
@@ -103,6 +103,7 @@ void FlashPhotoApp::leftMouseDown(int x, int y)
     int width = m_displayBuffer->getWidth();
     ColorData tempPixel;
     int bufferI, bufferJ;
+    //loops through the stamp buffer array and applies each pixel to display buffer where the mouse currently is
     for (int i = 0; i < stampWidth; i++)
     {
       for (int j = 0; j < stampHeight; j++)
@@ -522,7 +523,6 @@ void FlashPhotoApp::loadImageToCanvas()
   int i;
   PixelBuffer *newBuf;
   std::string tempName;
-  png_bytep * row_pointers;
   tempName = "./" + m_fileName;
   const char *myFileName = tempName.c_str();
 
@@ -558,7 +558,7 @@ void FlashPhotoApp::loadImageToCanvas()
       }
     }
 
-    // Modify the main display PixleBuffer
+    // Modify the main display PixelBuffer and make canvas fit to the image size
     canvasWidth = cinfo.output_width;
     canvasHeight = cinfo.output_height;
     setWindowDimensions(cinfo.output_width,cinfo.output_height);
@@ -596,7 +596,7 @@ void FlashPhotoApp::loadImageToCanvas()
           }
           free(buffer);
 
-          // Modify the main display PixleBuffer
+          // Modify the main display PixelBuffer
           canvasWidth = w;
           canvasHeight = h;
           setWindowDimensions(w,h);
@@ -616,7 +616,6 @@ void FlashPhotoApp::loadImageToStamp()
     int i;
     PixelBuffer *newBuf;
     std::string tempName;
-    png_bytep * row_pointers;
     tempName = "./" + m_fileName;
     const char *myFileName = tempName.c_str();
 
@@ -705,9 +704,6 @@ void FlashPhotoApp::loadImageToStamp()
 
 void FlashPhotoApp::saveCanvasToFile()
 {
-  png_bytep * row_pointers;
-  int i, j;
-
   const char *myFileName = m_fileName.c_str();
   FILE *fp = fopen(myFileName, "wb");
   if (!fp) {
