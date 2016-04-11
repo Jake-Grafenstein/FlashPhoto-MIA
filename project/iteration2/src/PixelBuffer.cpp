@@ -9,6 +9,7 @@
 #include "ColorData.h"
 
 using std::cerr;
+using std::cout;
 using std::endl;
 using std::fill;
 
@@ -25,7 +26,7 @@ PixelBuffer::~PixelBuffer() {
 
 ColorData PixelBuffer::getPixel(int x, int y) const {
 	ColorData pixelData;
-	
+
 	if ((x < 0) || (x >= m_width) || (y < 0) || (y >= m_height)) {
 		cerr << "getPixel: x,y out of range: " << x << " " << y << endl;
 	}
@@ -69,9 +70,10 @@ void PixelBuffer::fillPixelBufferWithColor(ColorData color) {
 void PixelBuffer::copyPixelBuffer(PixelBuffer * sourceBuffer, PixelBuffer * destinationBuffer) {
 	if (destinationBuffer->getWidth() != sourceBuffer->getWidth() || destinationBuffer->getHeight() != sourceBuffer->getHeight()) {
 		cerr << "copyPixelBuffer: " << "dimension mismatch" << endl;
+		cout << "Temporary Buffer Width & Height: " << sourceBuffer->getWidth() << ", " << sourceBuffer->getHeight() << endl;
+		cout << "Primary Buffer Width & Height: " << destinationBuffer->getWidth() << ", " << destinationBuffer->getHeight() << endl;
 	}
 	else {
 		memcpy ( (void*)destinationBuffer->m_pixels, (void*) sourceBuffer->m_pixels, sizeof(ColorData)*destinationBuffer->m_height*destinationBuffer->m_width );
-	}	
+	}
 }
-

@@ -539,7 +539,7 @@ void FlashPhotoApp::loadImageToCanvas()
 	newBuf->setPixel(i,cinfo.output_height-cinfo.output_scanline,ColorData(((float) buffer[0][3*i])/255,((float) buffer[0][3*i+1])/255,((float) buffer[0][3*i+2])/255));
       }
     }
-    canvasWidth = row_width;
+    canvasWidth = cinfo.output_width;
     canvasHeight = cinfo.output_height;
     setWindowDimensions(cinfo.output_width,cinfo.output_height);
     m_displayBuffer = newBuf;
@@ -625,8 +625,42 @@ void FlashPhotoApp::saveCanvasToFile()
     cout << "Save Canvas been clicked for file " << m_fileName << endl;
     if (m_fileName.substr(m_fileName.find_last_of(".") + 1) == "jpg")
     {
-      cout << "jpeg file" << endl;
-
+      struct jpeg_compress_struct cinfo;
+      struct jpeg_error_mgr jerr;
+      int k = 0;
+      int sizeOfImageBuffer = canvasWidth*canvasHeight*3;
+      JSAMPLE * image_buffer = (JSAMPLE *) malloc(sizeOfImageBuffer*sizeof(JSAMPLE));
+      for (int i = 0; i < canvasHeight; i++) {
+        for (int j = 0; j < canvasWidth; j++) {
+          if (k < sizeOfImageBuffer) {
+            image_buffer[k] = (JSAMPLE) 255 * m_displayBuffer->getPixel(j,canvasHeight-1-i).getRed();
+            image_buffer[k+1] = (JSAMPLE) 255 * m_displayBuffer->getPixel(j,canvasHeight-1-i).getGreen();
+            image_buffer[k+2] = (JSAMPLE) 255 * m_displayBuffer->getPixel(j,canvasHeight-1-i).getBlue();
+          }
+          k+=3;
+        }
+      }
+      JSAMPROW row_pointer[1];
+      int row_stride;
+      cinfo.err = jpeg_std_error(&jerr);
+      jpeg_create_compress(&cinfo);
+      if (fp == NULL) {
+        exit(1);
+      }
+      jpeg_stdio_dest(&cinfo, fp);
+      cinfo.image_width = canvasWidth;
+      cinfo.image_height = canvasHeight;
+      cinfo.input_components = 3;
+      cinfo.in_color_space = JCS_RGB;
+      jpeg_set_defaults(&cinfo);
+      jpeg_start_compress(&cinfo, TRUE);
+      row_stride = canvasWidth * 3;
+      while (cinfo.next_scanline < cinfo.image_height) {
+        row_pointer[0] = & image_buffer[cinfo.next_scanline * row_stride];
+        (void) jpeg_write_scanlines(&cinfo, row_pointer, 1);
+      }
+      jpeg_finish_compress(&cinfo);
+      jpeg_destroy_compress(&cinfo);
     }
     else if (m_fileName.substr(m_fileName.find_last_of(".") + 1) == "png")
     {
