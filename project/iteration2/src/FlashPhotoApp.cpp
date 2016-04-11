@@ -499,7 +499,7 @@ void FlashPhotoApp::gluiControl(int controlID)
 
 void FlashPhotoApp::loadImageToCanvas()
 {
-  int i, j;
+  int i;
   PixelBuffer *newBuf;
   std::string tempName;
   png_bytep * row_pointers;
@@ -664,35 +664,42 @@ void FlashPhotoApp::saveCanvasToFile()
     }
     else if (m_fileName.substr(m_fileName.find_last_of(".") + 1) == "png")
     {
-       png_structp png_structure = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-       png_infop png_information = png_create_info_struct(png_structure);
+      int imageHeight = canvasHeight;
+      int imageWidth = canvasWidth;
+      png_structp png_structure = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+      // Error Checking
+      if (png_structure == NULL) {
+        fprintf(stderr, "PNG write structure creation failed.\n");
+        exit(1);
+      }
+      png_infop png_information = png_create_info_struct(png_structure);
+      // Error Checking
+      if (png_information == NULL) {
+        fprintf(stderr, "PNG info structure creation failed.\n");
+        exit(1);
+      }
 
-       png_init_io(png_structure, fp);
+      png_init_io(png_structure, fp);
 
-       png_set_IHDR(png_structure, png_information, imageWidth, imageHeight, bit_depth, color_type, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
+      // Create the header
+      png_set_IHDR(png_structure, png_information, imageWidth, imageHeight, 8, PNG_COLOR_TYPE_RGB_ALPHA, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
 
-       png_write_info(png_structure, png_information);
+      png_write_info(png_structure, png_information);
 
-       row_pointers = (png_bytep *) malloc(imageHeight * sizeof(png_bytep));
-       for (i = 0; i < imageHeight; i++) {
-         row_pointers[i] = (png_byte *) malloc(png_get_rowbytes(png_structure, png_information));
-       }
+      // Allocate space for a row of image data
+      png_bytep myRow = (png_bytep) malloc(imageWidth*4*sizeof(png_byte));
 
-       for (i = 0; i < imageHeight; i++) {
-         png_byte* myRow = row_pointers[i];
-         for (j = 0; j < imageWidth; j++) {
-           png_byte* myPtr = &(myRow[i*4]);
-           myPtr[0] = m_displayBuffer->getPixel(i,j).getRed();
-           myPtr[1] = m_displayBuffer->getPixel(i,j).getGreen();
-           myPtr[2] = m_displayBuffer->getPixel(i,j).getBlue();
-           myPtr[3] = m_displayBuffer->getPixel(i,j).getAlpha();
-         }
-       }
-
-       png_write_image(png_structure, row_pointers);
-
-       png_write_end(png_structure, NULL);
-
+      // Write data from the PixelBuffer to the row
+      int i,j;
+      for (i=0; i < imageHeight; i++) {
+        for (j=0;j < imageWidth; j++) {
+          myRow[j*4] = (unsigned char) 255 * m_displayBuffer->getPixel(j,i).getRed();
+          myRow[j*4+1] = (unsigned char) 255 * m_displayBuffer->getPixel(j,i).getGreen();
+          myRow[j*4+2] = (unsigned char) 255 * m_displayBuffer->getPixel(j,i).getBlue();
+          myRow[j*4+3] = (unsigned char) 255 * m_displayBuffer->getPixel(j,i).getAlpha();
+        }
+        png_write_row(png_structure, myRow);
+      }
     }
   fclose(fp);
 }
