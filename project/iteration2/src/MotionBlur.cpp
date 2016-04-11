@@ -42,19 +42,27 @@ MotionBlur::~MotionBlur() {
 void MotionBlur::adjustKernel(float amount, int direction) {
   int i, j;
   float blurRatio = 1.0 / amount;
+
+  // Reinitialize kernel to 0.0
+  for (i = 0; i < kernelSize; i++) {
+    for (j = 0; j < kernelSize; j++) {
+      kernel[i][j] = 0.0;
+    }
+  }
+
   if (direction == 0) {
     for (i = 0; i < kernelSize; i++) {
-      kernel[midPoint][i] = amount;
+      kernel[midPoint][i] = blurRatio;
     }
   } else if (direction == 1) {
     for (i = 0; i < kernelSize; i++) {
-      kernel[i][midPoint] = amount;
+      kernel[i][midPoint] = blurRatio;
     }
   } else if (direction == 2) {
     for (i = 0; i < kernelSize; i++) {
       for (j = 0; j < kernelSize; j++) {
         if (i == j) {
-          kernel[i][j] = amount;
+          kernel[i][j] = blurRatio;
         }
       }
     }
@@ -62,28 +70,9 @@ void MotionBlur::adjustKernel(float amount, int direction) {
     for (i = 0; i < kernelSize; i++) {
       for (j = 0; j < kernelSize; j++) {
         if ((kernelSize - 1 - j) == i) {
-          kernel[i][j] = amount;
+          kernel[i][j] = blurRatio;
         }
       }
     }
   }
-}
-
-void MotionBlur::applyFilter(PixelBuffer *buf, float amount, int direction) {
-  adjustKernel(amount, direction);
-	int i,j,width,height;
-	ColorData tempPixel;
-	PixelBuffer *tempBuffer;
-	width = buf -> getWidth();
-	height = buf -> getHeight();
-	tempBuffer = new PixelBuffer(width,height,ColorData(0,0,0));
-	for (i = 0; i < width; i++)
-	{
-		for (j = 0; j < height; j++)
-		{
-			applyKernel(i,j,buf,tempBuffer);
-		}
-	}
-	PixelBuffer::copyPixelBuffer(tempBuffer,buf);
-	delete tempBuffer;
 }

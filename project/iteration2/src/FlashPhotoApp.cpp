@@ -730,7 +730,7 @@ void FlashPhotoApp::applyFilterMotionBlur()
 {
   storePixelBuffer();
   motionBlur->applyFilter(m_displayBuffer, m_filterParameters.motionBlur_amount, m_filterParameters.motionBlur_direction);
-  cout << "Apply has been clicked for Sharpen with amount = " << m_filterParameters.motionBlur_amount
+  cout << "Apply has been clicked for Motion Blur with amount = " << m_filterParameters.motionBlur_amount
     << " and direction " << m_filterParameters.motionBlur_direction << endl;
 }
 

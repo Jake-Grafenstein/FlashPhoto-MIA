@@ -12,7 +12,6 @@ class MotionBlur : public ConvolutionFilter {
 public:
   MotionBlur();
   ~MotionBlur();
-  void applyFilter(PixelBuffer *buf, float amount, int direction);
   void adjustKernel(float amount, int direction);
 private:
 
