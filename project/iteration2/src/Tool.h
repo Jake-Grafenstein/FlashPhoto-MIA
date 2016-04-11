@@ -19,6 +19,7 @@ public:
   float getPixel(int x,int y);
   float calculateDistance(int x, int y, float mid);
   virtual void paintMask(int x,int y,PixelBuffer **pixelBuffer,ColorData color,ColorData backgroundColor);
+  virtual void updateStamp(PixelBuffer* newStamp);
 
 protected:
   float **mask;

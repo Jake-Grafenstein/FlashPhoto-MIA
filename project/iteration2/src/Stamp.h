@@ -13,6 +13,10 @@ class Stamp: public Tool
   public:
     Stamp();
     virtual ~Stamp();
+    void updateStamp(PixelBuffer* newStamp);
+
+  private:
+    PixelBuffer* stampBuffer;
 };
 
 #endif

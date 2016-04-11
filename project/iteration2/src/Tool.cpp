@@ -43,13 +43,13 @@ void Tool::paintMask(int x,int y,PixelBuffer **displayBuffer,ColorData color,Col
 	width = (*displayBuffer)->getWidth();
 	height = (*displayBuffer)->getHeight();
 	ColorData tempPixel;
-	
+
 	// Applies the mask to the display buffer
 	for (i=0;i<maskSize;i++) {
 		for (j=0;j<maskSize;j++) {
 			bufferI = x + i - (maskSize/2) - 1;
 			bufferJ = y + j - (maskSize/2) - 1;
-                        
+
 			// Make sure the width and length are correct, be prepared to swap if necessary
 			if ((bufferI > 0) && (bufferI < width) && (bufferJ > 0) && (bufferJ < height)) {
 				tempPixel = (**displayBuffer).getPixel(bufferI,height - bufferJ) * (1 - getPixel(i,j));
@@ -57,4 +57,9 @@ void Tool::paintMask(int x,int y,PixelBuffer **displayBuffer,ColorData color,Col
 			}
 		}
 	}
+}
+
+void Tool::updateStamp(PixelBuffer* newStamp)
+{
+
 }

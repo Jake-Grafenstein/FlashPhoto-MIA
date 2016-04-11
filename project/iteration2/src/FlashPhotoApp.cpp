@@ -583,6 +583,93 @@ void FlashPhotoApp::loadImageToCanvas()
 void FlashPhotoApp::loadImageToStamp()
 {
     cout << "Load Stamp has been clicked for file " << m_fileName << endl;
+    int i;
+    PixelBuffer *newBuf;
+    std::string tempName;
+    png_bytep * row_pointers;
+    tempName = "./" + m_fileName;
+    const char *myFileName = tempName.c_str();
+
+    // If we are dealing with a JPEG, image
+    if (m_fileName.substr(m_fileName.find_last_of(".") + 1) == "jpg") {
+      cout << "jpeg file" << endl;
+      struct jpeg_decompress_struct cinfo;
+      struct jpeg_error_mgr jerr;
+      FILE * infile;
+      JSAMPARRAY buffer;
+      int row_width;
+      cinfo.err = jpeg_std_error(&jerr);
+
+      // Open the file
+      if ((infile = fopen(myFileName, "rb")) == NULL) {
+        fprintf(stderr, "can't open %s\n", myFileName);
+        return;
+      }
+
+      jpeg_create_decompress(&cinfo);
+      jpeg_stdio_src(&cinfo, infile);
+      (void) jpeg_read_header(&cinfo, FALSE);
+      (void) jpeg_start_decompress(&cinfo);
+      row_width = cinfo.output_width * cinfo.output_components;
+      buffer = (*cinfo.mem->alloc_sarray) ((j_common_ptr) &cinfo, JPOOL_IMAGE, row_width, 1);
+      newBuf = new PixelBuffer(cinfo.output_width,cinfo.output_height,ColorData(1,1,1));
+
+      // Set the pixel in the temporary PixelBuffer to the information stored in the JSAMPARRAY buffer
+      while (cinfo.output_scanline < cinfo.output_height) {
+        (void) jpeg_read_scanlines(&cinfo, buffer, 1);
+        for (i=0;i<cinfo.output_width;i++) {
+  	       newBuf->setPixel(i,cinfo.output_height-cinfo.output_scanline,ColorData(((float) buffer[0][3*i])/255,((float) buffer[0][3*i+1])/255,((float) buffer[0][3*i+2])/255));
+        }
+      }
+
+      // Modify the main display PixleBuffer
+      canvasWidth = cinfo.output_width;
+      canvasHeight = cinfo.output_height;
+      tools[7]->updateStamp(newBuf);
+      (void) jpeg_finish_decompress(&cinfo);
+      jpeg_destroy_decompress(&cinfo);
+      fclose(infile);
+    }
+    else if (m_fileName.substr(m_fileName.find_last_of(".") + 1) == "png")
+    {
+      cout << "Png image" << endl;
+      png_image image;
+      memset(&image, 0, (sizeof image) );
+      image.version = PNG_IMAGE_VERSION;
+      cout << myFileName << endl;
+
+      // Check to make sure we can read the file
+      if (png_image_begin_read_from_file(&image, myFileName)) {
+        png_bytep buffer;
+        image.format = PNG_FORMAT_RGBA;
+  	    int imageSize = PNG_IMAGE_SIZE(image);
+        buffer = new png_byte[imageSize];
+
+        if (buffer != NULL) {
+          if (png_image_finish_read(&image, NULL, buffer, 0, NULL)) {
+            ColorData temp;
+            int w = image.width;
+            int h = image.height;
+            newBuf = new PixelBuffer(w,h,ColorData(1,1,1));
+
+            // Create a temp pixel from the data held in buffer
+            for (i=0;i<(imageSize/4);i++) {
+              temp = ColorData(((float) buffer[4*i])/255.0,((float) buffer[4*i+1])/255.0,((float) buffer[4*i+2])/255.0,buffer[4*i+3]);
+              newBuf->setPixel(i%w,i/w,temp);
+            }
+            free(buffer);
+
+            // Modify the main display PixleBuffer
+            canvasWidth = w;
+            canvasHeight = h;
+            tools[7]->updateStamp(newBuf);
+          } else {
+            fprintf(stderr, "pngtopng: read %s: %s\n", myFileName, image.message);
+            png_image_free(&image);
+          }
+        }
+      }
+    }
 }
 
 void FlashPhotoApp::saveCanvasToFile()

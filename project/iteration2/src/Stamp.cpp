@@ -17,5 +17,10 @@ Stamp::Stamp()
 
 Stamp::~Stamp()
 {
-  
+
+}
+
+void Stamp::updateStamp(PixelBuffer* newStamp)
+{
+  stampBuffer = newStamp;
 }
