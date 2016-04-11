@@ -26,8 +26,6 @@ FlashPhotoApp::FlashPhotoApp(int argc, char* argv[], int width, int height, Colo
     initializeTools();
     // Initialize Interface
     initializeBuffers(backgroundColor, width, height);
-    // Initialize Image Helper Variables
-    initializeImageVars();
 
     initGlui();
     initGraphics();
@@ -51,11 +49,6 @@ FlashPhotoApp::~FlashPhotoApp()
     if (m_displayBuffer) {
         delete m_displayBuffer;
     }
-    for (i=0;i<toolSize;i++)
-    {
-	delete tools[i];
-    }
-    tools.clear();
 }
 
 
@@ -87,16 +80,15 @@ void FlashPhotoApp::mouseDragged(int x, int y)
 	}
 }
 
-void FlashPhotoApp::mouseMoved(int x, int y)
-{
-
+void FlashPhotoApp::mouseMoved(int x, int y) {
+  // beep boop
 }
 
 void FlashPhotoApp::leftMouseDown(int x, int y)
 {
   storePixelBuffer();
 	// If the leftMouseDown is clicked without moving, the tool should be applied to the pixelBuffer once
-        (*tools[m_curTool]).paintMask(x,y,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
+  (*tools[m_curTool]).paintMask(x,y,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
 
 	// Set the previous x and y values to fill the line
 	previousX = x;
@@ -149,6 +141,7 @@ int FlashPhotoApp::getNextYValue(float slope, int previousX, int newX, int previ
 	return (int)(-1.0*((slope*newX)-(slope*previousX)-previousY));
 }
 
+// A function for keeping the old pixelBuffer so that the undo/redo operations work properly
 void FlashPhotoApp::storePixelBuffer() {
   // Store the current pixelBuffer in the undoStack
 	PixelBuffer *tempPixelBuffer = new PixelBuffer(canvasWidth,canvasHeight,backColor);
@@ -182,12 +175,7 @@ void FlashPhotoApp::initializeTools() {
   blur = new BlurFilter();
 }
 
-void FlashPhotoApp::initializeImageVars() {
-
-}
-
-void FlashPhotoApp::initGlui()
-{
+void FlashPhotoApp::initGlui() {
     // Select first tool (this activates the first radio button in glui)
     m_curTool = 0;
 
@@ -503,12 +491,11 @@ void FlashPhotoApp::loadImageToCanvas()
   PixelBuffer *newBuf;
   std::string tempName;
   png_bytep * row_pointers;
-
   tempName = "./" + m_fileName;
   const char *myFileName = tempName.c_str();
 
-  if (m_fileName.substr(m_fileName.find_last_of(".") + 1) == "jpg")
-  {
+  // If we are dealing with a JPEG, image
+  if (m_fileName.substr(m_fileName.find_last_of(".") + 1) == "jpg") {
     cout << "jpeg file" << endl;
     struct jpeg_decompress_struct cinfo;
     struct jpeg_error_mgr jerr;
@@ -517,28 +504,29 @@ void FlashPhotoApp::loadImageToCanvas()
     int row_width;
     cinfo.err = jpeg_std_error(&jerr);
 
-    if ((infile = fopen(myFileName, "rb")) == NULL)
-    {
+    // Open the file
+    if ((infile = fopen(myFileName, "rb")) == NULL) {
       fprintf(stderr, "can't open %s\n", myFileName);
       return;
     }
+
     jpeg_create_decompress(&cinfo);
     jpeg_stdio_src(&cinfo, infile);
     (void) jpeg_read_header(&cinfo, FALSE);
     (void) jpeg_start_decompress(&cinfo);
     row_width = cinfo.output_width * cinfo.output_components;
-    buffer = (*cinfo.mem->alloc_sarray)
-  		((j_common_ptr) &cinfo, JPOOL_IMAGE, row_width, 1);
+    buffer = (*cinfo.mem->alloc_sarray) ((j_common_ptr) &cinfo, JPOOL_IMAGE, row_width, 1);
     newBuf = new PixelBuffer(cinfo.output_width,cinfo.output_height,ColorData(1,1,1));
-    while (cinfo.output_scanline < cinfo.output_height)
-    {
+
+    // Set the pixel in the temporary PixelBuffer to the information stored in the JSAMPARRAY buffer
+    while (cinfo.output_scanline < cinfo.output_height) {
       (void) jpeg_read_scanlines(&cinfo, buffer, 1);
-      for (i=0;i<cinfo.output_width;i++)
-      {
-//cout << "Line: " << cinfo.output_scanline << endl;
-	newBuf->setPixel(i,cinfo.output_height-cinfo.output_scanline,ColorData(((float) buffer[0][3*i])/255,((float) buffer[0][3*i+1])/255,((float) buffer[0][3*i+2])/255));
+      for (i=0;i<cinfo.output_width;i++) {
+	       newBuf->setPixel(i,cinfo.output_height-cinfo.output_scanline,ColorData(((float) buffer[0][3*i])/255,((float) buffer[0][3*i+1])/255,((float) buffer[0][3*i+2])/255));
       }
     }
+
+    // Modify the main display PixleBuffer
     canvasWidth = cinfo.output_width;
     canvasHeight = cinfo.output_height;
     setWindowDimensions(cinfo.output_width,cinfo.output_height);
@@ -546,64 +534,48 @@ void FlashPhotoApp::loadImageToCanvas()
     (void) jpeg_finish_decompress(&cinfo);
     jpeg_destroy_decompress(&cinfo);
     fclose(infile);
-
   }
   else if (m_fileName.substr(m_fileName.find_last_of(".") + 1) == "png")
   {
     cout << "Png image" << endl;
-      png_image image;
+    png_image image;
+    memset(&image, 0, (sizeof image) );
+    image.version = PNG_IMAGE_VERSION;
+    cout << myFileName << endl;
 
-      /* Only the image structure version number needs to be set. */
-      memset(&image, 0, (sizeof image) );
-      image.version = PNG_IMAGE_VERSION;
-      cout << myFileName << endl;
-      if (png_image_begin_read_from_file(&image, myFileName))
-      {
-         png_bytep buffer;
-         /* Change this to try different formats!  If you set a colormap format
-          * then you must also supply a colormap below.
-          */
-         image.format = PNG_FORMAT_RGBA;
-	 int imageSize = PNG_IMAGE_SIZE(image);
-         buffer = new png_byte[imageSize];
-         if (buffer != NULL)
-         {
-            if (png_image_finish_read(&image, NULL/*background*/, buffer,
-               0/*row_stride*/, NULL/*colormap for PNG_FORMAT_FLAG_COLORMAP */))
-            {
-              ColorData temp;
-              int w = image.width;
-              int h = image.height;
-              newBuf = new PixelBuffer(w,h,ColorData(1,1,1));
-               for (i=0;i<(imageSize/4);i++)
-               {
-                   temp = ColorData(((float) buffer[4*i])/255.0,((float) buffer[4*i+1])/255.0,((float) buffer[4*i+2])/255.0,buffer[4*i+3]);
-                   newBuf->setPixel(i%w,i/w,temp);
-               }
-               free(buffer);
-               canvasWidth = w;
-               canvasHeight = h;
-               setWindowDimensions(w,h);
-               m_displayBuffer = newBuf;
-               cout << "success?" << endl;
-		cout << imageSize << " " << w << " " << h << endl;
+    // Check to make sure we can read the file
+    if (png_image_begin_read_from_file(&image, myFileName)) {
+      png_bytep buffer;
+      image.format = PNG_FORMAT_RGBA;
+	    int imageSize = PNG_IMAGE_SIZE(image);
+      buffer = new png_byte[imageSize];
 
-            }
+      if (buffer != NULL) {
+        if (png_image_finish_read(&image, NULL, buffer, 0, NULL)) {
+          ColorData temp;
+          int w = image.width;
+          int h = image.height;
+          newBuf = new PixelBuffer(w,h,ColorData(1,1,1));
 
-            else
-            {
-               fprintf(stderr, "pngtopng: read %s: %s\n", myFileName,
-                   image.message);
+          // Create a temp pixel from the data held in buffer
+          for (i=0;i<(imageSize/4);i++) {
+            temp = ColorData(((float) buffer[4*i])/255.0,((float) buffer[4*i+1])/255.0,((float) buffer[4*i+2])/255.0,buffer[4*i+3]);
+            newBuf->setPixel(i%w,i/w,temp);
+          }
+          free(buffer);
 
-               /* This is the only place where a 'free' is required; libpng does
-                * the cleanup on error and success, but in this case we couldn't
-                * complete the read because of running out of memory.
-                */
-               png_image_free(&image);
-            }
-         }
-       }
-   }
+          // Modify the main display PixleBuffer
+          canvasWidth = w;
+          canvasHeight = h;
+          setWindowDimensions(w,h);
+          m_displayBuffer = newBuf;
+        } else {
+          fprintf(stderr, "pngtopng: read %s: %s\n", myFileName, image.message);
+          png_image_free(&image);
+        }
+      }
+    }
+  }
 }
 
 void FlashPhotoApp::loadImageToStamp()
@@ -619,17 +591,22 @@ void FlashPhotoApp::saveCanvasToFile()
   const char *myFileName = m_fileName.c_str();
   FILE *fp = fopen(myFileName, "wb");
   if (!fp) {
-
+    exit(1);
   }
 
     cout << "Save Canvas been clicked for file " << m_fileName << endl;
     if (m_fileName.substr(m_fileName.find_last_of(".") + 1) == "jpg")
     {
+      // Create necessary structures
       struct jpeg_compress_struct cinfo;
       struct jpeg_error_mgr jerr;
       int k = 0;
       int sizeOfImageBuffer = canvasWidth*canvasHeight*3;
       JSAMPLE * image_buffer = (JSAMPLE *) malloc(sizeOfImageBuffer*sizeof(JSAMPLE));
+      JSAMPROW row_pointer[1];
+      int row_stride;
+
+      // Store Pixel Data in the JSAMPLE buffer
       for (int i = 0; i < canvasHeight; i++) {
         for (int j = 0; j < canvasWidth; j++) {
           if (k < sizeOfImageBuffer) {
@@ -640,13 +617,10 @@ void FlashPhotoApp::saveCanvasToFile()
           k+=3;
         }
       }
-      JSAMPROW row_pointer[1];
-      int row_stride;
+
+      // Set JPEG structure's information
       cinfo.err = jpeg_std_error(&jerr);
       jpeg_create_compress(&cinfo);
-      if (fp == NULL) {
-        exit(1);
-      }
       jpeg_stdio_dest(&cinfo, fp);
       cinfo.image_width = canvasWidth;
       cinfo.image_height = canvasHeight;
@@ -655,6 +629,8 @@ void FlashPhotoApp::saveCanvasToFile()
       jpeg_set_defaults(&cinfo);
       jpeg_start_compress(&cinfo, TRUE);
       row_stride = canvasWidth * 3;
+
+      // Scan through the image buffer to garner the pixel data, write to the JPEG struture
       while (cinfo.next_scanline < cinfo.image_height) {
         row_pointer[0] = & image_buffer[cinfo.next_scanline * row_stride];
         (void) jpeg_write_scanlines(&cinfo, row_pointer, 1);
@@ -666,12 +642,14 @@ void FlashPhotoApp::saveCanvasToFile()
     {
       int imageHeight = canvasHeight;
       int imageWidth = canvasWidth;
+
       png_structp png_structure = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
       // Error Checking
       if (png_structure == NULL) {
         fprintf(stderr, "PNG write structure creation failed.\n");
         exit(1);
       }
+
       png_infop png_information = png_create_info_struct(png_structure);
       // Error Checking
       if (png_information == NULL) {
@@ -709,7 +687,7 @@ void FlashPhotoApp::applyFilterThreshold()
   storePixelBuffer();
 	thresh.setValue(m_filterParameters.threshold_amount);
 	thresh.applyFilter(m_displayBuffer);
-//    cout << "Apply has been clicked for Threshold has been clicked with amount =" << m_filterParameters.threshold_amount << endl;
+  cout << "Apply has been clicked for Threshold has been clicked with amount =" << m_filterParameters.threshold_amount << endl;
 }
 
 void FlashPhotoApp::applyFilterChannel()
@@ -719,9 +697,9 @@ void FlashPhotoApp::applyFilterChannel()
 	channels.setG(m_filterParameters.channel_colorGreen);
 	channels.setB(m_filterParameters.channel_colorBlue);
 	channels.applyFilter(m_displayBuffer);
-/*    cout << "Apply has been clicked for Channels with red = " << m_filterParameters.channel_colorRed
+    cout << "Apply has been clicked for Channels with red = " << m_filterParameters.channel_colorRed
     << ", green = " << m_filterParameters.channel_colorGreen
-    << ", blue = " << m_filterParameters.channel_colorBlue << endl;*/
+    << ", blue = " << m_filterParameters.channel_colorBlue << endl;
 }
 
 void FlashPhotoApp::applyFilterSaturate()
@@ -729,28 +707,28 @@ void FlashPhotoApp::applyFilterSaturate()
   storePixelBuffer();
 	saturate.setValue(m_filterParameters.saturation_amount);
 	saturate.applyFilter(m_displayBuffer);
-//    cout << "Apply has been clicked for Saturate with amount = " << m_filterParameters.saturation_amount << endl;
+  cout << "Apply has been clicked for Saturate with amount = " << m_filterParameters.saturation_amount << endl;
 }
 
 void FlashPhotoApp::applyFilterBlur()
 {
   storePixelBuffer();
   blur->applyFilter(m_displayBuffer, m_filterParameters.blur_amount, -1);
-    cout << "Apply has been clicked for Blur with amount = " << m_filterParameters.blur_amount << endl;
+  cout << "Apply has been clicked for Blur with amount = " << m_filterParameters.blur_amount << endl;
 }
 
 void FlashPhotoApp::applyFilterSharpen()
 {
   storePixelBuffer();
   sharpen->applyFilter(m_displayBuffer, m_filterParameters.sharpen_amount, -1);
-    cout << "Apply has been clicked for Sharpen with amount = " << m_filterParameters.sharpen_amount << endl;
+  cout << "Apply has been clicked for Sharpen with amount = " << m_filterParameters.sharpen_amount << endl;
 }
 
 void FlashPhotoApp::applyFilterMotionBlur()
 {
   storePixelBuffer();
   motionBlur->applyFilter(m_displayBuffer, m_filterParameters.motionBlur_amount, m_filterParameters.motionBlur_direction);
-    cout << "Apply has been clicked for Sharpen with amount = " << m_filterParameters.motionBlur_amount
+  cout << "Apply has been clicked for Sharpen with amount = " << m_filterParameters.motionBlur_amount
     << " and direction " << m_filterParameters.motionBlur_direction << endl;
 }
 
@@ -765,13 +743,13 @@ void FlashPhotoApp::applyFilterQuantize()
   storePixelBuffer();
 	quantize.setBins(m_filterParameters.quantize_bins);
 	quantize.applyFilter(m_displayBuffer);
-    cout << "Apply has been clicked for Quantize with bins = " << m_filterParameters.quantize_bins << endl;
+  cout << "Apply has been clicked for Quantize with bins = " << m_filterParameters.quantize_bins << endl;
 }
 
 void FlashPhotoApp::applyFilterSpecial() {
   storePixelBuffer();
   comicBook.applyFilter(m_displayBuffer);
-    cout << "Apply has been clicked for Special" << endl;
+  cout << "Apply has been clicked for Special" << endl;
 }
 
 void FlashPhotoApp::undoOperation()
