@@ -8,6 +8,7 @@
 #include "Pen.h"
 #include "XPen.h"
 #include "Blur.h"
+#include "Stamp.h"
 #include "Tool.h"
 #include <cmath>
 #include <iostream>
@@ -164,6 +165,7 @@ void FlashPhotoApp::initializeTools() {
 	tools.push_back(new Highlighter());
 	tools.push_back(new XPen());
 	tools.push_back(new Blur());
+  tools.push_back(new Stamp());
 	thresh = Threshold();
 	saturate = Saturate();
 	channels = Channels();
@@ -190,7 +192,7 @@ void FlashPhotoApp::initGlui() {
         new GLUI_RadioButton(radio, "Highlighter");
         new GLUI_RadioButton(radio, "XPen");
         new GLUI_RadioButton(radio, "Blur");
-//        new GLUI_RadioButton(radio, "Stamp");//will implement later
+        new GLUI_RadioButton(radio, "Stamp");
     }
 
     GLUI_Panel *colorPanel = new GLUI_Panel(m_glui, "Tool Color");
