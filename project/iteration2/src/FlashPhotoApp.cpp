@@ -96,7 +96,6 @@ void FlashPhotoApp::mouseMoved(int x, int y) {
 void FlashPhotoApp::leftMouseDown(int x, int y)
 {
   storePixelBuffer();
-<<<<<<< HEAD
   // if the current tool is the stamp tool
   if (m_curTool == 7)
   {
@@ -123,11 +122,6 @@ void FlashPhotoApp::leftMouseDown(int x, int y)
   {
     (*tools[m_curTool]).paintMask(x,y,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
   }
-=======
-	// If the leftMouseDown is clicked without moving, the tool should be applied to the pixelBuffer once
-  (*tools[m_curTool]).paintMask(x,y,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
-
->>>>>>> parent of dbfc650... Stamp works! Might need to be cleaned up a little bit
 	// Set the previous x and y values to fill the line
 	previousX = x;
 	previousY = y;
@@ -658,15 +652,11 @@ void FlashPhotoApp::loadImageToStamp()
       }
 
       // Modify the main display PixleBuffer
-<<<<<<< HEAD
       stampWidth = cinfo.output_width;
       stampHeight = cinfo.output_height;
       stampBuffer = newBuf;
-=======
       canvasWidth = cinfo.output_width;
       canvasHeight = cinfo.output_height;
-      tools[7]->updateStamp(newBuf);
->>>>>>> parent of dbfc650... Stamp works! Might need to be cleaned up a little bit
       (void) jpeg_finish_decompress(&cinfo);
       jpeg_destroy_decompress(&cinfo);
       fclose(infile);
@@ -701,18 +691,10 @@ void FlashPhotoApp::loadImageToStamp()
             free(buffer);
 
             // Modify the main display PixleBuffer
-<<<<<<< HEAD
             stampWidth = w;
             stampHeight = h;
             stampBuffer = newBuf;
-            }
-            else {
-=======
-            canvasWidth = w;
-            canvasHeight = h;
-            tools[7]->updateStamp(newBuf);
-          } else {
->>>>>>> parent of dbfc650... Stamp works! Might need to be cleaned up a little bit
+            }  else {
             fprintf(stderr, "pngtopng: read %s: %s\n", myFileName, image.message);
             png_image_free(&image);
           }
