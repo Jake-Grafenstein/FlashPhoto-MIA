@@ -15,30 +15,70 @@ using namespace std;
 
 EdgeDetection::EdgeDetection() {
   kernelSize = 3;
-  kernel = (float**) malloc(kernelSize*sizeof(float *));
+  xKernel = (float**) malloc(kernelSize*sizeof(float *));
   for (int i = 0; i < kernelSize; i++) {
-    kernel[i] = (float *) malloc(kernelSize * sizeof(float));
+    xKernel[i] = (float *) malloc(kernelSize * sizeof(float));
+  }
+  yKernel = (float**) malloc(kernelSize*sizeof(float *));
+  for (int i = 0; i < kernelSize; i++) {
+    yKernel[i] = (float *) malloc(kernelSize * sizeof(float));
   }
 
-  int midPoint = floor(kernelSize/2);
+  xKernel[0][0] = -1.0;
+  xKernel[0][1] = 0.0;
+  xKernel[0][2] = 1.0;
+  xKernel[1][0] = -2.0;
+  xKernel[1][1] = 0.0;
+  xKernel[1][2] = 2.0;
+  xKernel[2][0] = -1.0;
+  xKernel[2][1] = 0.0;
+  xKernel[2][2] = 1.0;
 
-  kernel[midPoint][midPoint] = 8.0;
-  for (int j = 0; j < kernelSize; j++) {
-    for (int k = 0; k < kernelSize; k++) {
-      if ((j == k) == midPoint) {
-        // Do Nothing
-      } else if (((j == 0) || (j== kernelSize-1)) && ((k == 0) || (k == kernelSize-1))) {
-        kernel[j][k] = 0.0;
-      } else {
-        kernel[j][k] = -1.0;
-      }
-    }
-  }
+  yKernel[0][0] = -1.0;
+  yKernel[0][1] = -2.0;
+  yKernel[0][2] = -1.0;
+  yKernel[1][0] = 0.0;
+  yKernel[1][1] = 0.0;
+  yKernel[1][2] = 0.0;
+  yKernel[2][0] = 1.0;
+  yKernel[2][1] = 2.0;
+  yKernel[2][2] = 1.0;
+
 }
 
 EdgeDetection::~EdgeDetection() {
   for (int i = 0; i < kernelSize; i++) {
-    free(kernel[i]);
+    free(xKernel[i]);
+    free(yKernel[i]);
   }
-  free(kernel);
+  free(xKernel);
+  free(yKernel);
+}
+
+void EdgeDetection::applyKernel(int x, int y,PixelBuffer *buf, PixelBuffer *temp)
+{
+	float r=0,g=0,b=0;
+	int i,j,xloc,yloc,w,h;
+	ColorData pixel;
+	w = buf->getWidth();
+	h = buf->getHeight();
+	for (i = 0; i < kernelSize; i++)
+	{
+		for (j = 0; j < kernelSize; j++)
+		{
+			xloc = x+i-(kernelSize/2);
+			yloc = y+j-(kernelSize/2);
+			if (xloc > -1 && xloc < w && yloc > -1 && yloc < h)
+			{
+				pixel = buf -> getPixel(x + i - (kernelSize/2),y + j - (kernelSize/2));
+				r += (xKernel[i][j] * pixel.getRed());
+				g += (xKernel[i][j] * pixel.getGreen());
+				b += (xKernel[i][j] * pixel.getBlue());
+        r += (yKernel[i][j] * pixel.getRed());
+				g += (yKernel[i][j] * pixel.getGreen());
+				b += (yKernel[i][j] * pixel.getBlue());
+			}
+		}
+	}
+	temp -> setPixel(x,y,ColorData(r,g,b));
 }
