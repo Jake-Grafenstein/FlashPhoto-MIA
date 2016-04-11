@@ -88,9 +88,30 @@ void FlashPhotoApp::mouseMoved(int x, int y) {
 void FlashPhotoApp::leftMouseDown(int x, int y)
 {
   storePixelBuffer();
-	// If the leftMouseDown is clicked without moving, the tool should be applied to the pixelBuffer once
-  (*tools[m_curTool]).paintMask(x,y,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
-
+  if (m_curTool == 7)
+  {
+    int height = m_displayBuffer->getHeight();
+    int width = m_displayBuffer->getWidth();
+    ColorData tempPixel;
+    int bufferI, bufferJ;
+    for (int i = 0; i < stampWidth; i++)
+    {
+      for (int j = 0; j < stampHeight; j++)
+      {
+        bufferI = x + i - (stampWidth/2);
+        bufferJ = (height-y) + j - (stampHeight/2);
+        if (bufferI > 0 && bufferI < width && bufferJ > 0 && bufferJ < height)
+        {
+          tempPixel = stampBuffer->getPixel(i, j);
+          m_displayBuffer->setPixel(bufferI, bufferJ, tempPixel);
+        }
+      }
+    }
+  }
+	else// If the leftMouseDown is clicked without moving, the tool should be applied to the pixelBuffer once
+  {
+    (*tools[m_curTool]).paintMask(x,y,&m_displayBuffer,ColorData(m_curColorRed,m_curColorGreen,m_curColorBlue),backColor);
+  }
 	// Set the previous x and y values to fill the line
 	previousX = x;
 	previousY = y;
@@ -623,9 +644,10 @@ void FlashPhotoApp::loadImageToStamp()
       }
 
       // Modify the main display PixleBuffer
-      canvasWidth = cinfo.output_width;
-      canvasHeight = cinfo.output_height;
-      tools[7]->updateStamp(newBuf);
+      stampWidth = cinfo.output_width;
+      stampHeight = cinfo.output_height;
+      //tools[7]->updateStamp(newBuf);
+      stampBuffer = newBuf;
       (void) jpeg_finish_decompress(&cinfo);
       jpeg_destroy_decompress(&cinfo);
       fclose(infile);
@@ -660,10 +682,12 @@ void FlashPhotoApp::loadImageToStamp()
             free(buffer);
 
             // Modify the main display PixleBuffer
-            canvasWidth = w;
-            canvasHeight = h;
-            tools[7]->updateStamp(newBuf);
-          } else {
+            stampWidth = w;
+            stampHeight = h;
+            //tools[7]->updateStamp(newBuf);
+            stampBuffer = newBuf;
+            }
+            else {
             fprintf(stderr, "pngtopng: read %s: %s\n", myFileName, image.message);
             png_image_free(&image);
           }
