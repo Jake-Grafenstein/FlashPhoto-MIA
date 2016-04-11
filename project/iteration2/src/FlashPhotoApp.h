@@ -158,7 +158,10 @@ private:
 
     // This is the pointer to the buffer where the display PixelBuffer is stored
     PixelBuffer* m_displayBuffer;
+<<<<<<< HEAD
+=======
 
+>>>>>>> 3e9cac201eac625f4e5f34ee02de085590b504ad
     PixelBuffer* stampBuffer;
     // These are used to store the selections from the GLUI user interface
     int m_curTool;
@@ -166,6 +169,7 @@ private:
     std::vector<Tool*> tools;
     std::vector<PixelBuffer*> undoStack;
     std::vector<PixelBuffer*> redoStack;
+
     Threshold thresh;
     Saturate saturate;
     Channels channels;
