@@ -13,10 +13,11 @@ class Sharpen : public ConvolutionFilter {
 public:
   Sharpen();
   ~Sharpen();
-  void applyFilter(PixelBuffer *buf, float amount, int direction);
 
 private:
   int midPoint;
+  void adjustKernel(float amount, int direction);
+  void resizeKernel(float amount);
 };
 
 #endif

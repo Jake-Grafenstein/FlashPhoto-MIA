@@ -10,7 +10,7 @@
 //applies kernel over whole canvas, should just need to define kernel in subclasses
 void ConvolutionFilter::applyFilter(PixelBuffer *buf, float amount, int direction)
 {
-	adjustKernel(amount);
+	adjustKernel(amount,direction);
 	int i,j,width,height;
 	ColorData tempPixel;
 	PixelBuffer *tempBuffer;
@@ -55,6 +55,6 @@ void ConvolutionFilter::applyKernel(int x, int y,PixelBuffer *buf, PixelBuffer *
 	temp -> setPixel(x,y,ColorData(r,g,b));
 }
 
-void ConvolutionFilter::adjustKernel(float amount) {
+void ConvolutionFilter::resizeKernel(float amount) {
 	// Do Nothing
 }

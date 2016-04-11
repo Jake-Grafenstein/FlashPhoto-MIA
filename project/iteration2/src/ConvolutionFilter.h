@@ -19,6 +19,7 @@ protected:
 	float **kernel;
 	int kernelSize;
 	int midPoint;
-	virtual void adjustKernel(float amount);
+	virtual void adjustKernel(float amount, int direction) = 0;
+	virtual void resizeKernel(float amount);
 };
 #endif

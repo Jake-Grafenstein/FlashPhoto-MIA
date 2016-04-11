@@ -9,6 +9,7 @@
 #include <math.h>
 #include "ConvolutionFilter.h"
 #include "Sharpen.h"
+#include "EdgeDetection.h"
 
 Sharpen::Sharpen() {
   kernelSize = 3;
@@ -38,22 +39,46 @@ Sharpen::~Sharpen() {
   free(kernel);
 }
 
-void Sharpen::applyFilter(PixelBuffer *buf, float amount, int direction)
-{
-  kernel[midPoint][midPoint] = amount;
-	int i,j,width,height;
-	ColorData tempPixel;
-	PixelBuffer *tempBuffer;
-	width = buf -> getWidth();
-	height = buf -> getHeight();
-	tempBuffer = new PixelBuffer(width,height,ColorData(0,0,0));
-	for (i = 0; i < width; i++)
-	{
-		for (j = 0; j < height; j++)
-		{
-			applyKernel(i,j,buf, tempBuffer);
-		}
-	}
-	PixelBuffer::copyPixelBuffer(tempBuffer,buf);
-	delete tempBuffer;
+void Sharpen::adjustKernel(float amount, int direction) {
+  int i,j;
+  resizeKernel(amount);
+  midPoint = floor(kernelSize/2);
+
+  kernel[midPoint][midPoint] = (float) kernelSize*kernelSize;
+  for (i=0; i < kernelSize; i++) {
+    for (j = 0; j < kernelSize; j++) {
+      if ((i == midPoint) && (j==midPoint)) {
+        // Do Nothing
+      } else {
+        kernel[i][j] = -1.0;
+      }
+    }
+  }
+  for (i=0; i < kernelSize; i++) {
+    for (j = 0; j < kernelSize; j++) {
+      std::cout << kernel[i][j] << std::endl;
+    }
+  }
+}
+
+void Sharpen::resizeKernel(float amount) {
+  int i;
+  int myAmount = (int) amount;
+  for (i=0;i<kernelSize;i++) {
+    free(kernel[i]);
+  }
+  free(kernel);
+
+  if ((myAmount%2)==0) {
+    myAmount++;
+  } else {
+    myAmount=ceil(myAmount);
+  }
+
+  kernelSize = myAmount;
+  kernel = (float **) malloc(kernelSize * sizeof(float *));
+  for (int i = 0; i < kernelSize; i++) {
+    kernel[i] = (float *) malloc(kernelSize * sizeof(float));
+  }
+
 }

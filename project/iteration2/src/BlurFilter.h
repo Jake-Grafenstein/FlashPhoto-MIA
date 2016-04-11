@@ -12,7 +12,7 @@ class BlurFilter : public ConvolutionFilter {
 public:
   BlurFilter();
   ~BlurFilter();
-  void adjustKernel(float amount);
+  void adjustKernel(float amount, int direction);
 
 
 private:

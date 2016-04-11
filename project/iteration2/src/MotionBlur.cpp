@@ -39,9 +39,34 @@ MotionBlur::~MotionBlur() {
   free(kernel);
 }
 
+void MotionBlur::resizeKernel(float amount) {
+  int i;
+  int myAmount = (int) amount;
+  for (i=0;i<kernelSize;i++) {
+    delete[] kernel[i];
+  }
+  delete[] kernel;
+
+  std::cout << "This is my amount: " << myAmount << std::endl;
+  if ((myAmount%2)==0) {
+    myAmount++;
+  } else {
+    myAmount=ceil(myAmount);
+  }
+
+  kernelSize = myAmount;
+  kernel = (float **) malloc(kernelSize * sizeof(float *));
+  for (int i = 0; i < kernelSize; i++) {
+    kernel[i] = (float *) malloc(kernelSize * sizeof(float));
+  }
+}
+
+
 void MotionBlur::adjustKernel(float amount, int direction) {
   int i, j;
   float blurRatio = 1.0 / amount;
+  resizeKernel(amount);
+  midPoint = floor(kernelSize/2);
 
   // Reinitialize kernel to 0.0
   for (i = 0; i < kernelSize; i++) {
@@ -49,6 +74,7 @@ void MotionBlur::adjustKernel(float amount, int direction) {
       kernel[i][j] = 0.0;
     }
   }
+  std::cout << "I made it here" << std::endl;
 
   if (direction == 0) {
     for (i = 0; i < kernelSize; i++) {
@@ -75,4 +101,5 @@ void MotionBlur::adjustKernel(float amount, int direction) {
       }
     }
   }
+  std::cout << "made it baybeee" << std::endl;
 }

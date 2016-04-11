@@ -18,6 +18,7 @@ public:
 private:
   float **xKernel;
   float **yKernel;
+  void adjustKernel(float amount, int direction);
 };
 
 

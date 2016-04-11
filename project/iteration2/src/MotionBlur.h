@@ -14,6 +14,7 @@ public:
   ~MotionBlur();
   void adjustKernel(float amount, int direction);
 private:
+  void resizeKernel(float amount);
 
 
 };

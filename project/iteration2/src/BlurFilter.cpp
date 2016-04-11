@@ -32,7 +32,7 @@ BlurFilter::~BlurFilter() {
 }
 
 // Frees the old kernel and creates a new one with a larger kernelSize
-void BlurFilter::adjustKernel(float amount) {
+void BlurFilter::adjustKernel(float amount, int direction) {
   int i;
   for (i = 0; i < kernelSize; i++) {
     free(kernel[i]);

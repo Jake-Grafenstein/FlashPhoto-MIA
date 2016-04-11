@@ -82,3 +82,7 @@ void EdgeDetection::applyKernel(int x, int y,PixelBuffer *buf, PixelBuffer *temp
 	}
 	temp -> setPixel(x,y,ColorData(r,g,b));
 }
+
+void EdgeDetection::adjustKernel(float amount, int direction) {
+  // Do Nothing
+}
