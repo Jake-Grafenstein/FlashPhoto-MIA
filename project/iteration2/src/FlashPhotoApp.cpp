@@ -201,7 +201,6 @@ void FlashPhotoApp::initializeTools() {
 	saturate = Saturate();
 	channels = Channels();
 	quantize = Quantize();
-  comicBook = ComicBook();
   edgeDet = new EdgeDetection();
   sharpen = new Sharpen();
   motionBlur = new MotionBlur();
@@ -350,7 +349,7 @@ void FlashPhotoApp::initGlui() {
             new GLUI_Button(quantPanel, "Apply", UI_APPLY_QUANTIZE, s_gluicallback);
         }
 
-        GLUI_Panel *specialFilterPanel = new GLUI_Panel(filterPanel, "Comic Book"); // YOUR SPECIAL FILTER PANEL
+        GLUI_Panel *specialFilterPanel = new GLUI_Panel(filterPanel, "Color Photo Emboss"); // YOUR SPECIAL FILTER PANEL
         {
             new GLUI_Button(specialFilterPanel, "Apply", UI_APPLY_SPECIAL_FILTER, s_gluicallback);
         }
