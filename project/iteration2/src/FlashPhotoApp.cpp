@@ -113,7 +113,11 @@ void FlashPhotoApp::leftMouseDown(int x, int y)
         if (bufferI > 0 && bufferI < width && bufferJ > 0 && bufferJ < height)
         {
           tempPixel = stampBuffer->getPixel(i, j);
-          m_displayBuffer->setPixel(bufferI, bufferJ, tempPixel);
+          if (tempPixel.getAlpha() == 0.0) {
+            // Do Nothin
+          } else {
+            m_displayBuffer->setPixel(bufferI, bufferJ, tempPixel);
+          }
         }
       }
     }
