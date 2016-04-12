@@ -881,6 +881,9 @@ void FlashPhotoApp::undoOperation()
   	m_displayBuffer->copyPixelBuffer(m_displayBuffer, tempPixelBuffer);
   	redoStack.push_back(tempPixelBuffer);
   	// Set m_displayBuffer to tempPixelBuffer
+    setWindowDimensions(myNewPixelBuffer->getWidth(),myNewPixelBuffer->getHeight());
+    canvasWidth=myNewPixelBuffer->getWidth();
+    canvasHeight=myNewPixelBuffer->getHeight();
     m_displayBuffer = myNewPixelBuffer;
   } else {
     cout << "Nothing to undo" << endl;
@@ -899,6 +902,9 @@ void FlashPhotoApp::redoOperation()
   	m_displayBuffer->copyPixelBuffer(m_displayBuffer, tempPixelBuffer);
   	undoStack.push_back(tempPixelBuffer);
   	// Set m_displayBuffer to displayBuffer
+    setWindowDimensions(myNewPixelBuffer->getWidth(),myNewPixelBuffer->getHeight());
+    canvasWidth=myNewPixelBuffer->getWidth();
+    canvasHeight=myNewPixelBuffer->getHeight();
     m_displayBuffer = myNewPixelBuffer;
   } else {
     cout << "Nothing to redo" << endl;
