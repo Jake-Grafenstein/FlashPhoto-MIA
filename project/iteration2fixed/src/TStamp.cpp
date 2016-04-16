@@ -15,8 +15,8 @@ PixelBuffer *TStamp::m_stampBuffer = NULL;
 TStamp::TStamp()
 {
     // default buffer
-    m_mask = NULL;
-    m_maxSmear = 0;
+    mask = NULL;
+//    m_maxSmear = 0;
 }
 
 TStamp::~TStamp()
@@ -42,9 +42,9 @@ void TStamp::setStampBuffer(PixelBuffer * stampBuffer)
     m_stampBuffer = stampBuffer;
 }
 
-std::string TStamp::getName() {
+/*std::string TStamp::getName() {
     return "Stamp";
-}
+}*/
 
 ColorData TStamp::processPixel(int maskX, int maskY, ColorData toolColor, PixelBuffer* buffer, int bufferX, int bufferY)
 {

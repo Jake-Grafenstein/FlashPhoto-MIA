@@ -21,7 +21,7 @@ public:
     TStamp();
     virtual ~TStamp();
     
-    std::string getName();
+//    std::string getName();
     virtual int getWidth();
     virtual int getHeight();
 
