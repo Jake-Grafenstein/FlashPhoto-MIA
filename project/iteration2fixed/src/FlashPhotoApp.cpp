@@ -103,28 +103,7 @@ void FlashPhotoApp::leftMouseDown(int x, int y)
   // if the current tool is the stamp tool
   if (m_curTool == 7)
   {
-    int height = m_displayBuffer->getHeight();
-    int width = m_displayBuffer->getWidth();
-    ColorData tempPixel;
-    int bufferI, bufferJ;
-    //loops through the stamp buffer array and applies each pixel to display buffer where the mouse currently is
-    for (int i = 0; i < stampWidth; i++)
-    {
-      for (int j = 0; j < stampHeight; j++)
-      {
-        bufferI = x + i - (stampWidth/2);
-        bufferJ = (height-y) + j - (stampHeight/2);
-        if (bufferI > 0 && bufferI < width && bufferJ > 0 && bufferJ < height)
-        {
-          tempPixel = stampBuffer->getPixel(i, j);
-          if (tempPixel.getAlpha() == 0.0) {
-            // Do Nothin
-          } else {
-            m_displayBuffer->setPixel(bufferI, bufferJ, tempPixel);
-          }
-        }
-      }
-    }
+    stamp.paintMask(x,y,&m_displayBuffer,ColorData(0,0,0),backColor);
   }
 	else// If the leftMouseDown is clicked without moving, the tool should be applied to the pixelBuffer once
   {
@@ -204,7 +183,8 @@ void FlashPhotoApp::initializeTools() {
 	tools.push_back(new Highlighter());
 	tools.push_back(new XPen());
 	tools.push_back(new Blur());
-  tools.push_back(new Stamp());
+//  tools.push_back(new TStamp());had to do this to allow setting of stamp buffer
+	stamp = TStamp();
 	thresh = Threshold();
 	saturate = Saturate();
 	channels = Channels();
@@ -538,7 +518,7 @@ void FlashPhotoApp::loadImageToCanvas()
 
 void FlashPhotoApp::loadImageToStamp()
 {
-	TStamp::setStampBuffer(ImageHandler::loadImage(m_fileName));
+	stamp.setStampBuffer(ImageHandler::loadImage(m_fileName));
 }
 
 void FlashPhotoApp::saveCanvasToFile()

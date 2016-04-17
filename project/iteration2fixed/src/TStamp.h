@@ -25,11 +25,11 @@ public:
     virtual int getWidth();
     virtual int getHeight();
 
-    static void setStampBuffer(PixelBuffer * stampBuffer);
+    void setStampBuffer(PixelBuffer * stampBuffer);
+    void paintMask(int x,int y,PixelBuffer **displayBuffer,ColorData color, ColorData background);
+
 protected:
     static PixelBuffer *m_stampBuffer;
-    virtual ColorData processPixel(int maskX, int maskY, ColorData toolColor, PixelBuffer* buffer, int bufferX, int bufferY);
-
 };
 
 #endif /* defined(__PhotoShop_Proj__TStamp__) */

@@ -19,6 +19,7 @@
 #include "MotionBlur.h"
 #include "BlurFilter.h"
 #include "Emboss.h"
+#include "TStamp.h"
 #include <string>
 #include <png.h>
 
@@ -170,6 +171,7 @@ private:
     Saturate saturate;
     Channels channels;
     Quantize quantize;
+    TStamp stamp;
     EdgeDetection* edgeDet;
     Sharpen* sharpen;
     MotionBlur* motionBlur;

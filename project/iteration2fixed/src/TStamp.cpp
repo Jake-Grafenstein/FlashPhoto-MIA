@@ -40,13 +40,33 @@ void TStamp::setStampBuffer(PixelBuffer * stampBuffer)
         delete m_stampBuffer;
     }
     m_stampBuffer = stampBuffer;
+    maskSize = m_stampBuffer->getWidth();
 }
 
 /*std::string TStamp::getName() {
     return "Stamp";
 }*/
 
-ColorData TStamp::processPixel(int maskX, int maskY, ColorData toolColor, PixelBuffer* buffer, int bufferX, int bufferY)
+void TStamp::paintMask(int x,int y,PixelBuffer **displayBuffer,ColorData color,ColorData backgroundColor)
+{
+	int i,j,bufferI,bufferJ,width,height;
+	width = (*displayBuffer)->getWidth();
+	height = (*displayBuffer)->getHeight();
+	for (i=0;i<maskSize;i++)
+	{
+		for (j=0;j<maskSize;j++)
+		{
+			bufferI = x + i - (maskSize/2) - 1;
+			bufferJ = y + j - (maskSize/2) - 1;
+			if ((bufferI > 0) && (bufferI < width) && (bufferJ > 0) && (bufferJ < height))
+			{
+				(**displayBuffer).setPixel(bufferI,height - bufferJ,m_stampBuffer->getPixel(i,j));
+			}
+		}
+	}
+}
+
+/*ColorData TStamp::processPixel(int maskX, int maskY, ColorData toolColor, PixelBuffer* buffer, int bufferX, int bufferY)
 {
     ColorData stampColor = TStamp::m_stampBuffer->getPixel(maskX, maskY);
     
@@ -58,3 +78,4 @@ ColorData TStamp::processPixel(int maskX, int maskY, ColorData toolColor, PixelB
     
     return stampColor*alpha + buffer->getPixel(bufferX, bufferY)*(1-alpha);
 }
+*/
