@@ -8,13 +8,13 @@
 #include "Pen.h"
 #include "XPen.h"
 #include "Blur.h"
-#include "Stamp.h"
+//#include "Stamp.h"
 #include "Tool.h"
 #include <cmath>
 #include <iostream>
 #include <vector>
 #include <zlib.h>
-#include "jpeglib.h"
+//#include "jpeglib.h"
 #include <setjmp.h>
 #include "ImageHandler.h"
 #include "IJPGHandler.h"
@@ -513,6 +513,8 @@ void FlashPhotoApp::loadImageToCanvas()
 		delete m_displayBuffer;
 	}
 	m_displayBuffer = ImageHandler::loadImage(m_fileName);
+	canvasWidth = m_displayBuffer->getWidth();
+	canvasHeight = m_displayBuffer->getHeight();
 	setWindowDimensions(m_displayBuffer->getWidth(),m_displayBuffer->getHeight());
 }
 

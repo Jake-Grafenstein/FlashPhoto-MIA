@@ -438,6 +438,8 @@ void FlashPhoto::loadImageToCanvas()
 {
     if (m_displayBuffer) { delete m_displayBuffer; }
     m_displayBuffer = ImageHandler::loadImage(m_fileName);
+    canvasWidth = m_displayBuffer->getWidth();
+    canvasHeight = m_displayBuffer->getHeight();
     setWindowDimensions(m_displayBuffer->getWidth(), m_displayBuffer->getHeight());
 }
 
