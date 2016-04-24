@@ -14,7 +14,7 @@
 #include <iostream>
 #include <vector>
 #include <zlib.h>
-#include "jpeglib.h"
+//#include "jpeglib.h"
 #include <setjmp.h>
 #include "ImageHandler.h"
 #include "IJPGHandler.h"
