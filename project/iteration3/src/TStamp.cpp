@@ -58,9 +58,9 @@ void TStamp::paintMask(int x,int y,PixelBuffer **displayBuffer,ColorData color,C
 		{
 			bufferI = x + i - (maskSize/2) - 1;
 			bufferJ = y + j - (maskSize/2) - 1;
-			if ((bufferI > 0) && (bufferI < width) && (bufferJ > 0) && (bufferJ < height))
+			if ((bufferI > 0) && (bufferI < width) && (bufferJ > 0) && (bufferJ < height) && (m_stampBuffer->getPixel(i,maskSize - j -1).getAlpha()!=0))
 			{
-				(**displayBuffer).setPixel(bufferI,height - bufferJ,m_stampBuffer->getPixel(i,j));
+				(**displayBuffer).setPixel(bufferI,height - bufferJ,m_stampBuffer->getPixel(i,maskSize - j - 1));
 			}
 		}
 	}
