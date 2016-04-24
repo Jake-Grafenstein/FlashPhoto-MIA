@@ -14,10 +14,10 @@ class PixelBuffer;
 
 class MIAApp : public BaseGfxApp {
 public:
-    
+
     MIAApp(int argc, char* argv[], int width, int height, ColorData backgroundColor);
     virtual ~MIAApp();
-    
+
     // Glut overrided function
     void mouseDragged(int x, int y) ;
     void mouseMoved(int x, int y);
@@ -25,9 +25,9 @@ public:
     void leftMouseUp(int x, int y);
     void display();
     void gluiControl(int controlID);
-    
+
 private:
-    
+
     // GLUI INTERFACE ELEMENTS
     enum UIControlType {
         UI_TOOLTYPE,
@@ -59,27 +59,27 @@ private:
     void loadCanvasEnabled(bool enabled);
     void previousImageEnabled(bool enabled);
     void nextImageEnabled(bool enabled);
-    
+
     void loadImageToCanvas();
     void saveCanvasToFile();
     void loadNextImage();
     void loadPreviousImage();
-    
+
     void applyFilterSharpen();
     void applyFilterEdgeDetect();
     void applyFilterThreshold();
     void applyFilterMultiplyRGB();
     void applyFilterGrayScale();
     void applyFilterQuantize();
-    
+
     void undoOperation();
     void redoOperation();
-    
-    
+
+
     void initGlui();
     void initializeBuffers(ColorData initialColor, int width, int height);
 
-    
+
     struct {
         float multiply_colorRed;
         float multiply_colorGreen;
@@ -88,7 +88,7 @@ private:
         float sharpen_amount;
         int quantize_bins;
     } m_filterParameters;
-    
+
     struct {
         GLUI_FileBrowser* fileBrowser;
         GLUI_Button *loadCanvasButton;
@@ -97,25 +97,37 @@ private:
         GLUI_Button* previousImageButton;
         GLUI_Button *redoButton;
         GLUI_Button *undoButton;
-        
+
         GLUI_StaticText * currentFileLabel;
         GLUI_EditText* fileNameBox;
         GLUI_StaticText * saveFileLabel;
 
-        
-        
-        
+
+
+
     } m_gluiControlHooks;
-    
-        
+
+
     // This is the pointer to the buffer where the display PixelBuffer is stored
     PixelBuffer* m_displayBuffer;
-    
+
     // These are used to store the selections from the GLUI user interface
     int m_curTool;
-    std::string m_fileName;
+    std::string m_inFile;
+    std::string m_outFile;
     std::string m_nextFileName;
     std::string m_prevFileName;
+
+    Threshold thresh;
+    Saturate saturate;
+    Channels channels;
+    Quantize quantize;
+    TStamp stamp;
+    EdgeDetection* edgeDet;
+    Sharpen* sharpen;
+    MotionBlur* motionBlur;
+    BlurFilter* blur;
+    Emboss* emboss;
 
 
 };
