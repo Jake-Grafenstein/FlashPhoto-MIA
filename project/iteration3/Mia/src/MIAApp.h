@@ -106,8 +106,15 @@ private:
 
 
     } m_gluiControlHooks;
-
-
+//we should only need these tools
+    Threshold thresh;
+    Channels channels;
+    Saturate saturate;
+    Sharpen *sharpen;
+    EdgeDetection *edgeDet;
+    Quantize quantize;
+    TStamp stamp;
+        
     // This is the pointer to the buffer where the display PixelBuffer is stored
     PixelBuffer* m_displayBuffer;
 
@@ -117,17 +124,6 @@ private:
     std::string m_outFile;
     std::string m_nextFileName;
     std::string m_prevFileName;
-
-    Threshold thresh;
-    Saturate saturate;
-    Channels channels;
-    Quantize quantize;
-    TStamp stamp;
-    EdgeDetection* edgeDet;
-    Sharpen* sharpen;
-    MotionBlur* motionBlur;
-    BlurFilter* blur;
-    Emboss* emboss;
 
 
 };

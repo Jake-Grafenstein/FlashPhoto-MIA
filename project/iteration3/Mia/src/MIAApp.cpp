@@ -313,62 +313,135 @@ void MIAApp::gluiControl(int controlID)
 
 void MIAApp::loadImageToCanvas()
 {
-    cout << "Load Canvas has been clicked for file " << m_inFile << endl;
-    // TODO: Perform loading task
+	cout << "Load Canvas has been clicked for file " << m_fileName << endl;
+	// TODO: Perform loading task
 
+	if (m_displayBuffer) 
+	{
+		delete m_displayBuffer;
+	}
+	m_displayBuffer = ImageHandler::loadImage(m_fileName);
+	canvasWidth = m_displayBuffer->getWidth();
+	canvasHeight = m_displayBuffer->getHeight();
+	setWindowDimensions(m_displayBuffer->getWidth(),m_displayBuffer->getHeight());
 
-    // Determining whether there are next or previous images
-    m_nextFileName = getImageNamePlusSeqOffset(m_inFile, 1);
-    m_prevFileName = getImageNamePlusSeqOffset(m_inFile, -1);
+	// Determining whether there are next or previous images
+	m_nextFileName = getImageNamePlusSeqOffset(m_fileName, 1);
+	m_prevFileName = getImageNamePlusSeqOffset(m_fileName, -1);
 
-    nextImageEnabled(isValidImageFile(m_nextFileName));
-    previousImageEnabled(isValidImageFile(m_prevFileName));
+	nextImageEnabled(isValidImageFile(m_nextFileName));
+	previousImageEnabled(isValidImageFile(m_prevFileName));
 }
 
 void MIAApp::saveCanvasToFile()
 {
-    cout << "Save Canvas been clicked for file " << m_inFile << endl;
+	cout << "Save Canvas been clicked for file " << m_fileName << endl;
+	if (ImageHandler::saveImage(m_fileName, m_displayBuffer))
+	{
+		std::cout << "successfuly saved image" << std::endl;
+	}
+	else
+	{
+		std::cout << "failed to save image" << std::endl;
+	}
 }
 
 void MIAApp::applyFilterThreshold()
 {
-    cout << "Apply has been clicked for Threshold has been clicked with amount =" << m_filterParameters.threshold_amount << endl;
+	storePixelBuffer();
+	thresh.setValue(m_filterParameters.threshold_amount);
+	thresh.applyFilter(m_displayBuffer);
+	cout << "Apply has been clicked for Threshold has been clicked with amount =" << m_filterParameters.threshold_amount << endl;
+
 }
 
 void MIAApp::applyFilterMultiplyRGB()
 {
-    cout << "Apply has been clicked for Multiply RGB with red = " << m_filterParameters.multiply_colorRed
-    << ", green = " << m_filterParameters.multiply_colorGreen
-    << ", blue = " << m_filterParameters.multiply_colorBlue << endl;
+	storePixelBuffer();
+	channels.setR(m_filterParameters.channel_colorRed);
+	channels.setG(m_filterParameters.channel_colorGreen);
+	channels.setB(m_filterParameters.channel_colorBlue);
+	channels.applyFilter(m_displayBuffer);
+	cout << "Apply has been clicked for Multiply RGB with red = " << m_filterParameters.multiply_colorRed
+	<< ", green = " << m_filterParameters.multiply_colorGreen
+	<< ", blue = " << m_filterParameters.multiply_colorBlue << endl;
 }
 
 void MIAApp::applyFilterGrayScale()
 {
-    cout << "Apply has been clicked for Grayscale" << endl;
+	storePixelBuffer();
+	saturate.setValue(0.0);
+	saturate.applyFilter(m_displayBuffer);
+	cout << "Apply has been clicked for Grayscale" << endl;
 }
 
 
 void MIAApp::applyFilterSharpen()
 {
-    cout << "Apply has been clicked for Sharpen with amount = " << m_filterParameters.sharpen_amount << endl;
+	storePixelBuffer();
+	sharpen->applyFilter(m_displayBuffer, m_filterParameters.sharpen_amount, -1);
+	cout << "Apply has been clicked for Sharpen with amount = " << m_filterParameters.sharpen_amount << endl;
 }
 
-void MIAApp::applyFilterEdgeDetect() {
-    cout << "Apply has been clicked for Edge Detect" << endl;
+void MIAApp::applyFilterEdgeDetect()
+{
+	storePixelBuffer();
+	edgeDet->applyFilter(m_displayBuffer, -1, -1);
+	cout << "Apply has been clicked for Edge Detect" << endl;
 }
 
-void MIAApp::applyFilterQuantize() {
-    cout << "Apply has been clicked for Quantize with bins = " << m_filterParameters.quantize_bins << endl;
+void MIAApp::applyFilterQuantize()
+{
+	storePixelBuffer();
+	quantize.setBins(m_filterParameters.quantize_bins);
+	quantize.applyFilter(m_displayBuffer);
+	cout << "Apply has been clicked for Quantize with bins = " << m_filterParameters.quantize_bins << endl;
 }
 
 void MIAApp::undoOperation()
 {
-    cout << "Undoing..." << endl;
+	if (!undoStack.empty()) {
+		cout << "Undoing..." << endl;
+		// Pull tempPixelBuffer off the undostack
+		PixelBuffer *myNewPixelBuffer = undoStack.back();
+		undoStack.pop_back();
+		// Put m_displayBuffer on redoStack
+		PixelBuffer *tempPixelBuffer = new PixelBuffer(canvasWidth,canvasHeight,backColor);
+		m_displayBuffer->copyPixelBuffer(m_displayBuffer, tempPixelBuffer);
+		redoStack.push_back(tempPixelBuffer);
+		// Set m_displayBuffer to tempPixelBuffer
+		setWindowDimensions(myNewPixelBuffer->getWidth(),myNewPixelBuffer->getHeight());
+		canvasWidth=myNewPixelBuffer->getWidth();
+		canvasHeight=myNewPixelBuffer->getHeight();
+		m_displayBuffer = myNewPixelBuffer;
+		cout << "Undoing..." << endl;
+	}
+	else {
+    		cout << "Nothing to undo" << endl;
+	}
 }
 
 void MIAApp::redoOperation()
 {
-    cout << "Redoing..." << endl;
+	if (!redoStack.empty()) {
+		cout << "Redoing..." << endl;
+		// Pull displayBuffer off of redoStack
+		PixelBuffer *myNewPixelBuffer = redoStack.back();
+		redoStack.pop_back();
+		// Put m_displayBuffer on undoStack
+		PixelBuffer *tempPixelBuffer = new PixelBuffer(canvasWidth,canvasHeight,backColor);
+		m_displayBuffer->copyPixelBuffer(m_displayBuffer, tempPixelBuffer);
+		undoStack.push_back(tempPixelBuffer);
+		// Set m_displayBuffer to displayBuffer
+		setWindowDimensions(myNewPixelBuffer->getWidth(),myNewPixelBuffer->getHeight());
+		canvasWidth=myNewPixelBuffer->getWidth();
+		canvasHeight=myNewPixelBuffer->getHeight();
+		m_displayBuffer = myNewPixelBuffer;
+		cout << "Redoing..." << endl;
+	}
+	else {
+		cout << "Nothing to redo" << endl;
+	}
 }
 // ** END OF CALLBACKS **
 // **********************
