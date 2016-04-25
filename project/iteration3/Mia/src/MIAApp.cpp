@@ -8,7 +8,7 @@ using std::endl;
 
 MIAApp::MIAApp(int argc, char* argv[], int width, int height, ColorData backgroundColor) : BaseGfxApp(argc, argv, width, height, 50, 50, GLUT_RGB|GLUT_DOUBLE|GLUT_DEPTH, true, width+51, 50)
 {
-    int i = 0;
+    int i = 1;
     char const infile;
     char const outfile;
 
@@ -85,8 +85,13 @@ MIAApp::MIAApp(int argc, char* argv[], int width, int height, ColorData backgrou
         }
       }
     }
-    initGlui();
-    initGraphics();
+    if (argc == 1) {
+      initGlui();
+      initGraphics();
+    } else {
+      saveCanvasToFile();
+    }
+
 }
 
 void MIAApp::display()
