@@ -315,21 +315,21 @@ void MIAApp::gluiControl(int controlID)
 
 void MIAApp::loadImageToCanvas()
 {
-	cout << "Load Canvas has been clicked for file " << m_fileName << endl;
+	cout << "Load Canvas has been clicked for file " << m_inFile << endl;
 	// TODO: Perform loading task
 
 	if (m_displayBuffer)
 	{
 		delete m_displayBuffer;
 	}
-	m_displayBuffer = ImageHandler::loadImage(m_fileName);
+	m_displayBuffer = ImageHandler::loadImage(m_inFile);
 	canvasWidth = m_displayBuffer->getWidth();
 	canvasHeight = m_displayBuffer->getHeight();
 	setWindowDimensions(m_displayBuffer->getWidth(),m_displayBuffer->getHeight());
 
 	// Determining whether there are next or previous images
-	m_nextFileName = getImageNamePlusSeqOffset(m_fileName, 1);
-	m_prevFileName = getImageNamePlusSeqOffset(m_fileName, -1);
+	m_nextFileName = getImageNamePlusSeqOffset(m_inFile, 1);
+	m_prevFileName = getImageNamePlusSeqOffset(m_inFile, -1);
 
 	nextImageEnabled(isValidImageFile(m_nextFileName));
 	previousImageEnabled(isValidImageFile(m_prevFileName));
@@ -337,8 +337,8 @@ void MIAApp::loadImageToCanvas()
 
 void MIAApp::saveCanvasToFile()
 {
-	cout << "Save Canvas been clicked for file " << m_fileName << endl;
-	if (ImageHandler::saveImage(m_fileName, m_displayBuffer))
+	cout << "Save Canvas been clicked for file " << m_outFile << endl;
+	if (ImageHandler::saveImage(m_outFile, m_displayBuffer))
 	{
 		std::cout << "successfuly saved image" << std::endl;
 	}
