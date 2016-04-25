@@ -83,6 +83,12 @@ bool PixelBuffer::CompareBuffers(PixelBuffer * firstBuffer, PixelBuffer * second
    int w, h;
    w = firstBuffer->getWidth();
    h = firstBuffer->getHeight();
+	 w2 = secondBuffer->getWidth();
+	 h2 = secondBuffer->getHeight();
+
+	 if ((w != w2) || (h != h2)) {
+		 return false;
+	 }
 
    for (i = 0; i < w; i++) {
        for (j = 0; j < h; j++) {
