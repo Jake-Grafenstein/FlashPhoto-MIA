@@ -80,7 +80,9 @@ MIAApp::MIAApp(int argc, char* argv[], int width, int height, ColorData backgrou
       } else if (strcmp(argv[i], "-compare")) {
         PixelBuffer *tempInBuffer = ImageHandler::loadImage(m_inFile);
         PixelBuffer *tempOutBuffer = ImageHandler::loadImage(m_outFile);
-
+        if (PixelBuffer::CompareBuffers(tempInBuffer,tempOutBuffer)) {
+          cout << "True" << endl;
+        }
       }
     }
     initGlui();
@@ -316,7 +318,7 @@ void MIAApp::loadImageToCanvas()
 	cout << "Load Canvas has been clicked for file " << m_fileName << endl;
 	// TODO: Perform loading task
 
-	if (m_displayBuffer) 
+	if (m_displayBuffer)
 	{
 		delete m_displayBuffer;
 	}
