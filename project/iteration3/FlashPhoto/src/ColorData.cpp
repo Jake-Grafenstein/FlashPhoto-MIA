@@ -61,7 +61,6 @@ ColorData ColorData::clampedColor() const {
 	return ColorData(clampedRed, clampedGreen, clampedBlue, clampedAlpha);	
 }
 
-
 // Apply component-wise arithmatic operations
 ColorData operator* (const ColorData& a, float f) {
 	return ColorData(a.m_red*f, a.m_green*f, a.m_blue*f, a.m_alpha*f);

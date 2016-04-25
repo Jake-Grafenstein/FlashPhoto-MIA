@@ -77,3 +77,16 @@ void PixelBuffer::copyPixelBuffer(PixelBuffer * sourceBuffer, PixelBuffer * dest
 		memcpy ( (void*)destinationBuffer->m_pixels, (void*) sourceBuffer->m_pixels, sizeof(ColorData)*destinationBuffer->m_height*destinationBuffer->m_width );
 	}
 }
+
+//bool PixelBuffer::CompareBuffers(PixelBuffer * firstBuffer, PixelBuffer * secondBuffer) {
+//    int i, j;
+//    int w, h;
+//    w = firstBuffer->getWidth();
+//    h = firstBuffer->getHeight();
+
+//    for (i = 0; i < w; i++) {
+//        for (j = 0; j < h; j++) {
+//            if ((firstBuffer[i][j].getRed)
+//        }
+//    }
+//}
