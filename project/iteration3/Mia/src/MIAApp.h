@@ -107,6 +107,13 @@ private:
         
     } m_gluiControlHooks;
     
+    Threshold thresh;
+    Channels channels;
+    Saturate saturate;
+    Sharpen sharpen;
+    EdgeDetection edgeDet;
+    Quantize quantize;
+    
         
     // This is the pointer to the buffer where the display PixelBuffer is stored
     PixelBuffer* m_displayBuffer;
