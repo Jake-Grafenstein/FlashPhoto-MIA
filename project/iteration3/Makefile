@@ -1,3 +1,3 @@
 all:
-	cd FlashPhoto
-	cd ..
+	make -C FlashPhoto/
+

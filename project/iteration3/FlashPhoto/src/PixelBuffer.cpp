@@ -78,9 +78,9 @@ void PixelBuffer::copyPixelBuffer(PixelBuffer * sourceBuffer, PixelBuffer * dest
 	}
 }
 
-bool PixelBuffer::CompareBuffers(PixelBuffer * firstBuffer, PixelBuffer * secondBuffer) {
+bool PixelBuffer::compareBuffers(PixelBuffer * firstBuffer, PixelBuffer * secondBuffer) {
    int i, j;
-   int w, h;
+   int w, h, w2, h2;
    w = firstBuffer->getWidth();
    h = firstBuffer->getHeight();
 	 w2 = secondBuffer->getWidth();
@@ -92,7 +92,7 @@ bool PixelBuffer::CompareBuffers(PixelBuffer * firstBuffer, PixelBuffer * second
 
    for (i = 0; i < w; i++) {
        for (j = 0; j < h; j++) {
-           if (ColorData::comparePixel(firstBuffer[i][j],secondBuffer[i][j])) {
+           if (firstBuffer->getPixel(i,j).comparePixel(secondBuffer->getPixel(i,j))) {
 						 continue;
 					 } else {
 						 return false;

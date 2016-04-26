@@ -31,7 +31,7 @@ public:
 
 	// Return a clamped version of this ColorData
 	ColorData clampedColor() const;
-	bool comparePixel(ColorData *first, ColorData *second);
+	bool comparePixel(ColorData other);
 
 	// Arithmatic operators (friends so that non-member functions can access private variables)
 	friend ColorData operator* (const ColorData& a, float f);

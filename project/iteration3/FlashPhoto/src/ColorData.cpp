@@ -61,8 +61,8 @@ ColorData ColorData::clampedColor() const {
 	return ColorData(clampedRed, clampedGreen, clampedBlue, clampedAlpha);
 }
 
-bool ColorData::comparePixel(ColorData *first, ColorData *second) {
-	if ((first->getRed() == second->getRed()) && (first->getBlue() == second->getBlue()) && (first->getGreen() == second->getGreen()) && (first->getAlpha() == second->getAlpha())) {
+bool ColorData::comparePixel(ColorData other) {
+	if ((m_red == other.getRed()) && (m_blue == other.getBlue()) && (m_green == other.getGreen()) && (m_alpha == other.getAlpha())) {
 		return true;
 	} else {
 		return false;
