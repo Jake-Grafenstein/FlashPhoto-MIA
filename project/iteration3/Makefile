@@ -1,3 +1,3 @@
 all:
-	make -C FlashPhoto/
-
+	cd FlashPhoto && $(MAKE)
+	cd Mia && $(MAKE)
