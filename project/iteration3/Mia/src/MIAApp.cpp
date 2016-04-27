@@ -22,67 +22,91 @@ MIAApp::MIAApp(int argc, char* argv[], int width, int height, ColorData backgrou
       m_outFile = argv[argc-1];
       loadImageToCanvas();
     }
-    while (argv[i] != NULL) {
-      if (strcmp(argv[i], "-h")) {
-        cout << "Display Help" << endl;
-        cout << "-h" << endl;
-        cout << "-sharpen <Integer>" << endl;
-        cout << "-edgeDetect" << endl;
-        cout << "-thresh <Float>" << endl;
-        cout << "-quantize <Integer>" << endl;
-        cout << "-blur <Float>" << endl;
-        cout << "-saturate <Float>" << endl;
-        cout << "-multirgb <Float>,<Float>,<Float>" << endl;
-        cout << "-compare" << endl;
-        i++;
-      } else if (strcmp(argv[i], "-sharpen")) {
+    while (i < argc) {
+      if (strcmp(argv[i], "-sharpen")) {
         cout << "sharpening..." << endl;
-        sharpen = new Sharpen();
         m_filterParameters.sharpen_amount = atoi(argv[i+1]);
-        sharpen->applyFilter(m_displayBuffer, m_filterParameters.sharpen_amount, -1);
-        i += 2;
+        if (m_filterParameters.sharpen_amount > 0) {
+          applyFilterSharpen();
+          i += 2;
+        } else {
+          cout << "Invalid Integer Value, please try again" << endl;
+          break;
+        }
       } else if (strcmp(argv[i], "-edgeDetect")) {
         cout << "Detecting Edges" << endl;
-        edgeDet = new EdgeDetection();
-        edgeDet->applyFilter(m_displayBuffer, -1, -1);
+        applyFilterEdgeDetect();
         i++;
       } else if (strcmp(argv[i], "-thresh")) {
         cout << "Resetting the Threshold" << endl;
         m_filterParameters.threshold_amount = atof(argv[i+1]);
-        thresh.setValue(m_filterParameters.threshold_amount);
-      	thresh.applyFilter(m_displayBuffer);
-        i += 2;
+        if (m_filterParameters.threshold_amount > 0.0) {
+          applyFilterThreshold();
+          i += 2;
+        } else {
+          cout << "Invalid Floating Point Value, please try again" << endl;
+          break;
+        }
       } else if (strcmp(argv[i], "-quantize")) {
         cout << "Quantizing" << endl;
         m_filterParameters.quantize_bins = atoi(argv[i+1]);
-        quantize.setBins(m_filterParameters.quantize_bins);
-      	quantize.applyFilter(m_displayBuffer);
-        i += 2;
+        if (m_filterParameters.quantize_bins > 0) {
+          applyFilterQuantize();
+          i += 2;
+        } else {
+          cout << "Invalid Integer Value, please try again" << endl;
+          break;
+        }
       } else if (strcmp(argv[i], "-blur")) {
         m_filterParameters.blur_amount = atof(argv[i+1]);
-        blur = new BlurFilter();
-        blur->applyFilter(m_displayBuffer, m_filterParameters.blur_amount, -1);
-        i += 2;
+        if (m_filterParameters.blur_amount > 0.0) {
+          // Is there a blur callback?
+          i += 2;
+        } else {
+          cout << "Invalid Floating Point Value, please try again" << endl;
+          break;
+        }
       } else if (strcmp(argv[i], "-saturate")) {
         m_filterParameters.saturation_amount = atof(argv[i+1]);
-        saturate.setValue(m_filterParameters.saturation_amount);
-      	saturate.applyFilter(m_displayBuffer);
-        i += 2;
+        if (m_filterParameters.saturation_amount > 0.0) {
+          // Is there a saturate callback?
+          i += 2;
+        } else {
+          cout << "Invalid Floating Point Value, please try again" << endl;
+          break;
+        }
       } else if (strcmp(argv[i], "-multrgb")) {
         m_filterParameters.multiply_colorRed = atof(argv[i+1]);
         m_filterParameters.multiply_colorGreen = atof(argv[i+2]);
         m_filterParameters.multiply_colorBlue = atof(argv[i+3]);
-        channels.setR(m_filterParameters.channel_colorRed);
-      	channels.setG(m_filterParameters.channel_colorGreen);
-      	channels.setB(m_filterParameters.channel_colorBlue);
-      	channels.applyFilter(m_displayBuffer);
-        i += 4;
+        if ((m_filterParameters.multiply_colorRed > 0.0) && (m_filterParameters.multiply_colorGreen > 0.0) && (m_filterParameters.multiply_colorBlue > 0.0)) {
+          applyFilterMultiplyRGB();
+          i += 4;
+        } else {
+          cout << "Invalid Floating Point Value, please try again" << endl;
+          break;
+        }
       } else if (strcmp(argv[i], "-compare")) {
         PixelBuffer *tempInBuffer = ImageHandler::loadImage(m_inFile);
         PixelBuffer *tempOutBuffer = ImageHandler::loadImage(m_outFile);
         if (PixelBuffer::CompareBuffers(tempInBuffer,tempOutBuffer)) {
-          cout << "True" << endl;
+          cout << "1" << endl;
+        } else {
+          cout << "0" << endl;
         }
+      } else {
+          cout << "Display Help" << endl;
+          cout << "-h" << endl;
+          cout << "-sharpen <Integer>" << endl;
+          cout << "-edgeDetect" << endl;
+          cout << "-thresh <Float>" << endl;
+          cout << "-quantize <Integer>" << endl;
+          cout << "-blur <Float>" << endl;
+          cout << "-saturate <Float>" << endl;
+          cout << "-multrgb <Float>,<Float>,<Float>" << endl;
+          cout << "-compare" << endl;
+          i++;
+          break;
       }
     }
     if (argc == 1) {
@@ -91,7 +115,6 @@ MIAApp::MIAApp(int argc, char* argv[], int width, int height, ColorData backgrou
     } else {
       saveCanvasToFile();
     }
-
 }
 
 void MIAApp::display()
