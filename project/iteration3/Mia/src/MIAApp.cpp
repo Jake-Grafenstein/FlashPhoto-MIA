@@ -44,7 +44,7 @@ void MIAApp::commandLine(int argc, char* argv[]) {
 
 
   if (argc > 2) {
-    m_inFile = string(argv[1], strlen(arv[1]));
+    m_inFile = string(argv[1], strlen(argv[1]));
     m_outFile = string(argv[argc-1], strlen(argv[1]));
     ImageHandler::IMAGE_TYPE myInType = ImageHandler::getImageType(m_inFile);
     ImageHandler::IMAGE_TYPE myOutType = ImageHandler::getImageType(m_outFile);
@@ -71,7 +71,7 @@ void MIAApp::commandLine(int argc, char* argv[]) {
     } else if (!strcmp(myRead->d_name,"..")) {
       //printf("We found the designator for the parent directory.\n");
     } else {
-      m_inFile = str(myRead->d_name);
+      m_inFile = string(myRead->d_name);
       loadImageToCanvas();
       applyCommandLineFilters();
       saveCanvasToFile();
