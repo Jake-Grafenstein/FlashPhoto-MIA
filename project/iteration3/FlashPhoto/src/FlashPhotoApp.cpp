@@ -508,7 +508,7 @@ void FlashPhotoApp::gluiControl(int controlID)
 
 void FlashPhotoApp::loadImageToCanvas()
 {
-	if (m_displayBuffer) 
+	if (m_displayBuffer)
 	{
 		delete m_displayBuffer;
 	}

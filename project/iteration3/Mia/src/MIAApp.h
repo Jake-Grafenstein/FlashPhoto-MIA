@@ -8,6 +8,17 @@
 #define MIAAPP_H
 
 #include "BaseGfxApp.h"
+#include "Filter.h"
+#include "Threshold.h"
+#include "Saturate.h"
+#include "Channels.h"
+#include "Quantize.h"
+#include "ConvolutionFilter.h"
+#include "EdgeDetection.h"
+#include "Sharpen.h"
+#include "BlurFilter.h"
+#include "TStamp.h"
+#include <string>
 
 class ColorData;
 class PixelBuffer;
@@ -47,6 +58,7 @@ private:
         UI_REDO,
         UI_QUIT
     };
+
     void setImageFile(const std::string & filepath);
     bool isValidImageFileName(const std::string & name);
     bool isValidImageFile(const std::string & name);
@@ -71,9 +83,17 @@ private:
     void applyFilterMultiplyRGB();
     void applyFilterGrayScale();
     void applyFilterQuantize();
+    void applyFilterBlur();
+    void applyFilterSaturate();
 
     void undoOperation();
     void redoOperation();
+
+    void commandLine();
+    void traverseArguments();
+    void applyCommandLineFilters();
+    void displayHelp();
+    void compareImages();
 
 
     void initGlui();
@@ -90,6 +110,18 @@ private:
     } m_filterParameters;
 
     struct {
+      bool toDisplayHelp;
+      bool toSharpen;
+      bool toEdgeDetect;
+      bool toThreshold;
+      bool toQuantize;
+      bool toBlur;
+      bool toSaturate;
+      bool toMultiplyRGB;
+      bool toCompare;
+    } m_filterBooleans;
+
+    struct {
         GLUI_FileBrowser* fileBrowser;
         GLUI_Button *loadCanvasButton;
         GLUI_Button *saveCanvasButton;
@@ -101,20 +133,17 @@ private:
         GLUI_StaticText * currentFileLabel;
         GLUI_EditText* fileNameBox;
         GLUI_StaticText * saveFileLabel;
-
-
-
-
     } m_gluiControlHooks;
 //we should only need these tools
     Threshold thresh;
     Channels channels;
     Saturate saturate;
+    Quantize quantize;
     Sharpen *sharpen;
     EdgeDetection *edgeDet;
-    Quantize quantize;
+    Blur *blur;
     TStamp stamp;
-        
+
     // This is the pointer to the buffer where the display PixelBuffer is stored
     PixelBuffer* m_displayBuffer;
 
