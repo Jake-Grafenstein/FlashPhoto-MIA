@@ -1,3 +1,4 @@
 all:
-	cd FlashPhoto && $(MAKE)
-	cd Mia && $(MAKE)
+	make -C libphoto/
+	make -C FlashPhoto/
+	make -C Mia/
