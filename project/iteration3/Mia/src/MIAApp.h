@@ -112,6 +112,8 @@ private:
         float multiply_colorBlue;
         float threshold_amount;
         float sharpen_amount;
+        float blur_amount;
+        float saturation_amount;
         int quantize_bins;
     } m_filterParameters;
 
