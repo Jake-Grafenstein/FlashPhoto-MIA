@@ -42,22 +42,27 @@ void MIAApp::commandLine(int argc, char* argv[]) {
   struct dirent *myRead;
   unsigned char fileType;
 
-
+// If there are more than 2 arguments, we know that the inFile is in array slot 1, and outfile is stored in the last slot.
   if (argc > 2) {
     m_inFile = string(argv[1], strlen(argv[1]));
     m_outFile = string(argv[argc-1], strlen(argv[1]));
+    std::string outFileCopy = m_outFile;
     ImageHandler::IMAGE_TYPE myInType = ImageHandler::getImageType(m_inFile);
     ImageHandler::IMAGE_TYPE myOutType = ImageHandler::getImageType(m_outFile);
-//    loadImageToCanvas();
-  }
 
+  }
   traverseArguments();
+
+  // If "-h" existed anywhere in the command line, return help
   if (m_filterBooleans.toDisplayHelp == true) {
     displayHelp();
     return;
   }
 
-  if ((myInType == UNKNOWN_IMAGE) || (myOutType == UNKNOWN_IMAGE)) {
+// Check if directory, attempt to open the directory
+  if (m_inFile != UNKNOWN_IMAGE) {
+    loadImageToCanvas();
+  } else {
     workingDirectory = opendir(argv[1]);
     if (workingDirectory == NULL) {
       perror("Could not open given directory.");
@@ -65,20 +70,31 @@ void MIAApp::commandLine(int argc, char* argv[]) {
     }
   }
 
+// Read each element in the directory and if it is an image, apply the filters and save the file
   while ((myRead = readdir(workingDirectory)) != NULL) {
     if (!strcmp(myRead->d_name,".")) {
-      //printf("We found the designator for the current working directory.\n");
+      cout << "I found the designator for the current working directory." << endl;
     } else if (!strcmp(myRead->d_name,"..")) {
-      //printf("We found the designator for the parent directory.\n");
+      cout << "I found the designator for the parent directory." << endl;
     } else {
       m_inFile = string(myRead->d_name);
-      loadImageToCanvas();
-      applyCommandLineFilters();
-      saveCanvasToFile();
+      myInType = ImageHandler::getImageType(m_inFile);
+
+      // Apply filters to the image and save it, if possible
+      if (myInType != UNKNOWN_IMAGE) {
+        loadImageToCanvas();
+        applyCommandLineFilters();
+        strcat(m_outFile,"/");
+        strcat(m_outFile,m_inFile);
+        saveCanvasToFile();
+      }
+      m_outFile.clear();
+      strcpy(m_outFile, outFileCopy);
     }
   }
 }
 
+//  Applies the filters if they existed in the command line
 void MIAApp::applyCommandLineFilters() {
 
   if (m_filterBooleans.toSharpen == true) {
@@ -105,6 +121,8 @@ void MIAApp::applyCommandLineFilters() {
     applyFilterMultiplyRGB();
   }
 }
+
+// Self-explanatory
 void MIAApp::displayHelp() {
   cout << "Help" << endl;
   cout << "-h" << endl;
