@@ -46,6 +46,7 @@ LINK_LIBS += -L$(PNG_PATH)/lib/ -lpng
 PNG_LIB += $(PNG_PATH)/lib/libpng.a
 
 LIBPHOTO_PATH += ../libphoto
+INCLUDE += -I$(LIBPHOTO_PATH)/src
 LINK_LIBS += -L$(LIBPHOTO_PATH)/lib/ -llibphoto
 LIBPHOTO_LIB += $(LIBPHOTO_PATH)/lib/libphoto.a
 
