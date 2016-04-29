@@ -50,14 +50,17 @@ void MIAApp::commandLine(int argc, char* argv[]) {
   DIR *workingDirectory;
   struct dirent *myRead;
   unsigned char fileType;
+  char *myInFile;
+  char *myOutFile;
+  char *outFileCopy;
 
 // If there are more than 2 arguments, we know that the inFile is in array slot 1, and outfile is stored in the last slot.
   if (argc > 2) {
-    std::string m_inFile(argv[1], strlen(argv[1]));
-    std::string m_outFile(argv[argc-1], strlen(argv[argc-1]));
-    std::string outFileCopy = m_outFile;
+    strcpy(myInFile, argv[1]);
+    strcpy(myOutFile, argv[argc-1]);
+    strcpy(outFileCopy, myOutFile);
   }
-  traverseArguments();
+  traverseArguments(argc, argv);
 
   // If "-h" existed anywhere in the command line, return help
   if (m_filterBooleans.toDisplayHelp == true) {
@@ -66,7 +69,8 @@ void MIAApp::commandLine(int argc, char* argv[]) {
   }
 
 // Check if directory, attempt to open the directory
-  if (m_inFile != UNKNOWN_IMAGE) {
+  std::string tempImage(myInFile);
+  if (ImageHandler::getImageType(tempImage) != UNKNOWN_IMAGE) {
     loadImageToCanvas();
   } else {
     workingDirectory = opendir(argv[1]);

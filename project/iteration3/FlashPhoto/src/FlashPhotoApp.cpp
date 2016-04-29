@@ -5,7 +5,6 @@
 #include "Highlighter.h"
 #include "Eraser.h"
 #include "SprayCan.h"
-#include "Pen.h"
 #include "XPen.h"
 #include "Blur.h"
 //#include "Stamp.h"
