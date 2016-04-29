@@ -2,6 +2,15 @@
 #include "ColorData.h"
 #include "PixelBuffer.h"
 #include "ImageHandler.h"
+#include "IJPGHandler.h"
+#include "IPNGHandler.h"
+#include "Pen.h"
+#include "Tool.h"
+#include <cmath>
+#include <iostream>
+#include <vector>
+#include <zlib.h>
+#include <setjmp.h>
 #include <sstream>
 #include <string>
 #include <dirent.h>
@@ -250,6 +259,22 @@ void MIAApp::leftMouseDown(int x, int y)
 void MIAApp::leftMouseUp(int x, int y)
 {
     std::cout << "mouseReleased " << x << " " << y << std::endl;
+}
+
+// Finds the next Y value given the slope of the line, the previous x and y values, and the new x value
+int MIAApp::getNextYValue(float slope, int previousX, int newX, int previousY) {
+	return (int)(-1.0*((slope*newX)-(slope*previousX)-previousY));
+}
+
+// A function for keeping the old pixelBuffer so that the undo/redo operations work properly
+void MIAApp::storePixelBuffer() {
+  // Store the current pixelBuffer in the undoStack
+	PixelBuffer *tempPixelBuffer = new PixelBuffer(canvasWidth,canvasHeight,backColor);
+	m_displayBuffer->copyPixelBuffer(m_displayBuffer, tempPixelBuffer);
+	undoStack.push_back(tempPixelBuffer);
+
+	// Empty the redoStack
+	redoStack.clear();
 }
 
 void MIAApp::initializeBuffers(ColorData backgroundColor, int width, int height) {

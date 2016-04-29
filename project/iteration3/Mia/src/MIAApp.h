@@ -20,6 +20,7 @@
 #include "TStamp.h"
 #include <string>
 
+
 class ColorData;
 class PixelBuffer;
 
@@ -94,6 +95,9 @@ private:
     void applyCommandLineFilters();
     void displayHelp();
     void compareImages();
+
+    int getNextYValue(float slope, int previousX, int newX, int previousY);
+    void storePixelBuffer();
 
 
     void initGlui();
