@@ -45,6 +45,10 @@ INCLUDE += -I$(PNG_PATH)/include
 LINK_LIBS += -L$(PNG_PATH)/lib/ -lpng
 PNG_LIB += $(PNG_PATH)/lib/libpng.a
 
+LIBPHOTO_PATH += ../libphoto
+LINK_LIBS += -L$(LIBPHOTO_PATH)/lib/ -llibphoto
+LIBPHOTO_LIB += $(LIBPHOTO_PATH)/lib/libphoto.a
+
 LINK_LIBS += -lz
 
 
@@ -110,6 +114,11 @@ $(PNG_LIB):
 	./configure --enable-shared=no --prefix=$(abspath $(PNG_PATH))
 	$(MAKE) -C $(PNG_PATH) all
 	$(MAKE) -C $(PNG_PATH) install
+
+$(LIBPHOTO_LIB):
+	cd $(LIBPHOTO_PATH); \
+	./configure --enable-shared=no --prefix=$(abspath $(LIBPHOTO_PATH))
+	$(MAKE) -C $(LIBPHOTO_PATH) all
 
 cleanpng:
 	$(MAKE) -C $(PNG_PATH) distclean
