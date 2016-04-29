@@ -52,10 +52,10 @@ void BlurFilter::calculateKernel(float amount) {
   int i, j, xVal, yVal;
   float firstArgument, secondArgument, sum;
   float e = 2.71828182846;
-  float pi = 22/7;
+  float pi = 22.0/7.0;
   sum = 0.0;
 
-  firstArgument = e/(2*pi*pow(amount,2));
+  firstArgument = e/(2.0*pi*pow(amount,2.0));
 
   // Calculate the values for each spot in the kernel, based on their distance from the origin and the specified user amount;
   for (i=0; i < kernelSize; i++) {

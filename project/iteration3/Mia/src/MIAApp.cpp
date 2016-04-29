@@ -39,7 +39,7 @@ MIAApp::MIAApp(int argc, char* argv[], int width, int height, ColorData backgrou
 
     // Determine if command line mode or graphical mode
     if (argc > 1) {
-      commandLine(int argc, char* argv[]);
+      commandLine(argc, argv);
     } else {
       initGlui();
       initGraphics();
@@ -53,12 +53,9 @@ void MIAApp::commandLine(int argc, char* argv[]) {
 
 // If there are more than 2 arguments, we know that the inFile is in array slot 1, and outfile is stored in the last slot.
   if (argc > 2) {
-    m_inFile = string(argv[1], strlen(argv[1]));
-    m_outFile = string(argv[argc-1], strlen(argv[1]));
+    std::string m_inFile(argv[1], strlen(argv[1]));
+    std::string m_outFile(argv[argc-1], strlen(argv[argc-1]));
     std::string outFileCopy = m_outFile;
-    ImageHandler::IMAGE_TYPE myInType = ImageHandler::getImageType(m_inFile);
-    ImageHandler::IMAGE_TYPE myOutType = ImageHandler::getImageType(m_outFile);
-
   }
   traverseArguments();
 
@@ -86,17 +83,14 @@ void MIAApp::commandLine(int argc, char* argv[]) {
     } else if (!strcmp(myRead->d_name,"..")) {
       cout << "I found the designator for the parent directory." << endl;
     } else {
-      m_inFile = string(myRead->d_name);
-      myInType = ImageHandler::getImageType(m_inFile);
+      m_inFile.assign(myRead->d_name, strlen(myRead->d_name));
 
       // Apply filters to the image and save it, if possible
-      if (myInType != UNKNOWN_IMAGE) {
-        loadImageToCanvas();
-        applyCommandLineFilters();
-        strcat(m_outFile,"/");
-        strcat(m_outFile,m_inFile);
-        saveCanvasToFile();
-      }
+      loadImageToCanvas();
+      applyCommandLineFilters();
+      strcat(m_outFile,"/");
+      strcat(m_outFile,m_inFile);
+      saveCanvasToFile();
       m_outFile.clear();
       strcpy(m_outFile, outFileCopy);
     }
@@ -213,7 +207,7 @@ void MIAApp::traverseArguments(int argc, char* argv[]) {
       compareImages();
       return;
     } else {
-      m_filterBooleans.toDislayHelp = true;
+      m_filterBooleans.toDisplayHelp = true;
     }
   }
 }
@@ -401,6 +395,19 @@ void MIAApp::initGlui()
         previousImageEnabled(false);
     }
     return;
+}
+
+void MIAApp::initGraphics() {
+	// Initialize OpenGL for 2D graphics as used in the BrushWork app
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f );
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	gluOrtho2D(0, m_width, 0, m_height);
+	glViewport(0, 0, m_width, m_height);
 }
 
 void MIAApp::gluiControl(int controlID)

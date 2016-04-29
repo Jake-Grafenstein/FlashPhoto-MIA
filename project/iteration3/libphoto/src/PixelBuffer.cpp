@@ -78,15 +78,20 @@ void PixelBuffer::copyPixelBuffer(PixelBuffer * sourceBuffer, PixelBuffer * dest
 	}
 }
 
-//bool PixelBuffer::CompareBuffers(PixelBuffer * firstBuffer, PixelBuffer * secondBuffer) {
-//    int i, j;
-//    int w, h;
-//    w = firstBuffer->getWidth();
-//    h = firstBuffer->getHeight();
+bool PixelBuffer::compareBuffers(PixelBuffer * firstBuffer, PixelBuffer * secondBuffer) {
+   int i, j;
+   int w, h;
+   w = firstBuffer->getWidth();
+   h = firstBuffer->getHeight();
 
-//    for (i = 0; i < w; i++) {
-//        for (j = 0; j < h; j++) {
-//            if ((firstBuffer[i][j].getRed)
-//        }
-//    }
-//}
+   for (i = 0; i < w; i++) {
+       for (j = 0; j < h; j++) {
+				 	ColorData firstPixel = firstBuffer->getPixel(i,j);
+					ColorData secondPixel = secondBuffer->getPixel(i,j);
+           if ((firstPixel.getRed() != secondPixel.getRed()) || (firstPixel.getGreen() != secondPixel.getGreen()) || (firstPixel.getBlue() != secondPixel.getBlue()) || (firstPixel.getAlpha() != secondPixel.getAlpha())) {
+						 return false;
+					 }
+       }
+   }
+	 return true;
+}

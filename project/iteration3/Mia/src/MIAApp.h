@@ -90,19 +90,21 @@ private:
     void undoOperation();
     void redoOperation();
 
-    void commandLine();
-    void traverseArguments();
+    void commandLine(int argc, char *argv[]);
+    void traverseArguments(int argc, char *argv[]);
     void applyCommandLineFilters();
     void displayHelp();
     void compareImages();
 
     int getNextYValue(float slope, int previousX, int newX, int previousY);
+    void fillLine(float slope, int previousX,int previousY,int x,int y,int xy);
+    void removePixelBuffer();
     void storePixelBuffer();
 
 
     void initGlui();
+    void initGraphics();
     void initializeBuffers(ColorData initialColor, int width, int height);
-
 
     struct {
         float multiply_colorRed;
@@ -157,6 +159,17 @@ private:
     std::string m_outFile;
     std::string m_nextFileName;
     std::string m_prevFileName;
+
+    std::vector<Tool*> tools;
+    std::vector<PixelBuffer*> undoStack;
+    std::vector<PixelBuffer*> redoStack;
+    int previousX;
+    int previousY;
+    int canvasWidth;
+    int canvasHeight;
+    int stampWidth;
+    int stampHeight;
+    ColorData backColor;
 
 
 };
