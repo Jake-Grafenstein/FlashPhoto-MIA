@@ -6,7 +6,9 @@ glui/lib
 glui/build
 jpeg/lib
 jpeg/bin
+jpeg/jpeg-9b/*.o
 png/lib
 png/bin
+png/libpng-1.6.21/*.o
 libphoto/lib
 libphoto/build
