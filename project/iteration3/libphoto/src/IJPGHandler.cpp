@@ -7,7 +7,7 @@
 //
 
 #include "IJPGHandler.h"
-
+#include "../../jpeg/include/jpeglib.h"
 #include "PixelBuffer.h"
 #include "ColorData.h"
 #include <iostream>
@@ -16,31 +16,31 @@
 PixelBuffer* IJPGHandler::loadImage(const std::string fileName)
 {
     PixelBuffer* loadedImageBuffer = NULL;
-    
+
     /* This struct contains the JPEG decompression parameters and pointers to
      * working space (which is allocated as needed by the JPEG library).
      */
     struct jpeg_decompress_struct cinfo;
     struct my_error_mgr jerr;
-    
+
     FILE * infile;		/* source file */
     JSAMPARRAY buffer;		/* Output row buffer */
     int row_stride;		/* physical row width in output buffer */
-    
+
     /* In this example we want to open the input file before doing anything else,
      * so that the setjmp() error recovery below can assume the file is open.
      * VERY IMPORTANT: use "b" option to fopen() if you are on a machine that
      * requires it in order to read binary files.
      */
-    
+
     if ((infile = fopen(fileName.c_str(), "rb")) == NULL) {
         fprintf(stderr, "can't open %s\n", fileName.c_str());
         std::cout << "ERROR: CANNOT READ JPG" << std::endl;
         exit(1);
     }
-    
+
     /* Step 1: allocate and initialize JPEG decompression object */
-    
+
     /* We set up the normal JPEG error routines, then override error_exit. */
     cinfo.err = jpeg_std_error(&jerr.pub);
     jerr.pub.error_exit = NULL;//exit(1); //my_error_exit;
@@ -56,36 +56,36 @@ PixelBuffer* IJPGHandler::loadImage(const std::string fileName)
     }
     /* Now we can initialize the JPEG decompression object. */
     jpeg_create_decompress(&cinfo);
-    
+
     /* Step 2: specify data source (eg, a file) */
-    
+
     jpeg_stdio_src(&cinfo, infile);
-    
+
     /* Step 3: read file parameters with jpeg_read_header() */
-    
+
     (void) jpeg_read_header(&cinfo, TRUE);
     /* We can ignore the return value from jpeg_read_header since
      *   (a) suspension is not possible with the stdio data source, and
      *   (b) we passed TRUE to reject a tables-only JPEG file as an error.
      * See libjpeg.doc for more info.
      */
-    
+
     /* Step 4: set parameters for decompression */
-    
+
     /* In this example, we don't need to change any of the defaults set by
      * jpeg_read_header(), so we do nothing here.
      */
-    
+
     /* Step 5: Start decompressor */
-    
+
     (void) jpeg_start_decompress(&cinfo);
     /* We can ignore the return value since suspension is not possible
      * with the stdio data source.
      */
-    
-    
+
+
     loadedImageBuffer = new PixelBuffer(cinfo.output_width, cinfo.output_height, ColorData(0.0,0.0,0.0));
-    
+
     /* We may need to do some setup of our own at this point before reading
      * the data.  After jpeg_start_decompress() we have the correct scaled
      * output image dimensions available, as well as the output colormap
@@ -97,10 +97,10 @@ PixelBuffer* IJPGHandler::loadImage(const std::string fileName)
     /* Make a one-row-high sample array that will go away when done with image */
     buffer = (*cinfo.mem->alloc_sarray)
     ((j_common_ptr) &cinfo, JPOOL_IMAGE, row_stride, 1);
-    
+
     /* Step 6: while (scan lines remain to be read) */
     /*           jpeg_read_scanlines(...); */
-    
+
     /* Here we use the library's state variable cinfo.output_scanline as the
      * loop counter, so that we don't have to keep track ourselves.
      */
@@ -123,36 +123,36 @@ PixelBuffer* IJPGHandler::loadImage(const std::string fileName)
         }
         y+=1;
     }
-    
+
     /* Step 7: Finish decompression */
-    
+
     (void) jpeg_finish_decompress(&cinfo);
     /* We can ignore the return value since suspension is not possible
      * with the stdio data source.
      */
-    
+
     /* Step 8: Release JPEG decompression object */
-    
+
     /* This is an important step since it will release a good deal of memory. */
     jpeg_destroy_decompress(&cinfo);
-    
+
     /* After finish_decompress, we can close the input file.
      * Here we postpone it until after no more JPEG errors are possible,
      * so as to simplify the setjmp error logic above.  (Actually, I don't
      * think that jpeg_destroy can do an error exit, but why assume anything...)
      */
     fclose(infile);
-    
+
     /* At this point you may want to check to see whether any corrupt-data
      * warnings occurred (test whether jerr.pub.num_warnings is nonzero).
      */
-    
+
     return loadedImageBuffer;
 }
 
 bool IJPGHandler::saveImage(const std::string fileName, const PixelBuffer* bufferToSave)
 {
-    
+
     /* This struct contains the JPEG compression parameters and pointers to
      * working space (which is allocated as needed by the JPEG library).
      * It is possible to have several such structures, representing multiple
@@ -173,9 +173,9 @@ bool IJPGHandler::saveImage(const std::string fileName, const PixelBuffer* buffe
     FILE * outfile;		/* target file */
     JSAMPROW row_pointer[1];	/* pointer to JSAMPLE row[s] */
     int row_stride;		/* physical row width in image buffer */
-    
+
     /* Step 1: allocate and initialize JPEG compression object */
-    
+
     /* We have to set up the error handler first, in case the initialization
      * step fails.  (Unlikely, but it could happen if you are out of memory.)
      * This routine fills in the contents of struct jerr, and returns jerr's
@@ -184,10 +184,10 @@ bool IJPGHandler::saveImage(const std::string fileName, const PixelBuffer* buffe
     cinfo.err = jpeg_std_error(&jerr);
     /* Now we can initialize the JPEG compression object. */
     jpeg_create_compress(&cinfo);
-    
+
     /* Step 2: spe cify data destination (eg, a file) */
     /* Note: steps 2 and 3 can be done in either order. */
-    
+
     /* Here we use the library-supplied code to send compressed data to a
      * stdio stream.  You can also write your own code to do something else.
      * VERY IMPORTANT: use "b" option to fopen() if you are on a machine that
@@ -197,9 +197,9 @@ bool IJPGHandler::saveImage(const std::string fileName, const PixelBuffer* buffe
         exit(1);
     }
     jpeg_stdio_dest(&cinfo, outfile);
-    
+
     /* Step 3: set parameters for compression */
-    
+
     /* First we supply a description of the input image.
      * Four fields of the cinfo struct must be filled in:
      */
@@ -216,28 +216,28 @@ bool IJPGHandler::saveImage(const std::string fileName, const PixelBuffer* buffe
      * Here we just illustrate the use of quality (quantization table) scaling:
      */
     jpeg_set_quality(&cinfo, 100/*quality*/, TRUE /* limit to baseline-JPEG values */);
-    
+
     /* Step 4: Start compressor */
-    
+
     /* TRUE ensures that we will write a complete interchange-JPEG file.
      * Pass TRUE unless you are very sure of what you're doing.
      */
     jpeg_start_compress(&cinfo, TRUE);
-    
+
     /* Step 5: while (scan lines remain to be written) */
     /*           jpeg_write_scanlines(...); */
-    
+
     /* Here we use the library's state variable cinfo.next_scanline as the
      * loop counter, so that we don't have to keep track ourselves.
      * To keep things simple, we pass one scanline per call; you can pass
      * more if you wish, though.
      */
     row_stride = cinfo.image_width * 3;	/* JSAMPLEs per row in image_buffer */
-    
+
     const int width = bufferToSave->getWidth();
     const int height = bufferToSave->getHeight();
     JSAMPLE* image_buffer = new JSAMPLE[row_stride*cinfo.image_height];
-    
+
     for (int y = 0; y < height; y++) {
         for (int x = 0; x < width; x++) {
             ColorData currentPixel = bufferToSave->getPixel(x, y);
@@ -246,8 +246,8 @@ bool IJPGHandler::saveImage(const std::string fileName, const PixelBuffer* buffe
             image_buffer[((height-(y+1))*width+x)*3+2] = (JSAMPLE) (currentPixel.getBlue()*255.0);
         }
     }
-    
-    
+
+
     while (cinfo.next_scanline < cinfo.image_height) {
         /* jpeg_write_scanlines expects an array of pointers to scanlines.
          * Here the array is only one element long, but you could pass
@@ -256,21 +256,21 @@ bool IJPGHandler::saveImage(const std::string fileName, const PixelBuffer* buffe
         row_pointer[0] = & image_buffer[cinfo.next_scanline * row_stride];
         (void) jpeg_write_scanlines(&cinfo, row_pointer, 1);
     }
-    
+
     delete[] image_buffer;
-    
+
     /* Step 6: Finish compression */
-    
+
     jpeg_finish_compress(&cinfo);
     /* After finish_compress, we can close the output file. */
     fclose(outfile);
-    
+
     /* Step 7: release JPEG compression object */
-    
+
     /* This is an important step since it will release a good deal of memory. */
     jpeg_destroy_compress(&cinfo);
-    
+
     /* And we're done! */
-    
+
     return true;
 }
