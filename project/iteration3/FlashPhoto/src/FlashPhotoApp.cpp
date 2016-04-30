@@ -7,6 +7,7 @@
 #include "SprayCan.h"
 #include "XPen.h"
 #include "Blur.h"
+#include "Pen.h"
 //#include "Stamp.h"
 #include "Tool.h"
 #include <cmath>
