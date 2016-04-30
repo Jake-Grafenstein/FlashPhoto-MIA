@@ -40,7 +40,6 @@ void TStamp::setStampBuffer(PixelBuffer * stampBuffer)
         delete m_stampBuffer;
     }
     m_stampBuffer = stampBuffer;
-    maskSize = m_stampBuffer->getWidth();
 }
 
 /*std::string TStamp::getName() {
@@ -49,18 +48,20 @@ void TStamp::setStampBuffer(PixelBuffer * stampBuffer)
 
 void TStamp::paintMask(int x,int y,PixelBuffer **displayBuffer,ColorData color,ColorData backgroundColor)
 {
-	int i,j,bufferI,bufferJ,width,height;
+	int i,j,bufferI,bufferJ,width,height,stampWidth,stampHeight;
 	width = (*displayBuffer)->getWidth();
 	height = (*displayBuffer)->getHeight();
-	for (i=0;i<maskSize;i++)
+	stampWidth = getWidth();
+	stampHeight = getHeight();
+	for (i=0;i<stampWidth;i++)
 	{
-		for (j=0;j<maskSize;j++)
+		for (j=0;j<stampHeight;j++)
 		{
-			bufferI = x + i - (maskSize/2) - 1;
-			bufferJ = y + j - (maskSize/2) - 1;
-			if ((bufferI > 0) && (bufferI < width) && (bufferJ > 0) && (bufferJ < height) && (m_stampBuffer->getPixel(i,maskSize - j -1).getAlpha()!=0))
+			bufferI = x + i - (stampWidth/2) - 1;
+			bufferJ = y + j - (stampHeight/2) - 1;
+			if ((bufferI > 0) && (bufferI < width) && (height - bufferJ > 0) && (height - bufferJ < height) && (m_stampBuffer->getPixel(i,stampHeight - j -1).getAlpha()!=0))
 			{
-				(**displayBuffer).setPixel(bufferI,height - bufferJ,m_stampBuffer->getPixel(i,maskSize - j - 1));
+				(**displayBuffer).setPixel(bufferI,height - bufferJ,m_stampBuffer->getPixel(i,stampHeight - j - 1));
 			}
 		}
 	}
