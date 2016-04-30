@@ -10,7 +10,7 @@
 
 #include "PixelBuffer.h"
 #include "ColorData.h"
-#include "../../png//include/png.h"
+#include <png.h>
 #include <cstring>
 
 PixelBuffer* IPNGHandler::loadImage(const std::string fileName)

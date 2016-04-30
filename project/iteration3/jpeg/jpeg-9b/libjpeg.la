@@ -38,4 +38,4 @@ dlopen=''
 dlpreopen=''
 
 # Directory that this library needs to be installed in:
-libdir='/home/meye1907/csci3081/repo-group-bandcamp/project/iteration2/jpeg/jpeg-9b/lib'
+libdir='/home/meye1907/csci3081/repo-group-bandcamp/project/iteration3/jpeg/jpeg-9b/lib'

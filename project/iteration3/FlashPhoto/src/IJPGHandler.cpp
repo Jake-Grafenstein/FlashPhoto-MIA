@@ -274,3 +274,4 @@ bool IJPGHandler::saveImage(const std::string fileName, const PixelBuffer* buffe
     
     return true;
 }
+
