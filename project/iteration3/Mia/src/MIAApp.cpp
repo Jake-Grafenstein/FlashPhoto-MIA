@@ -16,7 +16,7 @@
 #include <dirent.h>
 #include <errno.h>
 
-#define MAX_FILE_SIZE 1028
+#define MAX_FILE_SIZE 1024
 
 using std::cout;
 using std::endl;
@@ -41,6 +41,7 @@ MIAApp::MIAApp(int argc, char* argv[], int width, int height, ColorData backgrou
 
     // Determine if command line mode or graphical mode
     if (argc > 1) {
+      printf("argc is greater than 1\n");
       commandLine(argc, argv);
     } else {
       initGlui();
@@ -54,24 +55,28 @@ void MIAApp::commandLine(int argc, char* argv[]) {
   char *myInFile = (char *) malloc(MAX_FILE_SIZE*sizeof(char));
   char *myOutFile = (char *) malloc(MAX_FILE_SIZE*sizeof(char));;
   char *outFileCopy = (char *) malloc(MAX_FILE_SIZE*sizeof(char));;
+  cout << "INSIDE COMMAND LINE FUNCTION" << endl;
 
 // If there are more than 2 arguments, we know that the inFile is in array slot 1, and outfile is stored in the last slot.
   if (argc > 2) {
     strcpy(myInFile, argv[1]);
+    cout << "This is myInFile: " << myInFile << endl;
     strcpy(myOutFile, argv[argc-1]);
     strcpy(outFileCopy, myOutFile);
+    std::string tempImage(myInFile);
+    loadImageToCanvas();
   }
   traverseArguments(argc, argv);
 
   // If "-h" existed anywhere in the command line, return help
   if (m_filterBooleans.toDisplayHelp == true) {
+    cout << "Display Help..." << endl;
     displayHelp();
     return;
+  } else {
+    cout << "Did not display help" << endl;
   }
-
 // Check if directory, attempt to open the directory
-  std::string tempImage(myInFile);
-  loadImageToCanvas();
   workingDirectory = opendir(argv[1]);
   if (workingDirectory == NULL) {
     cout << "Could not open given directory." << endl;
@@ -142,11 +147,17 @@ void MIAApp::displayHelp() {
 }
 
 void MIAApp::traverseArguments(int argc, char* argv[]) {
-  int i = 2;
-  int argEnd = argc-1;
+  int i = 1;
+  const char *input;
+  cout << "TRAVERSE ARGUMENTS" << endl;
+  cout << "Argc = " << argc << endl;
 
-  while (i < argEnd) {
-    if (strcmp(argv[i], "-sharpen")) {
+  cout << "Entering while loop" << endl;
+  while (i < argc) {
+    input = argv[i];
+    cout << "This is the input: " << input << endl;
+    if (!strcmp(input, "-sharpen")) {
+      cout << "Detected sharpen command" << endl;
       m_filterBooleans.toSharpen = true;
       m_filterParameters.sharpen_amount = atoi(argv[i+1]);
       if (m_filterParameters.sharpen_amount > 0) {
@@ -155,10 +166,12 @@ void MIAApp::traverseArguments(int argc, char* argv[]) {
         perror("Invalid Integer value for Sharpen");
         exit(1);
       }
-    } else if (strcmp(argv[i], "-edgeDetect")) {
+    } else if (!strcmp(argv[i], "-edgeDetect")) {
+      cout << "Detected edgeDetect command" << endl;
       m_filterBooleans.toEdgeDetect = true;
       i++;
-    } else if (strcmp(argv[i], "-thresh")) {
+    } else if (!strcmp(argv[i], "-thresh")) {
+      cout << "Detected thresh command" << endl;
       m_filterBooleans.toThreshold = true;
       m_filterParameters.threshold_amount = atof(argv[i+1]);
       if (m_filterParameters.threshold_amount > 0.0) {
@@ -167,7 +180,8 @@ void MIAApp::traverseArguments(int argc, char* argv[]) {
         perror("Invalid Floating Point Value for Threshold");
         exit(1);
       }
-    } else if (strcmp(argv[i], "-quantize")) {
+    } else if (!strcmp(argv[i], "-quantize")) {
+      cout << "Detected quantize command" << endl;
       m_filterBooleans.toQuantize = true;
       m_filterParameters.quantize_bins = atoi(argv[i+1]);
       if (m_filterParameters.quantize_bins > 0) {
@@ -176,7 +190,8 @@ void MIAApp::traverseArguments(int argc, char* argv[]) {
         perror("Invalid Integer value for Quantize");
         exit(1);
       }
-    } else if (strcmp(argv[i], "-blur")) {
+    } else if (!strcmp(argv[i], "-blur")) {
+      cout << "Detected blur command" << endl;
       m_filterBooleans.toBlur = true;
       m_filterParameters.blur_amount = atof(argv[i+1]);
       if (m_filterParameters.blur_amount > 0.0) {
@@ -185,7 +200,8 @@ void MIAApp::traverseArguments(int argc, char* argv[]) {
         perror("Invalid Floating Point value to Blur");
         exit(1);
       }
-    } else if (strcmp(argv[i], "-saturate")) {
+    } else if (!strcmp(argv[i], "-saturate")) {
+      cout << "Detected saturate command" << endl;
       m_filterBooleans.toSaturate = true;
       m_filterParameters.saturation_amount = atof(argv[i+1]);
       if (m_filterParameters.saturation_amount > 0.0) {
@@ -194,7 +210,8 @@ void MIAApp::traverseArguments(int argc, char* argv[]) {
         perror("Invalid Floating Point value for Saturate");
         exit(1);
       }
-    } else if (strcmp(argv[i], "-multrgb")) {
+    } else if (!strcmp(argv[i], "-multrgb")) {
+      cout << "Detected multiplyRGB command" << endl;
       m_filterBooleans.toMultiplyRGB = true;
       m_filterParameters.multiply_colorRed = atof(argv[i+1]);
       m_filterParameters.multiply_colorGreen = atof(argv[i+2]);
@@ -205,11 +222,15 @@ void MIAApp::traverseArguments(int argc, char* argv[]) {
         perror("Invalid Floating Point value for multrgb");
         exit(1);
       }
-    } else if (strcmp(argv[i], "-compare")) {
+    } else if (!strcmp(argv[i], "-compare")) {
+      cout << "Detected compare command" << endl;
       compareImages();
       return;
     } else {
+      cout << "Detected either -h or incomprehensible input" << endl;
       m_filterBooleans.toDisplayHelp = true;
+      cout << "m_filterBooleans.toDisplayHelp = " << m_filterBooleans.toDisplayHelp << endl;
+      i++;
     }
   }
 }

@@ -15,6 +15,7 @@
 
 PixelBuffer* IPNGHandler::loadImage(const std::string fileName)
 {
+    std::cout << "IPNGHandler -> loadImage" << std::endl;
     PixelBuffer* loadedImageBuffer = NULL;
 
     png_image image;
