@@ -41,9 +41,15 @@ MIAApp::MIAApp(int argc, char* argv[], int width, int height, ColorData backgrou
 
     // Determine if command line mode or graphical mode
     if (argc > 1) {
-      printf("argc is greater than 1\n");
+      cout << "argc is greater than 1" << endl;
+      isCommandLine = true;
       commandLine(argc, argv);
+      cout << "finished traversing the command line" << endl;
+      applyCommandLineFilters();
+      saveCanvasToFile();
+      return;
     } else {
+      isCommandLine = false;
       initGlui();
       initGraphics();
     }
@@ -62,8 +68,11 @@ void MIAApp::commandLine(int argc, char* argv[]) {
     strcpy(myInFile, argv[1]);
     cout << "This is myInFile: " << myInFile << endl;
     strcpy(myOutFile, argv[argc-1]);
+    cout << "This is myOutFile: " << myOutFile << endl;
     strcpy(outFileCopy, myOutFile);
     std::string tempImage(myInFile);
+    m_inFile.assign(myInFile);
+    m_outFile.assign(myOutFile);
     loadImageToCanvas();
   }
   traverseArguments(argc, argv);
@@ -77,30 +86,32 @@ void MIAApp::commandLine(int argc, char* argv[]) {
     cout << "Did not display help" << endl;
   }
 // Check if directory, attempt to open the directory
-  workingDirectory = opendir(argv[1]);
-  if (workingDirectory == NULL) {
-    cout << "Could not open given directory." << endl;
-  } else {
-    // Read each element in the directory and if it is an image, apply the filters and save the file
-      while ((myRead = readdir(workingDirectory)) != NULL) {
-        if (!strcmp(myRead->d_name,".")) {
-          cout << "I found the designator for the current working directory." << endl;
-        } else if (!strcmp(myRead->d_name,"..")) {
-          cout << "I found the designator for the parent directory." << endl;
-        } else {
-          m_inFile.assign(myRead->d_name, strlen(myRead->d_name));
+  if (!isValidImageFileName(m_inFile)) {
+    workingDirectory = opendir(argv[1]);
+    if (workingDirectory == NULL) {
+      cout << "Could not open given directory." << endl;
+    } else {
+      // Read each element in the directory and if it is an image, apply the filters and save the file
+        while ((myRead = readdir(workingDirectory)) != NULL) {
+          if (!strcmp(myRead->d_name,".")) {
+            cout << "I found the designator for the current working directory." << endl;
+          } else if (!strcmp(myRead->d_name,"..")) {
+            cout << "I found the designator for the parent directory." << endl;
+          } else {
+            m_inFile.assign(myRead->d_name, strlen(myRead->d_name));
 
-          // Apply filters to the image and save it, if possible
-          loadImageToCanvas();
-          applyCommandLineFilters();
-          strcat(myOutFile,"/");
-          strcat(myOutFile,myInFile);
-          m_outFile.assign(myOutFile);
-          saveCanvasToFile();
-          m_outFile.clear();
-          strcpy(myOutFile, outFileCopy);
+            // Apply filters to the image and save it, if possible
+            loadImageToCanvas();
+            applyCommandLineFilters();
+            strcat(myOutFile,"/");
+            strcat(myOutFile,myInFile);
+            m_outFile.assign(myOutFile);
+            saveCanvasToFile();
+            m_outFile.clear();
+            strcpy(myOutFile, outFileCopy);
+          }
         }
-      }
+    }
   }
 }
 
@@ -148,12 +159,20 @@ void MIAApp::displayHelp() {
 
 void MIAApp::traverseArguments(int argc, char* argv[]) {
   int i = 1;
+  int argEnd;
   const char *input;
   cout << "TRAVERSE ARGUMENTS" << endl;
   cout << "Argc = " << argc << endl;
 
+  if (argc > 2) {
+    argEnd = argc - 1;
+    i++;
+  } else {
+    argEnd = argc;
+  }
+
   cout << "Entering while loop" << endl;
-  while (i < argc) {
+  while (i < argEnd) {
     input = argv[i];
     cout << "This is the input: " << input << endl;
     if (!strcmp(input, "-sharpen")) {
@@ -503,20 +522,24 @@ void MIAApp::loadImageToCanvas()
 
 	if (m_displayBuffer)
 	{
-    storePixelBuffer();
+    if(!isCommandLine) {
+      storePixelBuffer();
+    }
 		delete m_displayBuffer;
 	}
 	m_displayBuffer = ImageHandler::loadImage(m_inFile);
+  cout << "Set m_displayBuffer to new image" << endl;
 	canvasWidth = m_displayBuffer->getWidth();
 	canvasHeight = m_displayBuffer->getHeight();
-	setWindowDimensions(m_displayBuffer->getWidth(),m_displayBuffer->getHeight());
+  if (!isCommandLine) {
+  	setWindowDimensions(m_displayBuffer->getWidth(),m_displayBuffer->getHeight());
+    // Determining whether there are next or previous images
+  	m_nextFileName = getImageNamePlusSeqOffset(m_inFile, 1);
+  	m_prevFileName = getImageNamePlusSeqOffset(m_inFile, -1);
 
-	// Determining whether there are next or previous images
-	m_nextFileName = getImageNamePlusSeqOffset(m_inFile, 1);
-	m_prevFileName = getImageNamePlusSeqOffset(m_inFile, -1);
-
-	nextImageEnabled(isValidImageFile(m_nextFileName));
-	previousImageEnabled(isValidImageFile(m_prevFileName));
+  	nextImageEnabled(isValidImageFile(m_nextFileName));
+  	previousImageEnabled(isValidImageFile(m_prevFileName));
+  }
 }
 
 void MIAApp::saveCanvasToFile()

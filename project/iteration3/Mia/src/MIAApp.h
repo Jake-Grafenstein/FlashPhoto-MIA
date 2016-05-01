@@ -172,6 +172,7 @@ private:
     int stampWidth;
     int stampHeight;
     ColorData backColor;
+    bool isCommandLine;
 
 
 };
