@@ -1,4 +1,4 @@
-#try 1
+#try 1 blah
 # CPP_FILES = $(wildcard src/*.cpp)
 # OBJ_FILES = $(addprefix build/,$(notdir $(CPP_FILES:.cpp=.o)))
 # CC_FLAGS = -c -Wall
