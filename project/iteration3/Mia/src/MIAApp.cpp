@@ -16,6 +16,8 @@
 #include <dirent.h>
 #include <errno.h>
 
+#define MAX_FILE_SIZE 1028
+
 using std::cout;
 using std::endl;
 
@@ -49,10 +51,9 @@ MIAApp::MIAApp(int argc, char* argv[], int width, int height, ColorData backgrou
 void MIAApp::commandLine(int argc, char* argv[]) {
   DIR *workingDirectory;
   struct dirent *myRead;
-  unsigned char fileType;
-  char *myInFile;
-  char *myOutFile;
-  char *outFileCopy;
+  char *myInFile = (char *) malloc(MAX_FILE_SIZE*sizeof(char));
+  char *myOutFile = (char *) malloc(MAX_FILE_SIZE*sizeof(char));;
+  char *outFileCopy = (char *) malloc(MAX_FILE_SIZE*sizeof(char));;
 
 // If there are more than 2 arguments, we know that the inFile is in array slot 1, and outfile is stored in the last slot.
   if (argc > 2) {
@@ -70,34 +71,31 @@ void MIAApp::commandLine(int argc, char* argv[]) {
 
 // Check if directory, attempt to open the directory
   std::string tempImage(myInFile);
-  if (ImageHandler::getImageType(tempImage) != UNKNOWN_IMAGE) {
-    loadImageToCanvas();
+  loadImageToCanvas();
+  workingDirectory = opendir(argv[1]);
+  if (workingDirectory == NULL) {
+    cout << "Could not open given directory." << endl;
   } else {
-    workingDirectory = opendir(argv[1]);
-    if (workingDirectory == NULL) {
-      perror("Could not open given directory.");
-      exit(1);
-    }
-  }
+    // Read each element in the directory and if it is an image, apply the filters and save the file
+      while ((myRead = readdir(workingDirectory)) != NULL) {
+        if (!strcmp(myRead->d_name,".")) {
+          cout << "I found the designator for the current working directory." << endl;
+        } else if (!strcmp(myRead->d_name,"..")) {
+          cout << "I found the designator for the parent directory." << endl;
+        } else {
+          m_inFile.assign(myRead->d_name, strlen(myRead->d_name));
 
-// Read each element in the directory and if it is an image, apply the filters and save the file
-  while ((myRead = readdir(workingDirectory)) != NULL) {
-    if (!strcmp(myRead->d_name,".")) {
-      cout << "I found the designator for the current working directory." << endl;
-    } else if (!strcmp(myRead->d_name,"..")) {
-      cout << "I found the designator for the parent directory." << endl;
-    } else {
-      m_inFile.assign(myRead->d_name, strlen(myRead->d_name));
-
-      // Apply filters to the image and save it, if possible
-      loadImageToCanvas();
-      applyCommandLineFilters();
-      strcat(m_outFile,"/");
-      strcat(m_outFile,m_inFile);
-      saveCanvasToFile();
-      m_outFile.clear();
-      strcpy(m_outFile, outFileCopy);
-    }
+          // Apply filters to the image and save it, if possible
+          loadImageToCanvas();
+          applyCommandLineFilters();
+          strcat(myOutFile,"/");
+          strcat(myOutFile,myInFile);
+          m_outFile.assign(myOutFile);
+          saveCanvasToFile();
+          m_outFile.clear();
+          strcpy(myOutFile, outFileCopy);
+        }
+      }
   }
 }
 
@@ -219,7 +217,7 @@ void MIAApp::traverseArguments(int argc, char* argv[]) {
 void MIAApp::compareImages() {
   PixelBuffer *tempInBuffer = ImageHandler::loadImage(m_inFile);
   PixelBuffer *tempOutBuffer = ImageHandler::loadImage(m_outFile);
-  if (PixelBuffer::CompareBuffers(tempInBuffer,tempOutBuffer)) {
+  if (tempInBuffer->compareBuffers(tempInBuffer,tempOutBuffer)) {
     cout << "1" << endl;
   } else {
     cout << "0" << endl;
@@ -525,9 +523,9 @@ void MIAApp::applyFilterThreshold()
 void MIAApp::applyFilterMultiplyRGB()
 {
 	storePixelBuffer();
-	channels.setR(m_filterParameters.channel_colorRed);
-	channels.setG(m_filterParameters.channel_colorGreen);
-	channels.setB(m_filterParameters.channel_colorBlue);
+	channels.setR(m_filterParameters.multiply_colorRed);
+	channels.setG(m_filterParameters.multiply_colorGreen);
+	channels.setB(m_filterParameters.multiply_colorBlue);
 	channels.applyFilter(m_displayBuffer);
 	cout << "Apply has been clicked for Multiply RGB with red = " << m_filterParameters.multiply_colorRed
 	<< ", green = " << m_filterParameters.multiply_colorGreen
@@ -565,13 +563,13 @@ void MIAApp::applyFilterQuantize()
 	cout << "Apply has been clicked for Quantize with bins = " << m_filterParameters.quantize_bins << endl;
 }
 
-void FlashPhotoApp::applyFilterBlur() {
+void MIAApp::applyFilterBlur() {
   storePixelBuffer();
   blur->applyFilter(m_displayBuffer, m_filterParameters.blur_amount, -1);
   cout << "Apply has been clicked for Blur with amount = " << m_filterParameters.blur_amount << endl;
 }
 
-void FlashPhotoApp::applyFilterSaturate()
+void MIAApp::applyFilterSaturate()
 {
   storePixelBuffer();
 	saturate.setValue(m_filterParameters.saturation_amount);
