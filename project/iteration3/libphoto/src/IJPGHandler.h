@@ -13,7 +13,7 @@
 #include <stdio.h>
 #include <string>
 
-#include <jpeglib.h>
+#include "../../jpeg/include/jpeglib.h"
 #include <setjmp.h>
 
 #include "ImageHandler.h"

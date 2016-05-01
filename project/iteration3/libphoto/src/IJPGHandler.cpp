@@ -7,7 +7,6 @@
 //
 
 #include "IJPGHandler.h"
-#include "../../jpeg/include/jpeglib.h"
 #include "PixelBuffer.h"
 #include "ColorData.h"
 #include <iostream>

@@ -7,15 +7,16 @@
 //
 
 #include "IPNGHandler.h"
-
 #include "PixelBuffer.h"
 #include "ColorData.h"
 #include <png.h>
 #include <cstring>
 
+using namespace std;
+
 PixelBuffer* IPNGHandler::loadImage(const std::string fileName)
 {
-    std::cout << "IPNGHandler -> loadImage" << std::endl;
+    printf("IPNGHandler -> loadImage\n");
     PixelBuffer* loadedImageBuffer = NULL;
 
     png_image image;
