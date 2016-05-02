@@ -301,7 +301,42 @@ MIAApp::~MIAApp()
 
 void MIAApp::mouseDragged(int x, int y)
 {
-
+  // if the current Tool is the stamp tool
+  if (m_curTool == 1)
+  {
+    //do nothing
+  }
+  else
+  {
+	  float slope;
+	  int xy;
+	  (*tools[m_curTool]).paintMask(x,y,&m_displayBuffer,ColorData(1, 0, 0),backColor);
+	  if ((previousX == -1) || (previousY == -1))
+    {
+		  // Do Nothing
+	  }
+    else if ((previousX != -1) && (previousY != -1))
+    {
+		  if ((previousX-x) == 0)
+      {
+			  xy = 1;
+			  slope = 0;
+		  }
+		  else
+      {
+			  slope = (float)(-1.0*(previousY-y)/(previousX-x));
+			  xy = 0;
+			  if (slope > 1 || slope < -1)
+			  {
+				slope = 1.0/slope;
+				xy = 1;
+			  }
+		  }
+		fillLine(slope,previousX,previousY,x,y,xy);
+		previousX = x;
+		previousY = y;
+    }
+	}
 }
 
 void MIAApp::mouseMoved(int x, int y)
@@ -311,7 +346,19 @@ void MIAApp::mouseMoved(int x, int y)
 
 void MIAApp::leftMouseDown(int x, int y)
 {
-    std::cout << "mousePressed " << x << " " << y << std::endl;
+  storePixelBuffer();
+  // if the current tool is the stamp tool
+  if (m_curTool == 1)
+  {
+    stamp.paintMask(x,y,&m_displayBuffer,ColorData(0,0,0),backColor);
+  }
+	else// If the leftMouseDown is clicked without moving, the tool should be applied to the pixelBuffer once
+  {
+    (*tools[m_curTool]).paintMask(x,y,&m_displayBuffer,ColorData(1, 0, 0),backColor);
+  }
+	// Set the previous x and y values to fill the line
+	previousX = x;
+	previousY = y;
 }
 
 void MIAApp::leftMouseUp(int x, int y)
@@ -322,6 +369,36 @@ void MIAApp::leftMouseUp(int x, int y)
 // Finds the next Y value given the slope of the line, the previous x and y values, and the new x value
 int MIAApp::getNextYValue(float slope, int previousX, int newX, int previousY) {
 	return (int)(-1.0*((slope*newX)-(slope*previousX)-previousY));
+}
+
+void MIAApp::fillLine(float slope, int previousX, int previousY, int x, int y, int xy) {
+	int i,nextCoord,stepSize;
+	stepSize = (int) (  ((float) (*tools[m_curTool]).getMaskSize()) * 2.0/7.0);
+	// Use the y/x slope
+	if (xy==0) {
+		// Moving left on the canvas
+		for (i = previousX-stepSize; i > x; i-=stepSize) {
+			nextCoord = getNextYValue(slope, previousX, i, previousY);
+			(*tools[m_curTool]).paintMask(i,nextCoord,&m_displayBuffer,ColorData(1, 0, 0),backColor);
+		}
+		// Moving right on the canvas
+		for (i = previousX+stepSize; i < x; i+=stepSize) {
+			nextCoord = getNextYValue(slope, previousX, i, previousY);
+			(*tools[m_curTool]).paintMask(i,nextCoord,&m_displayBuffer,ColorData(1, 0, 0),backColor);
+		}
+	}
+	else if (xy==1) {
+		// Moving left on the canvas
+		for (i = previousY-stepSize; i > y; i-=stepSize) {
+                        nextCoord = getNextYValue(slope, previousY, i, previousX);
+                        (*tools[m_curTool]).paintMask(nextCoord,i,&m_displayBuffer,ColorData(1, 0, 0),backColor);
+                }
+		// Moving right on the canvas
+                for (i = previousY+stepSize; i < y; i+=stepSize) {
+                        nextCoord = getNextYValue(slope, previousY, i, previousX);
+                        (*tools[m_curTool]).paintMask(nextCoord,i,&m_displayBuffer,ColorData(1, 0, 0),backColor);
+                }
+	}
 }
 
 // A function for keeping the old pixelBuffer so that the undo/redo operations work properly
