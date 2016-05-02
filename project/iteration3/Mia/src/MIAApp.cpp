@@ -73,6 +73,8 @@ void MIAApp::commandLine(int argc, char* argv[]) {
     std::string tempImage(myInFile);
     m_inFile.assign(myInFile);
     m_outFile.assign(myOutFile);
+    cout << "This is m_inFile: " << m_inFile << endl;
+    cout << "This is m_outFile: " << m_outFile << endl;
     loadImageToCanvas();
   }
   traverseArguments(argc, argv);
@@ -274,6 +276,18 @@ MIAApp::~MIAApp()
     if (m_displayBuffer) {
         delete m_displayBuffer;
     }
+
+    if (edgeDet) {
+      delete edgeDet;
+    }
+
+    if (sharpen) {
+      delete sharpen;
+    }
+
+    if (blur) {
+      delete blur;
+    }
 }
 
 
@@ -305,16 +319,16 @@ int MIAApp::getNextYValue(float slope, int previousX, int newX, int previousY) {
 // A function for keeping the old pixelBuffer so that the undo/redo operations work properly
 void MIAApp::storePixelBuffer() {
   // Store the current pixelBuffer in the undoStack
-	PixelBuffer *tempPixelBuffer = new PixelBuffer(canvasWidth,canvasHeight,backColor);
-	m_displayBuffer->copyPixelBuffer(m_displayBuffer, tempPixelBuffer);
-	undoStack.push_back(tempPixelBuffer);
-
+  undoOp->addToUndoStack(m_displayBuffer, backColor);
 	// Empty the redoStack
-	redoStack.clear();
+	redoOp->clearStack();
 }
 
 void MIAApp::initializeBuffers(ColorData backgroundColor, int width, int height) {
     m_displayBuffer = new PixelBuffer(width, height, backgroundColor);
+    backColor = backgroundColor;
+    undoOp = new Undo();
+    redoOp = new Redo();
 }
 
 void MIAApp::initGlui()
@@ -395,9 +409,9 @@ void MIAApp::initGlui()
         // UNDO,REDO,QUIT
         {
             m_gluiControlHooks.undoButton = new GLUI_Button(m_glui, "Undo", UI_UNDO, s_gluicallback);
-            undoEnabled(false);
+            undoEnabled(true);
             m_gluiControlHooks.redoButton  = new GLUI_Button(m_glui, "Redo", UI_REDO, s_gluicallback);
-            redoEnabled(false);
+            redoEnabled(true);
 
             new GLUI_Separator(m_glui);
             new GLUI_Button(m_glui, "Quit", UI_QUIT, (GLUI_Update_CB)exit);
@@ -528,6 +542,7 @@ void MIAApp::loadImageToCanvas()
 		delete m_displayBuffer;
 	}
 	m_displayBuffer = ImageHandler::loadImage(m_inFile);
+  m_outFile = m_inFile;
   cout << "Set m_displayBuffer to new image" << endl;
 	canvasWidth = m_displayBuffer->getWidth();
 	canvasHeight = m_displayBuffer->getHeight();
@@ -623,48 +638,22 @@ void MIAApp::applyFilterSaturate()
 
 void MIAApp::undoOperation()
 {
-	if (!undoStack.empty()) {
-		cout << "Undoing..." << endl;
-		// Pull tempPixelBuffer off the undostack
-		PixelBuffer *myNewPixelBuffer = undoStack.back();
-		undoStack.pop_back();
-		// Put m_displayBuffer on redoStack
-		PixelBuffer *tempPixelBuffer = new PixelBuffer(canvasWidth,canvasHeight,backColor);
-		m_displayBuffer->copyPixelBuffer(m_displayBuffer, tempPixelBuffer);
-		redoStack.push_back(tempPixelBuffer);
-		// Set m_displayBuffer to tempPixelBuffer
-		setWindowDimensions(myNewPixelBuffer->getWidth(),myNewPixelBuffer->getHeight());
-		canvasWidth=myNewPixelBuffer->getWidth();
-		canvasHeight=myNewPixelBuffer->getHeight();
-		m_displayBuffer = myNewPixelBuffer;
-		cout << "Undoing..." << endl;
-	}
-	else {
-    		cout << "Nothing to undo" << endl;
-	}
+	PixelBuffer *myNewPixelBuffer = undoOp->restoreBuffer(m_displayBuffer, backColor, redoOp);
+  cout << "This is myNewPixelBuffer: " << myNewPixelBuffer << endl;
+  if (&myNewPixelBuffer != NULL) {
+    m_displayBuffer = myNewPixelBuffer;
+    setWindowDimensions(m_displayBuffer->getWidth(),m_displayBuffer->getHeight());
+  }
 }
 
 void MIAApp::redoOperation()
 {
-	if (!redoStack.empty()) {
-		cout << "Redoing..." << endl;
-		// Pull displayBuffer off of redoStack
-		PixelBuffer *myNewPixelBuffer = redoStack.back();
-		redoStack.pop_back();
-		// Put m_displayBuffer on undoStack
-		PixelBuffer *tempPixelBuffer = new PixelBuffer(canvasWidth,canvasHeight,backColor);
-		m_displayBuffer->copyPixelBuffer(m_displayBuffer, tempPixelBuffer);
-		undoStack.push_back(tempPixelBuffer);
-		// Set m_displayBuffer to displayBuffer
-		setWindowDimensions(myNewPixelBuffer->getWidth(),myNewPixelBuffer->getHeight());
-		canvasWidth=myNewPixelBuffer->getWidth();
-		canvasHeight=myNewPixelBuffer->getHeight();
-		m_displayBuffer = myNewPixelBuffer;
-		cout << "Redoing..." << endl;
-	}
-	else {
-		cout << "Nothing to redo" << endl;
-	}
+	PixelBuffer *myNewPixelBuffer = redoOp->restoreBuffer(m_displayBuffer, backColor, undoOp);
+  cout << "This is myNewPixelBuffer: " << myNewPixelBuffer << endl;
+  if (&myNewPixelBuffer != NULL) {
+    m_displayBuffer = myNewPixelBuffer;
+    setWindowDimensions(m_displayBuffer->getWidth(),m_displayBuffer->getHeight());
+  }
 }
 // ** END OF CALLBACKS **
 // **********************

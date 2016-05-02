@@ -18,6 +18,8 @@
 #include "Sharpen.h"
 #include "BlurFilter.h"
 #include "TStamp.h"
+#include "Undo.h"
+#include "Redo.h"
 #include <string>
 
 
@@ -147,10 +149,13 @@ private:
     Channels channels;
     Saturate saturate;
     Quantize quantize;
-    Sharpen *sharpen;
-    EdgeDetection *edgeDet;
-    BlurFilter *blur;
+    Sharpen* sharpen;
+    EdgeDetection* edgeDet;
+    BlurFilter* blur;
     TStamp stamp;
+
+    Redo *redoOp;
+    Undo *undoOp;
 
     // This is the pointer to the buffer where the display PixelBuffer is stored
     PixelBuffer* m_displayBuffer;
@@ -163,8 +168,7 @@ private:
     std::string m_prevFileName;
 
     std::vector<Tool*> tools;
-    std::vector<PixelBuffer*> undoStack;
-    std::vector<PixelBuffer*> redoStack;
+
     int previousX;
     int previousY;
     int canvasWidth;
