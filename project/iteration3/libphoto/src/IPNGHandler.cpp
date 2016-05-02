@@ -74,6 +74,7 @@ bool IPNGHandler::saveImage(const std::string fileName, const PixelBuffer* buffe
         for (int x = 0; x < image.width; x++) {
             ColorData currentPixel = bufferToSave->getPixel(x, y);
             buffer[((image.height-(y+1))*image.width+x)*4] = (png_byte) (currentPixel.getRed()*255.0);
+            cout << "current pixel red: " << currentPixel.getRed()*255.0 << endl;
             buffer[((image.height-(y+1))*image.width+x)*4+1] = (png_byte) (currentPixel.getGreen()*255.0);
             buffer[((image.height-(y+1))*image.width+x)*4+2] = (png_byte) (currentPixel.getBlue()*255.0);
             buffer[((image.height-(y+1))*image.width+x)*4+3] = (png_byte) (currentPixel.getAlpha()*255.0);
