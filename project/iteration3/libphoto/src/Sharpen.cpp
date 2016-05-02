@@ -20,7 +20,7 @@ Sharpen::Sharpen() {
 
   midPoint = floor(kernelSize/2);
 
-  kernel[midPoint][midPoint] = 9.0;
+  kernel[midPoint][midPoint] = (float) kernelSize*kernelSize;
   for (int j = 0; j < kernelSize; j++) {
     for (int k = 0; k < kernelSize; k++) {
       if ((j == k) == midPoint) {
@@ -34,9 +34,9 @@ Sharpen::Sharpen() {
 
 Sharpen::~Sharpen() {
   for (int i = 0; i < kernelSize; i++) {
-    free(kernel[i]);
+    delete[] kernel[i];
   }
-  free(kernel);
+  delete[] kernel;
 }
 
 void Sharpen::adjustKernel(float amount, int direction) {
@@ -65,13 +65,19 @@ void Sharpen::resizeKernel(float amount) {
   int i;
   int myAmount = (int) amount;
   for (i=0;i<kernelSize;i++) {
-    free(kernel[i]);
+    delete[] kernel[i];
   }
-  free(kernel);
+  delete[] kernel;
 
-  if ((myAmount%2)==0) {
+  float myModulo = myAmount % 2;
+
+  if (myModulo==0.0) {
     myAmount++;
-  } else {
+  } else if (myModulo==1.0) {
+    // Do nothing
+  } else if (myModulo>1.0) {
+    myAmount = floor(myAmount);
+  } else if (myModulo<1.0) {
     myAmount=ceil(myAmount);
   }
 
