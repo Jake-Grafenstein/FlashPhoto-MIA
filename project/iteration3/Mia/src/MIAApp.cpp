@@ -30,14 +30,7 @@ MIAApp::MIAApp(int argc, char* argv[], int width, int height, ColorData backgrou
     initializeBuffers(backgroundColor, width, height);
 
     // Initalize Filters
-    stamp = TStamp();
-  	thresh = Threshold();
-  	saturate = Saturate();
-  	channels = Channels();
-  	quantize = Quantize();
-    edgeDet = new EdgeDetection();
-    sharpen = new Sharpen();
-    blur = new BlurFilter();
+    initializeTools();
 
     // Determine if command line mode or graphical mode
     if (argc > 1) {
@@ -53,6 +46,21 @@ MIAApp::MIAApp(int argc, char* argv[], int width, int height, ColorData backgrou
       initGlui();
       initGraphics();
     }
+}
+
+void MIAApp::initializeTools() {
+  tools.push_back(new Pen());
+  tools.push_back(new TStamp());
+  stamp = TStamp();
+  thresh = Threshold();
+  saturate = Saturate();
+  channels = Channels();
+  quantize = Quantize();
+  edgeDet = new EdgeDetection();
+  sharpen = new Sharpen();
+  blur = new BlurFilter();
+  undoOp = new Undo();
+  redoOp = new Redo();
 }
 
 void MIAApp::commandLine(int argc, char* argv[]) {
@@ -318,7 +326,6 @@ int MIAApp::getNextYValue(float slope, int previousX, int newX, int previousY) {
 
 // A function for keeping the old pixelBuffer so that the undo/redo operations work properly
 void MIAApp::storePixelBuffer() {
-  // Store the current pixelBuffer in the undoStack
   undoOp->addToUndoStack(m_displayBuffer, backColor);
 	// Empty the redoStack
 	redoOp->clearStack();
@@ -327,8 +334,6 @@ void MIAApp::storePixelBuffer() {
 void MIAApp::initializeBuffers(ColorData backgroundColor, int width, int height) {
     m_displayBuffer = new PixelBuffer(width, height, backgroundColor);
     backColor = backgroundColor;
-    undoOp = new Undo();
-    redoOp = new Redo();
 }
 
 void MIAApp::initGlui()

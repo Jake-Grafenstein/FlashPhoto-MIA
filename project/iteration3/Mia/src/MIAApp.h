@@ -107,6 +107,7 @@ private:
     void initGlui();
     void initGraphics();
     void initializeBuffers(ColorData initialColor, int width, int height);
+    void initializeTools();
 
     struct {
         float multiply_colorRed;

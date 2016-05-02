@@ -25,12 +25,12 @@ void Channels::setR(float value)
 
 void Channels::setG(float value)
 {
-        g = value;
+  g = value;
 }
 
 void Channels::setB(float value)
 {
-        b = value;
+  b = value;
 }
 
 ColorData Channels::modifyPixel(ColorData pixel)
@@ -44,4 +44,3 @@ ColorData Channels::modifyPixel(ColorData pixel)
 
 // really just convention
 Channels::~Channels() {}
-
