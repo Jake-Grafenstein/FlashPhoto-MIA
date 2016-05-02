@@ -9,7 +9,6 @@
 #include "IPNGHandler.h"
 #include "PixelBuffer.h"
 #include "ColorData.h"
-#include <png.h>
 #include <cstring>
 #include <iostream>
 

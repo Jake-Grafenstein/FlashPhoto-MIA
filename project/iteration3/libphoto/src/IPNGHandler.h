@@ -13,7 +13,6 @@
 #include <string>
 
 #include "ImageHandler.h"
-#include "../../png/include/png.h"
 
 class PixelBuffer;
 

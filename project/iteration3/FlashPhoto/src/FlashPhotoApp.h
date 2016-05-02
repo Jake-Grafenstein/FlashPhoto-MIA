@@ -21,7 +21,7 @@
 #include "Emboss.h"
 #include "TStamp.h"
 #include <string>
-#include <png.h>
+
 
 class ColorData;
 class PixelBuffer;

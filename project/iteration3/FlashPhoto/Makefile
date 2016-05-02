@@ -35,6 +35,11 @@ INCLUDE += -I$(GLUI_PATH)/include
 LINK_LIBS +=  -L$(GLUI_PATH)/lib/ -lglui -lpthread
 GLUI_LIB = $(GLUI_PATH)/lib/libglui.a
 
+LIBPHOTO_PATH += ../libphoto
+INCLUDE += -I$(LIBPHOTO_PATH)/src
+LINK_LIBS += -L$(LIBPHOTO_PATH)/lib/ -lphoto
+LIBPHOTO_LIB += $(LIBPHOTO_PATH)/lib/libphoto.a
+
 JPEG_PATH += ../jpeg/jpeg-9b
 INCLUDE += -I$(JPEG_PATH)/include
 LINK_LIBS += -L$(JPEG_PATH)/lib/ -ljpeg
@@ -44,11 +49,6 @@ PNG_PATH += ../png/libpng-1.6.21
 INCLUDE += -I$(PNG_PATH)/include
 LINK_LIBS += -L$(PNG_PATH)/lib/ -lpng
 PNG_LIB += $(PNG_PATH)/lib/libpng.a
-
-LIBPHOTO_PATH += ../libphoto
-INCLUDE += -I$(LIBPHOTO_PATH)/src
-LINK_LIBS += -L$(LIBPHOTO_PATH)/lib/ -lphoto
-LIBPHOTO_LIB += $(LIBPHOTO_PATH)/lib/libphoto.a
 
 LINK_LIBS += -lz
 
@@ -104,6 +104,9 @@ clean:
 $(GLUI_LIB):
 	$(MAKE) -C $(GLUI_PATH) all
 
+$(LIBPHOTO_LIB):
+	cd $(LIBPHOTO_PATH); $(MAKE) -C $(LIBPHOTO_PATH) all
+
 $(JPEG_LIB):
 	cd $(JPEG_PATH); \
 	./configure --enable-shared=no --prefix=$(abspath $(JPEG_PATH))
@@ -115,9 +118,6 @@ $(PNG_LIB):
 	./configure --enable-shared=no --prefix=$(abspath $(PNG_PATH))
 	$(MAKE) -C $(PNG_PATH) all
 	$(MAKE) -C $(PNG_PATH) install
-
-$(LIBPHOTO_LIB):
-	cd $(LIBPHOTO_PATH); $(MAKE) -C $(LIBPHOTO_PATH) all
 
 cleanpng:
 	$(MAKE) -C $(PNG_PATH) distclean

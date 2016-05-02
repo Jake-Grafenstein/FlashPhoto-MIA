@@ -10,6 +10,8 @@
 #ifndef __PhotoShop__ImageHandler__
 #define __PhotoShop__ImageHandler__
 
+#include "../../png/include/png.h"
+#include "../../jpeg/include/jpeglib.h"
 #include <string>
 
 class PixelBuffer;
