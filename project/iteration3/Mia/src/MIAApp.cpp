@@ -52,6 +52,7 @@ void MIAApp::initializeTools() {
   tools.push_back(new Pen());
   tools.push_back(new TStamp());
   stamp = TStamp();
+  stamp.setStampBuffer(ImageHandler::loadImage("marker.png"));
   thresh = Threshold();
   saturate = Saturate();
   channels = Channels();
