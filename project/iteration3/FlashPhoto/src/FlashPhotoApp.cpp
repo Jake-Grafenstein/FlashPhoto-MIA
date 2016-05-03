@@ -59,17 +59,28 @@ FlashPhotoApp::~FlashPhotoApp()
 }
 
 
-//setTool and setFileName only used for testing
-void setTool(int tool)
+//setTool, setFileName, and compareBuffers only used for testing
+void FlahsPhotoApp::setTool(int tool)
 {
 	m_curTool = tool;
 }
 
-void setFileName(char *filename)
+void FlashPhotoApp::setFileName(char *filename)
 {
 	strcpy(m_fileName,filename);
 }
 
+int FlashPhotoApp::compareBuffers()
+{
+	if( PixelBuffer::compareBuffers(m_displayBuffer,stampBuffer))
+	{
+		return 1;
+	}
+	else
+	{
+		return 0;
+	}
+}
 
 void FlashPhotoApp::mouseDragged(int x, int y)
 {

@@ -41,7 +41,7 @@ public:
     void gluiControl(int controlID);
     void setTool(int tool);
     void setFileName(char * filename);
-
+    int compareBuffers();
 private:
 
     // GLUI INTERFACE ELEMENTS
