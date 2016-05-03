@@ -177,6 +177,7 @@ private:
     MotionBlur* motionBlur;
     BlurFilter* blur;
     Emboss* emboss;
+    bool stampLoaded;
     int previousX;
     int previousY;
     int canvasWidth;

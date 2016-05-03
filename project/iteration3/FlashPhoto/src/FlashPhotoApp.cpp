@@ -24,11 +24,13 @@
 using std::cout;
 using std::endl;
 
+
 FlashPhotoApp::FlashPhotoApp(int argc, char* argv[], int width, int height, ColorData backgroundColor) : BaseGfxApp(argc, argv, width, height, 50, 50, GLUT_RGB|GLUT_DOUBLE|GLUT_DEPTH, true, width+51, 50)
 {
     // Set the name of the window
     setCaption("FlashPhoto");
     initializeTools();
+    stampLoaded = false;
     // Initialize Interface
     initializeBuffers(backgroundColor, width, height);
 
@@ -100,10 +102,13 @@ void FlashPhotoApp::mouseMoved(int x, int y) {
 void FlashPhotoApp::leftMouseDown(int x, int y)
 {
   storePixelBuffer();
-  // if the current tool is the stamp tool
+  // if the current tool is the stamp tool and an image has been loaded to the stamp
   if (m_curTool == 7)
   {
-    stamp.paintMask(x,y,&m_displayBuffer,ColorData(0,0,0),backColor);
+    if (stampLoaded)
+    {
+      stamp.paintMask(x,y,&m_displayBuffer,ColorData(0,0,0),backColor);
+    }
   }
 	else// If the leftMouseDown is clicked without moving, the tool should be applied to the pixelBuffer once
   {
@@ -521,6 +526,7 @@ void FlashPhotoApp::loadImageToCanvas()
 void FlashPhotoApp::loadImageToStamp()
 {
 	stamp.setStampBuffer(ImageHandler::loadImage(m_fileName));
+  stampLoaded = true;
 }
 
 void FlashPhotoApp::saveCanvasToFile()
