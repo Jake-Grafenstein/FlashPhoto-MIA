@@ -39,6 +39,8 @@ public:
     void display();
     void initGraphics();
     void gluiControl(int controlID);
+    void setTool(int tool);
+    void setFileName(char * filename);
 
 private:
 

@@ -59,6 +59,18 @@ FlashPhotoApp::~FlashPhotoApp()
 }
 
 
+//setTool and setFileName only used for testing
+void setTool(int tool)
+{
+	m_curTool = tool;
+}
+
+void setFileName(char *filename)
+{
+	strcpy(m_fileName,filename);
+}
+
+
 void FlashPhotoApp::mouseDragged(int x, int y)
 {
   // if the current Tool is the stamp tool
