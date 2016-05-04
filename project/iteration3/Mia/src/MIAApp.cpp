@@ -66,29 +66,32 @@ void MIAApp::commandLine(int argc, char* argv[]) {
   struct dirent *myRead;
   char *myInFile = (char *) malloc(MAX_FILE_SIZE*sizeof(char));
   char *myOutFile = (char *) malloc(MAX_FILE_SIZE*sizeof(char));;
-  char *outFileCopy = (char *) malloc(MAX_FILE_SIZE*sizeof(char));;
   std::string inDirectory;
-  std::string file;
   std::string outDirectory;
+  std::string file;
 
 // If there are more than 2 arguments, we know that the inFile is in array slot 1, and outfile is stored in the last slot.
   if (argc > 2) {
     strcpy(myInFile, argv[1]);
     strcpy(myOutFile, argv[argc-1]);
-    strcpy(outFileCopy, myOutFile);
-    std::string tempImage(myInFile);
     m_inFile.assign(myInFile);
     m_outFile.assign(myOutFile);
     if (isValidImageFileName(m_inFile)) {
       loadImageToCanvas();
+      if (isValidImageFileName(m_outFile)) {
+        // Do Nothing
+      } else {
+        cout << "Invalid output file name" << endl;
+        exit(1);
+      }
     }
   }
   traverseArguments(argc, argv);
 
-  // If "-h" existed anywhere in the command line, return help
+  // If "-h" existed anywhere in the command line or if invalid input, return help
   if (m_filterBooleans.toDisplayHelp == true) {
     displayHelp();
-    return;
+    exit(1);
   } else {
     // Do Nothing
   }
@@ -111,9 +114,9 @@ void MIAApp::commandLine(int argc, char* argv[]) {
       // Read each element in the directory and if it is an image, apply the filters and save the file
         while ((myRead = readdir(workingDirectory)) != NULL) {
           if (!strcmp(myRead->d_name,".")) {
-            // Do Nothing
+            // Do Nothing, found current directory
           } else if (!strcmp(myRead->d_name,"..")) {
-            // Do Nothing
+            // Do Nothing, found parent directory
           } else {
             file.assign(myRead->d_name, strlen(myRead->d_name));
             m_inFile = inDirectory + file;
@@ -124,10 +127,13 @@ void MIAApp::commandLine(int argc, char* argv[]) {
             m_outFile = outDirectory + file;
             saveCanvasToFile();
             m_outFile.clear();
-            strcpy(myOutFile, outFileCopy);
           }
         }
     }
+  } else {
+    loadImageToCanvas();
+    applyCommandLineFilters();
+    saveCanvasToFile();
   }
 }
 
@@ -256,7 +262,7 @@ void MIAApp::traverseArguments(int argc, char* argv[]) {
     } else if (!strcmp(argv[i], "-compare")) {
       cout << "Detected compare command" << endl;
       compareImages();
-      return;
+      exit(1);
     } else {
       cout << "Detected either -h or incomprehensible input" << endl;
       m_filterBooleans.toDisplayHelp = true;
@@ -267,9 +273,13 @@ void MIAApp::traverseArguments(int argc, char* argv[]) {
 }
 
 void MIAApp::compareImages() {
+  cout << "This is my_inFile: " << m_inFile << endl;
+  cout << "This is my_outFile: " << m_outFile << endl;
   PixelBuffer *tempInBuffer = ImageHandler::loadImage(m_inFile);
   PixelBuffer *tempOutBuffer = ImageHandler::loadImage(m_outFile);
-  if (tempInBuffer->compareBuffers(tempInBuffer,tempOutBuffer)) {
+  bool areEqual = tempInBuffer->compareBuffers(tempInBuffer,tempOutBuffer);
+  cout << areEqual << endl;
+  if (areEqual) {
     cout << "1" << endl;
   } else {
     cout << "0" << endl;
@@ -629,7 +639,6 @@ void MIAApp::loadImageToCanvas()
   if (m_displayBuffer == NULL) {
     cout << "m_displayBuffer is NULL" << endl;
   } else {
-    m_outFile = m_inFile;
   	canvasWidth = m_displayBuffer->getWidth();
   	canvasHeight = m_displayBuffer->getHeight();
     if (!isCommandLine) {

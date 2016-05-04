@@ -82,13 +82,19 @@ bool PixelBuffer::compareBuffers(PixelBuffer * firstBuffer, PixelBuffer * second
    int i, j;
    int w, h;
    w = firstBuffer->getWidth();
+	 cout << "firstBuffer width: " << w << endl;
    h = firstBuffer->getHeight();
+	 cout << "firstBuffer height: " << h << endl;
 
    for (i = 0; i < w; i++) {
        for (j = 0; j < h; j++) {
 				 	ColorData firstPixel = firstBuffer->getPixel(i,j);
 					ColorData secondPixel = secondBuffer->getPixel(i,j);
            if ((firstPixel.getRed() != secondPixel.getRed()) || (firstPixel.getGreen() != secondPixel.getGreen()) || (firstPixel.getBlue() != secondPixel.getBlue()) || (firstPixel.getAlpha() != secondPixel.getAlpha())) {
+						 cout << "firstPixel.getRed(): " << firstPixel.getRed() << "! secondPixel.getRed(): " << secondPixel.getRed() << endl;
+						 cout << "firstPixel.getGreen(): " << firstPixel.getGreen() << "! secondPixel.getGreen(): " << secondPixel.getGreen() << endl;
+						 cout << "firstPixel.getBlue(): " << firstPixel.getBlue() << "! secondPixel.getBlue(): " << secondPixel.getBlue() << endl;
+						 cout << "firstPixel.getAlpha(): " << firstPixel.getAlpha() << "! secondPixel.getAlpha(): " << secondPixel.getAlpha() << endl;
 						 return false;
 					 }
        }
