@@ -8,13 +8,11 @@
 #include "XPen.h"
 #include "Blur.h"
 #include "Pen.h"
-//#include "Stamp.h"
 #include "Tool.h"
 #include <cmath>
 #include <iostream>
 #include <vector>
 #include <zlib.h>
-//#include "jpeglib.h"
 #include <setjmp.h>
 #include "ImageHandler.h"
 #include "IJPGHandler.h"
@@ -561,6 +559,7 @@ void FlashPhotoApp::loadImageToCanvas()
 void FlashPhotoApp::loadImageToStamp()
 {
 	stamp.setStampBuffer(ImageHandler::loadImage(m_fileName));
+  stampBuffer = stamp.getStampBuffer();
   stampLoaded = true;
 }
 

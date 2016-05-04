@@ -16,16 +16,17 @@
 class PixelBuffer;
 
 class TStamp: public Tool {
-    
+
 public:
     TStamp();
     virtual ~TStamp();
-    
+
 //    std::string getName();
     virtual int getWidth();
     virtual int getHeight();
 
     void setStampBuffer(PixelBuffer * stampBuffer);
+    PixelBuffer* getStampBuffer();
     void paintMask(int x,int y,PixelBuffer **displayBuffer,ColorData color, ColorData background);
 
 protected:
