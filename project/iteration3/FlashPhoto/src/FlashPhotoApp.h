@@ -40,7 +40,7 @@ public:
     void initGraphics();
     void gluiControl(int controlID);
     void setTool(int tool);
-    void setFileName(char * filename);
+    void setFileName(const std::string & filename);
     int compareBuffers();
 private:
 

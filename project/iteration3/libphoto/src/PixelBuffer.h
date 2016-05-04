@@ -38,7 +38,7 @@ public:
 
 	// A static method to copy one pixel buffer to another
 	static void copyPixelBuffer(PixelBuffer * sourceBuffer, PixelBuffer * destinationBuffer);
-	bool compareBuffers(PixelBuffer * firstBuffer, PixelBuffer * secondBuffer);
+	static bool compareBuffers(PixelBuffer * firstBuffer, PixelBuffer * secondBuffer);
 
 private:
 

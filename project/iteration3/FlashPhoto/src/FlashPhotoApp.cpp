@@ -60,14 +60,14 @@ FlashPhotoApp::~FlashPhotoApp()
 
 
 //setTool, setFileName, and compareBuffers only used for testing
-void FlahsPhotoApp::setTool(int tool)
+void FlashPhotoApp::setTool(int tool)
 {
 	m_curTool = tool;
 }
 
-void FlashPhotoApp::setFileName(char *filename)
+void FlashPhotoApp::setFileName(const std::string &filename)
 {
-	strcpy(m_fileName,filename);
+	m_fileName = filename;
 }
 
 int FlashPhotoApp::compareBuffers()
