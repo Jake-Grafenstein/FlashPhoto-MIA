@@ -5,7 +5,11 @@
 
 #include <iostream>
 #include <cstring>
+#include <stdlib.h>
 #include "ConvolutionFilter.h"
+
+using std::cout;
+using std::endl;
 
 //applies kernel over whole canvas, should just need to define kernel in subclasses
 void ConvolutionFilter::applyFilter(PixelBuffer *buf, float amount, int direction)
@@ -52,7 +56,7 @@ void ConvolutionFilter::applyKernel(int x, int y,PixelBuffer *buf, PixelBuffer *
 			}
 		}
 	}
-	temp -> setPixel(x,y,ColorData(r,g,b));
+	temp -> setPixel(x,y,ColorData(r,g,b).clampedColor());
 }
 
 void ConvolutionFilter::resizeKernel(float amount) {

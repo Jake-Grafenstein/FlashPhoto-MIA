@@ -54,11 +54,6 @@ void Sharpen::adjustKernel(float amount, int direction) {
       }
     }
   }
-  for (i=0; i < kernelSize; i++) {
-    for (j = 0; j < kernelSize; j++) {
-      std::cout << kernel[i][j] << std::endl;
-    }
-  }
 }
 
 void Sharpen::resizeKernel(float amount) {

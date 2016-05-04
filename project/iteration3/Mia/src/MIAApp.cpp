@@ -34,13 +34,10 @@ MIAApp::MIAApp(int argc, char* argv[], int width, int height, ColorData backgrou
 
     // Determine if command line mode or graphical mode
     if (argc > 1) {
-      cout << "argc is greater than 1" << endl;
       isCommandLine = true;
       commandLine(argc, argv);
-      cout << "finished traversing the command line" << endl;
-      applyCommandLineFilters();
-      saveCanvasToFile();
-      return;
+      cout << "Your photos have been edited completely" << endl;
+      exit(1);
     } else {
       isCommandLine = false;
       initGlui();
@@ -70,34 +67,43 @@ void MIAApp::commandLine(int argc, char* argv[]) {
   char *myInFile = (char *) malloc(MAX_FILE_SIZE*sizeof(char));
   char *myOutFile = (char *) malloc(MAX_FILE_SIZE*sizeof(char));;
   char *outFileCopy = (char *) malloc(MAX_FILE_SIZE*sizeof(char));;
-  cout << "INSIDE COMMAND LINE FUNCTION" << endl;
+  std::string inDirectory;
+  std::string file;
+  std::string outDirectory;
 
 // If there are more than 2 arguments, we know that the inFile is in array slot 1, and outfile is stored in the last slot.
   if (argc > 2) {
     strcpy(myInFile, argv[1]);
-    cout << "This is myInFile: " << myInFile << endl;
     strcpy(myOutFile, argv[argc-1]);
-    cout << "This is myOutFile: " << myOutFile << endl;
     strcpy(outFileCopy, myOutFile);
     std::string tempImage(myInFile);
     m_inFile.assign(myInFile);
     m_outFile.assign(myOutFile);
-    cout << "This is m_inFile: " << m_inFile << endl;
-    cout << "This is m_outFile: " << m_outFile << endl;
-    loadImageToCanvas();
+    if (isValidImageFileName(m_inFile)) {
+      loadImageToCanvas();
+    }
   }
   traverseArguments(argc, argv);
 
   // If "-h" existed anywhere in the command line, return help
   if (m_filterBooleans.toDisplayHelp == true) {
-    cout << "Display Help..." << endl;
     displayHelp();
     return;
   } else {
-    cout << "Did not display help" << endl;
+    // Do Nothing
   }
 // Check if directory, attempt to open the directory
   if (!isValidImageFileName(m_inFile)) {
+    inDirectory.assign(m_inFile);
+    outDirectory.assign(m_outFile);
+    char ch = *inDirectory.rbegin();
+    char ch2 = *outDirectory.rbegin();
+    if (ch != '/') {
+      inDirectory += '/';
+    }
+    if (ch2 != '/') {
+      outDirectory += '/';
+    }
     workingDirectory = opendir(argv[1]);
     if (workingDirectory == NULL) {
       cout << "Could not open given directory." << endl;
@@ -105,18 +111,17 @@ void MIAApp::commandLine(int argc, char* argv[]) {
       // Read each element in the directory and if it is an image, apply the filters and save the file
         while ((myRead = readdir(workingDirectory)) != NULL) {
           if (!strcmp(myRead->d_name,".")) {
-            cout << "I found the designator for the current working directory." << endl;
+            // Do Nothing
           } else if (!strcmp(myRead->d_name,"..")) {
-            cout << "I found the designator for the parent directory." << endl;
+            // Do Nothing
           } else {
-            m_inFile.assign(myRead->d_name, strlen(myRead->d_name));
+            file.assign(myRead->d_name, strlen(myRead->d_name));
+            m_inFile = inDirectory + file;
 
             // Apply filters to the image and save it, if possible
             loadImageToCanvas();
             applyCommandLineFilters();
-            strcat(myOutFile,"/");
-            strcat(myOutFile,myInFile);
-            m_outFile.assign(myOutFile);
+            m_outFile = outDirectory + file;
             saveCanvasToFile();
             m_outFile.clear();
             strcpy(myOutFile, outFileCopy);
@@ -172,8 +177,6 @@ void MIAApp::traverseArguments(int argc, char* argv[]) {
   int i = 1;
   int argEnd;
   const char *input;
-  cout << "TRAVERSE ARGUMENTS" << endl;
-  cout << "Argc = " << argc << endl;
 
   if (argc > 2) {
     argEnd = argc - 1;
@@ -182,10 +185,8 @@ void MIAApp::traverseArguments(int argc, char* argv[]) {
     argEnd = argc;
   }
 
-  cout << "Entering while loop" << endl;
   while (i < argEnd) {
     input = argv[i];
-    cout << "This is the input: " << input << endl;
     if (!strcmp(input, "-sharpen")) {
       cout << "Detected sharpen command" << endl;
       m_filterBooleans.toSharpen = true;
@@ -404,9 +405,11 @@ void MIAApp::fillLine(float slope, int previousX, int previousY, int x, int y, i
 
 // A function for keeping the old pixelBuffer so that the undo/redo operations work properly
 void MIAApp::storePixelBuffer() {
-  undoOp->addToUndoStack(m_displayBuffer, backColor);
-	// Empty the redoStack
-	redoOp->clearStack();
+  if (!isCommandLine) {
+    undoOp->addToUndoStack(m_displayBuffer, backColor);
+  	// Empty the redoStack
+  	redoOp->clearStack();
+  }
 }
 
 void MIAApp::initializeBuffers(ColorData backgroundColor, int width, int height) {
@@ -619,24 +622,25 @@ void MIAApp::loadImageToCanvas()
 
 	if (m_displayBuffer)
 	{
-    if(!isCommandLine) {
-      storePixelBuffer();
-    }
+    storePixelBuffer();
 		delete m_displayBuffer;
 	}
-	m_displayBuffer = ImageHandler::loadImage(m_inFile);
-  m_outFile = m_inFile;
-  cout << "Set m_displayBuffer to new image" << endl;
-	canvasWidth = m_displayBuffer->getWidth();
-	canvasHeight = m_displayBuffer->getHeight();
-  if (!isCommandLine) {
-  	setWindowDimensions(m_displayBuffer->getWidth(),m_displayBuffer->getHeight());
-    // Determining whether there are next or previous images
-  	m_nextFileName = getImageNamePlusSeqOffset(m_inFile, 1);
-  	m_prevFileName = getImageNamePlusSeqOffset(m_inFile, -1);
+  m_displayBuffer = ImageHandler::loadImage(m_inFile);
+  if (m_displayBuffer == NULL) {
+    cout << "m_displayBuffer is NULL" << endl;
+  } else {
+    m_outFile = m_inFile;
+  	canvasWidth = m_displayBuffer->getWidth();
+  	canvasHeight = m_displayBuffer->getHeight();
+    if (!isCommandLine) {
+    	setWindowDimensions(m_displayBuffer->getWidth(),m_displayBuffer->getHeight());
+      // Determining whether there are next or previous images
+    	m_nextFileName = getImageNamePlusSeqOffset(m_inFile, 1);
+    	m_prevFileName = getImageNamePlusSeqOffset(m_inFile, -1);
 
-  	nextImageEnabled(isValidImageFile(m_nextFileName));
-  	previousImageEnabled(isValidImageFile(m_prevFileName));
+    	nextImageEnabled(isValidImageFile(m_nextFileName));
+    	previousImageEnabled(isValidImageFile(m_prevFileName));
+    }
   }
 }
 
@@ -722,7 +726,6 @@ void MIAApp::applyFilterSaturate()
 void MIAApp::undoOperation()
 {
 	PixelBuffer *myNewPixelBuffer = undoOp->restoreBuffer(m_displayBuffer, backColor, redoOp);
-  cout << "This is myNewPixelBuffer: " << myNewPixelBuffer << endl;
   if (&myNewPixelBuffer != NULL) {
     m_displayBuffer = myNewPixelBuffer;
     setWindowDimensions(m_displayBuffer->getWidth(),m_displayBuffer->getHeight());
@@ -732,7 +735,6 @@ void MIAApp::undoOperation()
 void MIAApp::redoOperation()
 {
 	PixelBuffer *myNewPixelBuffer = redoOp->restoreBuffer(m_displayBuffer, backColor, undoOp);
-  cout << "This is myNewPixelBuffer: " << myNewPixelBuffer << endl;
   if (&myNewPixelBuffer != NULL) {
     m_displayBuffer = myNewPixelBuffer;
     setWindowDimensions(m_displayBuffer->getWidth(),m_displayBuffer->getHeight());

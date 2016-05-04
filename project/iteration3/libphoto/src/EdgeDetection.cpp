@@ -80,7 +80,7 @@ void EdgeDetection::applyKernel(int x, int y,PixelBuffer *buf, PixelBuffer *temp
 			}
 		}
 	}
-	temp -> setPixel(x,y,ColorData(r,g,b));
+	temp -> setPixel(x,y,ColorData(r,g,b).clampedColor());
 }
 
 void EdgeDetection::adjustKernel(float amount, int direction) {

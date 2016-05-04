@@ -18,7 +18,6 @@ using std::endl;
 PixelBuffer* IPNGHandler::loadImage(const std::string fileName)
 {
     cout << "IPNGHandler LOAD IMAGE" << endl;
-    printf("IPNGHandler -> loadImage\n");
     PixelBuffer* loadedImageBuffer = NULL;
 
     png_image image;
@@ -26,7 +25,6 @@ PixelBuffer* IPNGHandler::loadImage(const std::string fileName)
     image.version = PNG_IMAGE_VERSION;
 
     if (png_image_begin_read_from_file(&image, fileName.c_str())) {
-
         loadedImageBuffer = new PixelBuffer(image.width, image.height, ColorData(0.0,0.0,0.0));
 
         png_bytep buffer;
@@ -34,7 +32,6 @@ PixelBuffer* IPNGHandler::loadImage(const std::string fileName)
         buffer = new png_byte[PNG_IMAGE_SIZE(image)];
 
         if (buffer && png_image_finish_read(&image, NULL, buffer, 0, NULL)) {
-          cout << "Finished buffer read" << endl;
             for (int y = 0; y < image.height; y++) {
                 for (int x = 0; x < image.width; x++) {
                     int r, g, b, a = 0;
@@ -50,7 +47,6 @@ PixelBuffer* IPNGHandler::loadImage(const std::string fileName)
 
         delete[] buffer;
     }
-    cout << "returning loaded image buffer" << endl;
     return loadedImageBuffer;
 }
 
@@ -74,7 +70,6 @@ bool IPNGHandler::saveImage(const std::string fileName, const PixelBuffer* buffe
         for (int x = 0; x < image.width; x++) {
             ColorData currentPixel = bufferToSave->getPixel(x, y);
             buffer[((image.height-(y+1))*image.width+x)*4] = (png_byte) (currentPixel.getRed()*255.0);
-            cout << "current pixel red: " << currentPixel.getRed()*255.0 << endl;
             buffer[((image.height-(y+1))*image.width+x)*4+1] = (png_byte) (currentPixel.getGreen()*255.0);
             buffer[((image.height-(y+1))*image.width+x)*4+2] = (png_byte) (currentPixel.getBlue()*255.0);
             buffer[((image.height-(y+1))*image.width+x)*4+3] = (png_byte) (currentPixel.getAlpha()*255.0);

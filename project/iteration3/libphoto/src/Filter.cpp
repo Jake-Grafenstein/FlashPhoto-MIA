@@ -18,10 +18,8 @@ void Filter::applyFilter(PixelBuffer *buf)
 	{
 		for (j = 0; j < height; j++)
 		{
-			tempPixel = modifyPixel(buf -> getPixel(i,j));
+			tempPixel = modifyPixel(buf -> getPixel(i,j)).clampedColor();
 			buf -> setPixel(i,j,tempPixel);
 		}
 	}
 }
-
-
