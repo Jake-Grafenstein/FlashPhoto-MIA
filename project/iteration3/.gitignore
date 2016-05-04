@@ -7,8 +7,6 @@ glui/build
 jpeg/lib
 jpeg/bin
 *.o
-*.Po
-*.Plo
 *.a
 png/lib
 png/bin
