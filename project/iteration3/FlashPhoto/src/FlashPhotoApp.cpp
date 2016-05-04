@@ -70,6 +70,18 @@ void FlashPhotoApp::setFileName(const std::string &filename)
 	m_fileName = filename;
 }
 
+void FlashPhotoApp::loadImageTest(std::string image)
+{
+  if (m_displayBuffer)
+	{
+		delete m_displayBuffer;
+	}
+	m_displayBuffer = ImageHandler::loadImage(image);
+	canvasWidth = m_displayBuffer->getWidth();
+	canvasHeight = m_displayBuffer->getHeight();
+	setWindowDimensions(m_displayBuffer->getWidth(),m_displayBuffer->getHeight());
+}
+
 int FlashPhotoApp::compareBuffers()
 {
 	if( PixelBuffer::compareBuffers(m_displayBuffer,stampBuffer))

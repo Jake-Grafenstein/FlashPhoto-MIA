@@ -41,6 +41,7 @@ public:
     void gluiControl(int controlID);
     void setTool(int tool);
     void setFileName(const std::string & filename);
+    void loadImageTest(std::string image);
     int compareBuffers();
 private:
 
