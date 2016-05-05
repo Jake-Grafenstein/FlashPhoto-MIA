@@ -93,15 +93,14 @@ setup: | $(OBJECT_DIR)
 $(OBJECT_DIR):
 	mkdir -p $(OBJECT_DIR)
 
-$(EXECUTABLES)/: $(OBJFILES) $(GLUI_LIB) $(PNG_LIB) $(JPEG_LIB) $(LIBPHOTO_LIB) FlashPhoto.o
-	echo "Making executables"
-	$(CC)  $(LDFLAGS) $(LINK_LIBS) -o $@ $<
+$(EXECUTABLES): $(OBJFILES) FlashPhoto.o $(GLUI_LIB) $(PNG_LIB) $(JPEG_LIB) $(LIBPHOTO_LIB)
+	$(CC)  $(LDFLAGS) $(LINK_LIBS) build/FlashPhoto.o -o $@ $<
 
 $(OBJECT_DIR)/%.o: $(SOURCE_DIR)/%.cpp
 	$(CC) $(CFLAGS) $(INCLUDE)  -o $@ $<
 
 FlashPhoto.o: 
-	$(CC) $(CFLAGS) $(INCLUDE) -o FlashPhoto.o
+	$(CC) $(CFLAGS) $(INCLUDE) -o build/FlashPhoto.o FlashPhotoApp.cpp
 
 clean:
 	\rm -rf $(OBJECT_DIR) $(EXECUTABLE)
