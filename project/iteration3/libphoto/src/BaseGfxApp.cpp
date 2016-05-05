@@ -89,8 +89,7 @@ void BaseGfxApp::drawPixels(int start_x, int start_y, int width, int height, voi
 	glDrawPixels(width, height, GL_RGBA, GL_FLOAT, pixels);
 
 	int err;
-	if ((err = glGetError()) != GL_NO_ERROR)
-	{
+	if ((err = glGetError()) != GL_NO_ERROR) {
 		std::cerr << "GL is in an error state after call to glDrawPixels()" << std::endl;
 		std::cerr << "(GL error code " << err << ")\n";
 		assert(0);
@@ -137,8 +136,7 @@ void BaseGfxApp::s_keyboardspecialup(int key, int x, int y) {
 void BaseGfxApp::s_mousemotion(int x, int y) {
 	if (s_currentApp->m_drag == true) {
 		s_currentApp->mouseDragged(x,y);
-	}
-	else {
+	} else {
 		s_currentApp->mouseMoved(x,y);
 	}
 	glutPostRedisplay();
@@ -148,21 +146,16 @@ void BaseGfxApp::s_mousebtn(int b, int s, int x, int y) {
 	if ((b==GLUT_LEFT_BUTTON) && (s==GLUT_UP)) {
 		s_currentApp->leftMouseUp(x,y);
 		s_currentApp->m_drag = false;
-	}
-	else if ((b==GLUT_LEFT_BUTTON) && (s==GLUT_DOWN)) {
+	} else if ((b==GLUT_LEFT_BUTTON) && (s==GLUT_DOWN)) {
 		s_currentApp->leftMouseDown(x,y);
 		s_currentApp->m_drag = true;
-	}
-	else if ((b==GLUT_RIGHT_BUTTON) && (s==GLUT_UP)) {
+	} else if ((b==GLUT_RIGHT_BUTTON) && (s==GLUT_UP)) {
 		s_currentApp->rightMouseUp(x,y);
-	}
-	else if ((b==GLUT_RIGHT_BUTTON) && (s==GLUT_DOWN)) {
+	} else if ((b==GLUT_RIGHT_BUTTON) && (s==GLUT_DOWN)) {
 		s_currentApp->rightMouseDown(x,y);
-	}
-	else if ((b==GLUT_MIDDLE_BUTTON) && (s==GLUT_UP)) {
+	} else if ((b==GLUT_MIDDLE_BUTTON) && (s==GLUT_UP)) {
 		s_currentApp->middleMouseUp(x,y);
-	}
-	else if ((b==GLUT_MIDDLE_BUTTON) && (s==GLUT_DOWN)) {
+	} else if ((b==GLUT_MIDDLE_BUTTON) && (s==GLUT_DOWN)) {
 		s_currentApp->middleMouseDown(x,y);
 	}
 	glutPostRedisplay();

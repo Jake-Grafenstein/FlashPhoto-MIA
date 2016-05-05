@@ -9,46 +9,35 @@
 #include "Filter.h"
 #include "Threshold.h"
 
-using namespace std;
+using std::cout;
+using std::endl;
 
-Threshold::Threshold()
-{
+Threshold::Threshold() {
 	value = 0.5;
 }
 
-void Threshold::setValue(float value)
-{
+void Threshold::setValue(float value) {
 	this->value = value;
 }
 
-ColorData Threshold::modifyPixel(ColorData pixel)
-{
+ColorData Threshold::modifyPixel(ColorData pixel) {
 	float r,g,b;
 	r = pixel.getRed();
 	g = pixel.getGreen();
 	b = pixel.getBlue();
-	if (r < value)
-	{
+	if (r < value) {
 		r = 0;
-	}
-	else 
-	{
+	}	else {
 		r = 1;
 	}
-	if (g < value)
-	{
+	if (g < value) {
 		g = 0;
-	}
-	else
-	{
+	}	else {
 		g = 1;
 	}
-	if (b < value)
-	{
+	if (b < value) {
 		b = 0;
-	}
-	else
-	{
+	}	else {
 		b = 1;
 	}
 	return ColorData(r,g,b);
@@ -56,4 +45,3 @@ ColorData Threshold::modifyPixel(ColorData pixel)
 
 // really just convention
 Threshold::~Threshold() {}
-

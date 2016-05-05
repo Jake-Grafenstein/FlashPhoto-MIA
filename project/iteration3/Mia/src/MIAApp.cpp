@@ -119,14 +119,16 @@ void MIAApp::commandLine(int argc, char* argv[]) {
             // Do Nothing, found parent directory
           } else {
             file.assign(myRead->d_name, strlen(myRead->d_name));
-            m_inFile = inDirectory + file;
+            if (isValidImageFileName(file)) {
+              m_inFile = inDirectory + file;
+              m_outFile = outDirectory + file;
 
-            // Apply filters to the image and save it, if possible
-            loadImageToCanvas();
-            applyCommandLineFilters();
-            m_outFile = outDirectory + file;
-            saveCanvasToFile();
-            m_outFile.clear();
+              // Apply filters to the image and save it, if possible
+              loadImageToCanvas();
+              applyCommandLineFilters();
+              saveCanvasToFile();
+              m_outFile.clear();
+            }
           }
         }
     }

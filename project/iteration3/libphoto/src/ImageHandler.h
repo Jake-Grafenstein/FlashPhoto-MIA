@@ -27,8 +27,9 @@ public:
     static PixelBuffer* loadImage(const std::string & fileName);
     static bool saveImage(const std::string & fileName, const PixelBuffer* bufferToSave);
     static IMAGE_TYPE getImageType(const std::string & fileName);
+
 private:
-    //bool isValidImageFile(const std::string & fileName);
+  
 };
 
 #endif

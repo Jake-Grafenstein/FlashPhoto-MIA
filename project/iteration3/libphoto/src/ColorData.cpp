@@ -6,13 +6,16 @@
 #include "ColorData.h"
 
 
-ColorData::ColorData() : m_red(1), m_green(1), m_blue(1), m_alpha(1) {	
+ColorData::ColorData() : m_red(1), m_green(1), m_blue(1), m_alpha(1) {
+
 }
 
-ColorData::ColorData(float r, float g, float b ) : m_red(r), m_green(g), m_blue(b), m_alpha(1) {	
+ColorData::ColorData(float r, float g, float b ) : m_red(r), m_green(g), m_blue(b), m_alpha(1) {
+
 }
 
-ColorData::ColorData(float r, float g, float b, float a) : m_red(r), m_green(g), m_blue(b), m_alpha(a)  {	
+ColorData::ColorData(float r, float g, float b, float a) : m_red(r), m_green(g), m_blue(b), m_alpha(a) {
+
 }
 
 void ColorData::setRed(float r) {
@@ -30,7 +33,6 @@ void ColorData::setBlue(float b) {
 void ColorData::setAlpha(float a) {
 	m_alpha = a;
 }
-
 
 float ColorData::getRed() const {
 	return m_red;
@@ -57,8 +59,8 @@ ColorData ColorData::clampedColor() const {
 	float clampedGreen = ColorData::clampValue(this->getGreen(), 0.f, 1.f);
 	float clampedBlue = ColorData::clampValue(this->getBlue(), 0.f, 1.f);
 	float clampedAlpha = ColorData::clampValue(this->getAlpha(), 0.f, 1.f);
-	
-	return ColorData(clampedRed, clampedGreen, clampedBlue, clampedAlpha);	
+
+	return ColorData(clampedRed, clampedGreen, clampedBlue, clampedAlpha);
 }
 
 // Apply component-wise arithmatic operations
@@ -73,4 +75,3 @@ ColorData operator+ (const ColorData& a, const ColorData& b) {
 ColorData operator- (const ColorData& a, const ColorData& b) {
 	return ColorData(a.m_red - b.m_red, a.m_green - b.m_green, a.m_blue - b.m_blue, a.m_alpha - b.m_alpha);
 }
-

@@ -9,6 +9,7 @@
 #include "Tool.h"
 
 using std::cerr;
+using std::cout;
 using std::endl;
 using std::fill;
 
@@ -38,7 +39,7 @@ float Tool::getPixel(int x,int y) {
 }
 
 // Default paintMask function, can be overwritten by tools
-void Tool::paintMask(int x,int y,PixelBuffer **displayBuffer,ColorData color,ColorData backgroundColor) {
+void Tool::paintMask(int x,int y,PixelBuffer** displayBuffer,ColorData color,ColorData backgroundColor) {
 	int i,j,bufferI,bufferJ,width,height;
 	width = (*displayBuffer)->getWidth();
 	height = (*displayBuffer)->getHeight();

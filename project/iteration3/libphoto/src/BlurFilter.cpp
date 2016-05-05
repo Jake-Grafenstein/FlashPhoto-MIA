@@ -26,18 +26,18 @@ BlurFilter::~BlurFilter() {
   int i;
 
   for (i = 0; i < kernelSize; i++) {
-    free(kernel[i]);
+    delete[] kernel[i];
   }
-  free(kernel);
+  delete[] kernel;
 }
 
 // Frees the old kernel and creates a new one with a larger kernelSize
 void BlurFilter::adjustKernel(float amount, int direction) {
   int i;
   for (i = 0; i < kernelSize; i++) {
-    free(kernel[i]);
+    delete[] kernel[i];
   }
-  free(kernel);
+  delete[] kernel;
 
   kernelSize = amount;
   kernel = (float **) malloc(kernelSize*sizeof(float *));

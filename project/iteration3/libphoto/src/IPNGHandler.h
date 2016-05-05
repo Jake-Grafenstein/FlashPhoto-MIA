@@ -11,15 +11,17 @@
 #define __PhotoShop__IPNGHandler__
 
 #include <string>
-
 #include "ImageHandler.h"
 
 class PixelBuffer;
 
 class IPNGHandler : public ImageHandler {
 public:
-    static PixelBuffer* loadImage(const std::string fileName);
-    static bool saveImage(const std::string fileName, const PixelBuffer* bufferToSave);
+  static PixelBuffer* loadImage(const std::string fileName);
+  static bool saveImage(const std::string fileName, const PixelBuffer* bufferToSave);
+
+private:
+
 };
 
 #endif

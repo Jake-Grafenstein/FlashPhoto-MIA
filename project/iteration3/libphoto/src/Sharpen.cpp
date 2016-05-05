@@ -81,5 +81,4 @@ void Sharpen::resizeKernel(float amount) {
   for (int i = 0; i < kernelSize; i++) {
     kernel[i] = (float *) malloc(kernelSize * sizeof(float));
   }
-
 }

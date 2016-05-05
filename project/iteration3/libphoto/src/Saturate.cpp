@@ -9,35 +9,28 @@
 #include "Filter.h"
 #include "Saturate.h"
 
-using namespace std;
+using std::cout;
+using std::endl;
 
-Saturate::Saturate()
-{
+Saturate::Saturate() {
 	value = 1.0;
 }
 
-void Saturate::setValue(float value)
-{
+void Saturate::setValue(float value) {
 	this->value = value;
 }
 
-ColorData Saturate::modifyPixel(ColorData pixel)
-{
+ColorData Saturate::modifyPixel(ColorData pixel) {
 	float r,g,b;
-	if (value > 0)
-	{
+	if (value > 0) {
 		r = pixel.getRed() * value;
 		g = pixel.getGreen() * value;
 		b = pixel.getBlue() * value;
-	}
-	else if (value < 0)
-	{
+	} else if (value < 0) {
 		r = 1.0 + pixel.getRed() * value;
 		g = 1.0 + pixel.getGreen() * value;
 		b = 1.0 + pixel.getBlue() * value;
-	}
-	else
-	{//value = 0
+	}	else {//value = 0
 		float avg = (pixel.getRed() + pixel.getGreen() + pixel.getBlue()) / 3.0;
 		r = avg;
 		g = avg;

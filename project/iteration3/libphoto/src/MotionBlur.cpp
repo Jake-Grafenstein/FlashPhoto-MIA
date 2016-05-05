@@ -10,7 +10,8 @@
 #include "ConvolutionFilter.h"
 #include "MotionBlur.h"
 
-using namespace std;
+using std::cout;
+using std::endl;
 
 MotionBlur::MotionBlur() {
   int i, j;
@@ -34,9 +35,9 @@ MotionBlur::~MotionBlur() {
   int i;
 
   for (i = 0; i < kernelSize; i++) {
-    free(kernel[i]);
+    delete[] kernel[i];
   }
-  free(kernel);
+  delete[] kernel;
 }
 
 void MotionBlur::resizeKernel(float amount) {

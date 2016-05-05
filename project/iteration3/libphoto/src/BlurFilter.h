@@ -1,10 +1,10 @@
-#ifndef BLURFILTER_H
-#define BLURFILTER_H
-
 //
 // BlurFilter.h
 // Created by Jacob Grafenstein
 //
+
+#ifndef BLURFILTER_H
+#define BLURFILTER_H
 
 class ConvolutionFilter;
 
@@ -13,7 +13,6 @@ public:
   BlurFilter();
   ~BlurFilter();
   void adjustKernel(float amount, int direction);
-
 
 private:
   int calculateXValue(int x, int y);

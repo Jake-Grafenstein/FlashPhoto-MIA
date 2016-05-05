@@ -9,7 +9,7 @@
 #include "Tool.h"
 #include "Highlighter.h"
 
-using namespace std;
+using std::cout;
 using std::cerr;
 using std::endl;
 using std::fill;
@@ -24,13 +24,13 @@ Highlighter::Highlighter() {
 		mask[i]=(float*) malloc(maskSize*sizeof(float));
 	}
 
-	// Store float values in the mask 
+	// Store float values in the mask
 	for (i=0;i<maskSize;i++) {
 		for (j=0;j<maskSize;j++) {
 			if ((i<5) || (i>9)) {
 				mask[i][j]=0;
 			} else if ((i == 5) || (i == 9)) {
-				mask[i][j]=0.2;	
+				mask[i][j]=0.2;
 			} else if ((i == 6) || (i == 8)) {
 				mask[i][j]=0.3;
 			} else {
@@ -41,33 +41,32 @@ Highlighter::Highlighter() {
 	}
 }
 
-Highlighter::~Highlighter()
-{
+Highlighter::~Highlighter() {
 	int i;
 
 	// Deallocate space stored in mask
 	for (i=0;i<maskSize;i++) {
-		free(mask[i]);
+		delete[] mask[i];
 	}
-	free(mask);
+	delete[] mask;
 }
 
 // Redefine paintMask function from Tool class to allow for dark colors of pixelBuffer to show through
-void Highlighter::paintMask(int x,int y,PixelBuffer **displayBuffer,ColorData color,ColorData backgroundColor) {
-        int i,j,bufferI,bufferJ,width,height;
+void Highlighter::paintMask(int x,int y,PixelBuffer** displayBuffer,ColorData color,ColorData backgroundColor) {
+	int i,j,bufferI,bufferJ,width,height;
 	float r,g,b,newR,newG,newB;
-        width = (*displayBuffer)->getWidth();
-        height = (*displayBuffer)->getHeight();
-        ColorData tempPixel;
+  width = (*displayBuffer)->getWidth();
+  height = (*displayBuffer)->getHeight();
+  ColorData tempPixel;
 
-        for (i=0;i<maskSize;i++) {
-                for (j=0;j<maskSize;j++) {
-                        bufferI = x + i - (maskSize/2) - 1;
-                        bufferJ = y + j - (maskSize/2) - 1;
+  for (i=0;i<maskSize;i++) {
+  	for (j=0;j<maskSize;j++) {
+      bufferI = x + i - (maskSize/2) - 1;
+      bufferJ = y + j - (maskSize/2) - 1;
 
 			// Make sure the width and length are correct, be prepared to swap if necessary
-                        if ((bufferI > 0) && (bufferI < width) && (bufferJ > 0) && (bufferJ < height)) {
-                                tempPixel = (**displayBuffer).getPixel(bufferI,height - bufferJ);
+      if ((bufferI > 0) && (bufferI < width) && (bufferJ > 0) && (bufferJ < height)) {
+        tempPixel = (**displayBuffer).getPixel(bufferI,height - bufferJ);
 				r = tempPixel.getRed();
 				g = tempPixel.getGreen();
 				b = tempPixel.getBlue();
@@ -76,20 +75,20 @@ void Highlighter::paintMask(int x,int y,PixelBuffer **displayBuffer,ColorData co
 				newR = tempPixel.getRed();
 				newG = tempPixel.getGreen();
 				newB = tempPixel.getBlue();
-				if (r < newR) { 
-					newR = r; 
+				if (r < newR) {
+					newR = r;
 				}
-				if (g < newG) { 
-					newG = g; 
+				if (g < newG) {
+					newG = g;
 				}
-				if (b < newB) { 
-					newB = b; 
+				if (b < newB) {
+					newB = b;
 				}
 				tempPixel.setRed(newR);
 				tempPixel.setGreen(newG);
 				tempPixel.setBlue(newB);
-                                (**displayBuffer).setPixel(bufferI,height - bufferJ,tempPixel);
-                        }
-                }
-        }
+        (**displayBuffer).setPixel(bufferI,height - bufferJ,tempPixel);
+      }
+    }
+  }
 }

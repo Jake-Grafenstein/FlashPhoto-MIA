@@ -1,14 +1,14 @@
-#ifndef CHANNELS_H
-#define CHANNELS_H
 //
 // Channels.h
 // Created by Jonathon Meyer
 //
 
+#ifndef CHANNELS_H
+#define CHANNELS_H
+
 class Filter;
 
-class Channels: public Filter
-{
+class Channels: public Filter {
 public:
 	Channels();
 	~Channels();
@@ -16,9 +16,10 @@ public:
 	void setR(float value);
 	void setG(float value);
 	void setB(float value);
+
 private:
 	float r,g,b;
+
 };
 
 #endif
-

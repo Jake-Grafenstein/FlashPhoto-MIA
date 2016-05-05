@@ -16,21 +16,19 @@
 class PixelBuffer;
 
 class TStamp: public Tool {
-
 public:
     TStamp();
     virtual ~TStamp();
-
-//    std::string getName();
     virtual int getWidth();
     virtual int getHeight();
 
-    void setStampBuffer(PixelBuffer * stampBuffer);
+    void setStampBuffer(PixelBuffer* stampBuffer);
     PixelBuffer* getStampBuffer();
-    void paintMask(int x,int y,PixelBuffer **displayBuffer,ColorData color, ColorData background);
+    void paintMask(int x,int y,PixelBuffer** displayBuffer,ColorData color, ColorData background);
 
 protected:
     static PixelBuffer *m_stampBuffer;
+
 };
 
-#endif /* defined(__PhotoShop_Proj__TStamp__) */
+#endif

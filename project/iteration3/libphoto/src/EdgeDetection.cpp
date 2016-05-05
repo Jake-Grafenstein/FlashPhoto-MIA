@@ -10,7 +10,8 @@
 #include "ConvolutionFilter.h"
 #include "EdgeDetection.h"
 
-using namespace std;
+using std::cout;
+using std::endl;
 
 
 EdgeDetection::EdgeDetection() {
@@ -48,28 +49,24 @@ EdgeDetection::EdgeDetection() {
 
 EdgeDetection::~EdgeDetection() {
   for (int i = 0; i < kernelSize; i++) {
-    free(xKernel[i]);
-    free(yKernel[i]);
+    delete[] xKernel[i];
+    delete[] Kernel[i];
   }
-  free(xKernel);
-  free(yKernel);
+  delete[] xKernel;
+  delete[] yKernel;
 }
 
-void EdgeDetection::applyKernel(int x, int y,PixelBuffer *buf, PixelBuffer *temp)
-{
+void EdgeDetection::applyKernel(int x, int y,PixelBuffer* buf, PixelBuffer* temp) {
 	float r=0,g=0,b=0;
 	int i,j,xloc,yloc,w,h;
 	ColorData pixel;
 	w = buf->getWidth();
 	h = buf->getHeight();
-	for (i = 0; i < kernelSize; i++)
-	{
-		for (j = 0; j < kernelSize; j++)
-		{
+	for (i = 0; i < kernelSize; i++) {
+		for (j = 0; j < kernelSize; j++) {
 			xloc = x+i-(kernelSize/2);
 			yloc = y+j-(kernelSize/2);
-			if (xloc > -1 && xloc < w && yloc > -1 && yloc < h)
-			{
+			if (xloc > -1 && xloc < w && yloc > -1 && yloc < h) {
 				pixel = buf -> getPixel(x + i - (kernelSize/2),y + j - (kernelSize/2));
 				r += (xKernel[i][j] * pixel.getRed());
 				g += (xKernel[i][j] * pixel.getGreen());

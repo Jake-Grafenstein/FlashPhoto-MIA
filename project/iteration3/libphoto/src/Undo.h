@@ -1,3 +1,8 @@
+//
+// Undo.h
+// Created by Jacob Grafenstein
+//
+
 #ifndef UNDO_H
 #define UNDO_H
 
@@ -14,8 +19,8 @@ public:
   Undo();
   ~Undo();
 
-  PixelBuffer *restoreBuffer(PixelBuffer *m_displayBuffer, ColorData backColor, Redo *redoOp);
-  void addToUndoStack(PixelBuffer *m_displayBuffer, ColorData backColor);
+  PixelBuffer* restoreBuffer(PixelBuffer* m_displayBuffer, ColorData backColor, Redo *redoOp);
+  void addToUndoStack(PixelBuffer* m_displayBuffer, ColorData backColor);
 
   std::vector<PixelBuffer*> undoStack;
 

@@ -10,8 +10,7 @@ class ColorData;
 
 /** The PixelBuffer class stores an array of ColorData, such as an image that
     can be drawn to the screen. */
-class PixelBuffer
-{
+class PixelBuffer {
 public:
 
 	PixelBuffer(int w, int h, ColorData backgroundColor);
