@@ -28,7 +28,6 @@ class PixelBuffer;
 
 class FlashPhotoApp : public BaseGfxApp {
 public:
-
     FlashPhotoApp(int argc, char* argv[], int width, int height, ColorData backgroundColor);
     virtual ~FlashPhotoApp();
 
@@ -43,6 +42,7 @@ public:
     void setFileName(const std::string & filename);
     void loadImageTest(std::string image);
     int compareBuffers();
+    
 private:
 
     // GLUI INTERFACE ELEMENTS
