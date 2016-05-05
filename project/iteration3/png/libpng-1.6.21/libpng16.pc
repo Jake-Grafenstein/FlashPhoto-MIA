@@ -1,4 +1,4 @@
-prefix=/usr/local
+prefix=/home/meye1907/csci3081/repo-group-bandcamp/project/iteration3/png/libpng-1.6.21
 exec_prefix=${prefix}
 libdir=${exec_prefix}/lib
 includedir=${prefix}/include/libpng16
