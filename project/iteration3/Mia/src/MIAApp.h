@@ -97,6 +97,7 @@ private:
     void applyCommandLineFilters();
     void displayHelp();
     void compareImages();
+    void getChannelParameters(const char *channelArgs);
 
     int getNextYValue(float slope, int previousX, int newX, int previousY);
     void fillLine(float slope, int previousX,int previousY,int x,int y,int xy);
@@ -120,17 +121,17 @@ private:
         int quantize_bins;
     } m_filterParameters;
 
+    int numFilters;
+
     struct {
-      bool toDisplayHelp;
-      bool toSharpen;
-      bool toEdgeDetect;
-      bool toThreshold;
-      bool toQuantize;
-      bool toBlur;
-      bool toSaturate;
-      bool toMultiplyRGB;
-      bool toCompare;
-    } m_filterBooleans;
+      int toSharpen;
+      int toEdgeDetect;
+      int toThreshold;
+      int toQuantize;
+      int toBlur;
+      int toSaturate;
+      int toMultiplyRGB;
+    } m_filterOrder;
 
     struct {
         GLUI_FileBrowser* fileBrowser;

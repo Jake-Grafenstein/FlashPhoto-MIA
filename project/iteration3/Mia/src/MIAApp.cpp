@@ -1,3 +1,9 @@
+//
+// MIAApp.cpp
+// Originally created by the 3081w TAs
+// Modified by Jacob Grafenstein, Stevie Frisbie, and Jonathon Meyer
+//
+
 #include "MIAApp.h"
 #include "ColorData.h"
 #include "PixelBuffer.h"
@@ -23,26 +29,26 @@ using std::endl;
 
 MIAApp::MIAApp(int argc, char* argv[], int width, int height, ColorData backgroundColor) : BaseGfxApp(argc, argv, width, height, 50, 50, GLUT_RGB|GLUT_DOUBLE|GLUT_DEPTH, true, width+51, 50) {
 
-    // Set the name of the window
-    setCaption("Medical Image Analysis (MIA)");
+  // Set the name of the window
+  setCaption("Medical Image Analysis (MIA)");
 
-    // Initialize Interface
-    initializeBuffers(backgroundColor, width, height);
+  // Initialize Interface
+  initializeBuffers(backgroundColor, width, height);
 
-    // Initalize Filters
-    initializeTools();
+  // Initalize Filters
+  initializeTools();
 
-    // Determine if command line mode or graphical mode
-    if (argc > 1) {
-      isCommandLine = true;
-      commandLine(argc, argv);
-      cout << "Your photos have been edited completely" << endl;
-      exit(1);
-    } else {
-      isCommandLine = false;
-      initGlui();
-      initGraphics();
-    }
+  // Determine if command line mode or graphical mode
+  if (argc > 1) {
+    isCommandLine = true;
+    commandLine(argc, argv);
+    cout << "Your photos have been edited completely" << endl;
+    exit(1);
+  } else {
+    isCommandLine = false;
+    initGlui();
+    initGraphics();
+  }
 }
 
 void MIAApp::initializeTools() {
@@ -70,7 +76,7 @@ void MIAApp::commandLine(int argc, char* argv[]) {
   std::string outDirectory;
   std::string file;
 
-// If there are more than 2 arguments, we know that the inFile is in array slot 1, and outfile is stored in the last slot.
+  // If there are more than 2 arguments, we know that the inFile is in array slot 1, and outfile is stored in the last slot.
   if (argc > 2) {
     strcpy(myInFile, argv[1]);
     strcpy(myOutFile, argv[argc-1]);
@@ -88,14 +94,7 @@ void MIAApp::commandLine(int argc, char* argv[]) {
   }
   traverseArguments(argc, argv);
 
-  // If "-h" existed anywhere in the command line or if invalid input, return help
-  if (m_filterBooleans.toDisplayHelp == true) {
-    displayHelp();
-    exit(1);
-  } else {
-    // Do Nothing
-  }
-// Check if directory, attempt to open the directory
+  // Check if directory, attempt to open the directory
   if (!isValidImageFileName(m_inFile)) {
     inDirectory.assign(m_inFile);
     outDirectory.assign(m_outFile);
@@ -112,25 +111,25 @@ void MIAApp::commandLine(int argc, char* argv[]) {
       cout << "Could not open given directory." << endl;
     } else {
       // Read each element in the directory and if it is an image, apply the filters and save the file
-        while ((myRead = readdir(workingDirectory)) != NULL) {
-          if (!strcmp(myRead->d_name,".")) {
-            // Do Nothing, found current directory
-          } else if (!strcmp(myRead->d_name,"..")) {
-            // Do Nothing, found parent directory
-          } else {
-            file.assign(myRead->d_name, strlen(myRead->d_name));
-            if (isValidImageFileName(file)) {
-              m_inFile = inDirectory + file;
-              m_outFile = outDirectory + file;
+      while ((myRead = readdir(workingDirectory)) != NULL) {
+        if (!strcmp(myRead->d_name,".")) {
+          // Do Nothing, found current directory
+        } else if (!strcmp(myRead->d_name,"..")) {
+          // Do Nothing, found parent directory
+        } else {
+          file.assign(myRead->d_name, strlen(myRead->d_name));
+          if (isValidImageFileName(file)) {
+            m_inFile = inDirectory + file;
+            m_outFile = outDirectory + file;
 
-              // Apply filters to the image and save it, if possible
-              loadImageToCanvas();
-              applyCommandLineFilters();
-              saveCanvasToFile();
-              m_outFile.clear();
-            }
+            // Apply filters to the image and save it, if possible
+            loadImageToCanvas();
+            applyCommandLineFilters();
+            saveCanvasToFile();
+            m_outFile.clear();
           }
         }
+      }
     }
   } else {
     loadImageToCanvas();
@@ -141,29 +140,44 @@ void MIAApp::commandLine(int argc, char* argv[]) {
 
 //  Applies the filters if they existed in the command line
 void MIAApp::applyCommandLineFilters() {
+  int filterIterator = 0;
 
-  if (m_filterBooleans.toSharpen == true) {
-    applyFilterSharpen();
-  }
+  while (filterIterator < numFilters) {
+    if (m_filterOrder.toSharpen == filterIterator) {
+      applyFilterSharpen();
+      filterIterator++;
+      continue;
+    }
 
-  if (m_filterBooleans.toEdgeDetect == true) {
-    applyFilterEdgeDetect();
-  }
+    if (m_filterOrder.toEdgeDetect == filterIterator) {
+      applyFilterEdgeDetect();
+      filterIterator++;
+      continue;
+    }
 
-  if (m_filterBooleans.toThreshold == true) {
-    applyFilterThreshold();
-  }
+    if (m_filterOrder.toThreshold == filterIterator) {
+      applyFilterThreshold();
+      filterIterator++;
+      continue;
+    }
 
-  if (m_filterBooleans.toQuantize == true) {
-    applyFilterQuantize();
-  }
+    if (m_filterOrder.toQuantize == filterIterator) {
+      applyFilterQuantize();
+      filterIterator++;
+      continue;
+    }
 
-  if (m_filterBooleans.toBlur == true) {
-    applyFilterBlur();
-  }
+    if (m_filterOrder.toBlur == filterIterator) {
+      applyFilterBlur();
+      filterIterator++;
+      continue;
+    }
 
-  if (m_filterBooleans.toMultiplyRGB == true) {
-    applyFilterMultiplyRGB();
+    if (m_filterOrder.toMultiplyRGB == filterIterator) {
+      applyFilterMultiplyRGB();
+      filterIterator++;
+      continue;
+    }
   }
 }
 
@@ -183,8 +197,18 @@ void MIAApp::displayHelp() {
 
 void MIAApp::traverseArguments(int argc, char* argv[]) {
   int i = 1;
+  int j = 0;
   int argEnd;
   const char *input;
+  numFilters = 0;
+
+  m_filterOrder.toSharpen = -1;
+  m_filterOrder.toEdgeDetect = -1;
+  m_filterOrder.toBlur = -1;
+  m_filterOrder.toMultiplyRGB = -1;
+  m_filterOrder.toThreshold = -1;
+  m_filterOrder.toQuantize = -1;
+  m_filterOrder.toSaturate = -1;
 
   if (argc > 2) {
     argEnd = argc - 1;
@@ -196,8 +220,10 @@ void MIAApp::traverseArguments(int argc, char* argv[]) {
   while (i < argEnd) {
     input = argv[i];
     if (!strcmp(input, "-sharpen")) {
+      numFilters++;
       cout << "Detected sharpen command" << endl;
-      m_filterBooleans.toSharpen = true;
+      m_filterOrder.toSharpen = j;
+      j++;
       m_filterParameters.sharpen_amount = atoi(argv[i+1]);
       if (m_filterParameters.sharpen_amount > 0) {
         i += 2;
@@ -206,12 +232,16 @@ void MIAApp::traverseArguments(int argc, char* argv[]) {
         exit(1);
       }
     } else if (!strcmp(argv[i], "-edgeDetect")) {
+      numFilters++;
       cout << "Detected edgeDetect command" << endl;
-      m_filterBooleans.toEdgeDetect = true;
+      m_filterOrder.toEdgeDetect = j;
+      j++;
       i++;
     } else if (!strcmp(argv[i], "-thresh")) {
+      numFilters++;
       cout << "Detected thresh command" << endl;
-      m_filterBooleans.toThreshold = true;
+      m_filterOrder.toThreshold = j;
+      j++;
       m_filterParameters.threshold_amount = atof(argv[i+1]);
       if (m_filterParameters.threshold_amount > 0.0) {
         i += 2;
@@ -220,8 +250,10 @@ void MIAApp::traverseArguments(int argc, char* argv[]) {
         exit(1);
       }
     } else if (!strcmp(argv[i], "-quantize")) {
+      numFilters++;
       cout << "Detected quantize command" << endl;
-      m_filterBooleans.toQuantize = true;
+      m_filterOrder.toQuantize = j;
+      j++;
       m_filterParameters.quantize_bins = atoi(argv[i+1]);
       if (m_filterParameters.quantize_bins > 0) {
         i += 2;
@@ -230,8 +262,10 @@ void MIAApp::traverseArguments(int argc, char* argv[]) {
         exit(1);
       }
     } else if (!strcmp(argv[i], "-blur")) {
+      numFilters++;
       cout << "Detected blur command" << endl;
-      m_filterBooleans.toBlur = true;
+      m_filterOrder.toBlur = j;
+      j++;
       m_filterParameters.blur_amount = atof(argv[i+1]);
       if (m_filterParameters.blur_amount > 0.0) {
         i += 2;
@@ -240,8 +274,10 @@ void MIAApp::traverseArguments(int argc, char* argv[]) {
         exit(1);
       }
     } else if (!strcmp(argv[i], "-saturate")) {
+      numFilters++;
       cout << "Detected saturate command" << endl;
-      m_filterBooleans.toSaturate = true;
+      m_filterOrder.toSaturate = j;
+      j++;
       m_filterParameters.saturation_amount = atof(argv[i+1]);
       if (m_filterParameters.saturation_amount > 0.0) {
         i += 2;
@@ -250,13 +286,13 @@ void MIAApp::traverseArguments(int argc, char* argv[]) {
         exit(1);
       }
     } else if (!strcmp(argv[i], "-multrgb")) {
+      numFilters++;
       cout << "Detected multiplyRGB command" << endl;
-      m_filterBooleans.toMultiplyRGB = true;
-      m_filterParameters.multiply_colorRed = atof(argv[i+1]);
-      m_filterParameters.multiply_colorGreen = atof(argv[i+2]);
-      m_filterParameters.multiply_colorBlue = atof(argv[i+3]);
+      m_filterOrder.toMultiplyRGB = j;
+      j++;
+      getChannelParameters(argv[i+1]);
       if ((m_filterParameters.multiply_colorRed > 0.0) && (m_filterParameters.multiply_colorGreen > 0.0) && (m_filterParameters.multiply_colorBlue > 0.0)) {
-        i += 4;
+        i += 2;
       } else {
         perror("Invalid Floating Point value for multrgb");
         exit(1);
@@ -267,11 +303,22 @@ void MIAApp::traverseArguments(int argc, char* argv[]) {
       exit(1);
     } else {
       cout << "Detected either -h or incomprehensible input" << endl;
-      m_filterBooleans.toDisplayHelp = true;
-      cout << "m_filterBooleans.toDisplayHelp = " << m_filterBooleans.toDisplayHelp << endl;
-      i++;
+      displayHelp();
+      exit(1);
     }
   }
+}
+
+void MIAApp::getChannelParameters(const char *channelArgs) {
+  char* pch = (char *) malloc(MAX_FILE_SIZE*sizeof(char));
+  char* newChannelArgs = (char *) malloc(MAX_FILE_SIZE*sizeof(char));
+  strcpy(newChannelArgs, channelArgs);
+  pch = strtok(newChannelArgs,",");
+  m_filterParameters.multiply_colorRed = atof(pch);
+  pch = strtok(NULL, ",");
+  m_filterParameters.multiply_colorGreen = atof(pch);
+  pch = strtok(NULL, ",");
+  m_filterParameters.multiply_colorBlue = atof(pch);
 }
 
 void MIAApp::compareImages() {
@@ -288,86 +335,68 @@ void MIAApp::compareImages() {
   }
 }
 
-void MIAApp::display()
-{
-    drawPixels(0, 0, m_width, m_height, m_displayBuffer->getData());
+void MIAApp::display() {
+  drawPixels(0, 0, m_width, m_height, m_displayBuffer->getData());
 }
 
-MIAApp::~MIAApp()
-{
-    if (m_displayBuffer) {
-        delete m_displayBuffer;
-    }
-
-    if (edgeDet) {
-      delete edgeDet;
-    }
-
-    if (sharpen) {
-      delete sharpen;
-    }
-
-    if (blur) {
-      delete blur;
-    }
-}
-
-
-void MIAApp::mouseDragged(int x, int y)
-{
-  // if the current Tool is the stamp tool
-  if (m_curTool == 1)
-  {
-    //do nothing
+MIAApp::~MIAApp() {
+  if (m_displayBuffer) {
+    delete m_displayBuffer;
   }
-  else
-  {
+
+  if (edgeDet) {
+    delete edgeDet;
+  }
+
+  if (sharpen) {
+    delete sharpen;
+  }
+
+  if (blur) {
+    delete blur;
+  }
+}
+
+
+void MIAApp::mouseDragged(int x, int y) {
+  // if the current Tool is the stamp tool
+  if (m_curTool == 1) {
+    //do nothing
+  } else {
 	  float slope;
 	  int xy;
 	  (*tools[m_curTool]).paintMask(x,y,&m_displayBuffer,ColorData(1, 0, 0),backColor);
-	  if ((previousX == -1) || (previousY == -1))
-    {
+	  if ((previousX == -1) || (previousY == -1)) {
 		  // Do Nothing
-	  }
-    else if ((previousX != -1) && (previousY != -1))
-    {
-		  if ((previousX-x) == 0)
-      {
+	  } else if ((previousX != -1) && (previousY != -1)) {
+		  if ((previousX-x) == 0) {
 			  xy = 1;
 			  slope = 0;
-		  }
-		  else
-      {
+		  } else {
 			  slope = (float)(-1.0*(previousY-y)/(previousX-x));
 			  xy = 0;
-			  if (slope > 1 || slope < -1)
-			  {
-				slope = 1.0/slope;
-				xy = 1;
+			  if (slope > 1 || slope < -1) {
+				  slope = 1.0/slope;
+				  xy = 1;
 			  }
 		  }
-		fillLine(slope,previousX,previousY,x,y,xy);
-		previousX = x;
-		previousY = y;
+		  fillLine(slope,previousX,previousY,x,y,xy);
+		  previousX = x;
+		  previousY = y;
     }
 	}
 }
 
-void MIAApp::mouseMoved(int x, int y)
-{
+void MIAApp::mouseMoved(int x, int y) {
 
 }
 
-void MIAApp::leftMouseDown(int x, int y)
-{
+void MIAApp::leftMouseDown(int x, int y) {
   storePixelBuffer();
   // if the current tool is the stamp tool
-  if (m_curTool == 1)
-  {
+  if (m_curTool == 1) {
     stamp.paintMask(x,y,&m_displayBuffer,ColorData(0,0,0),backColor);
-  }
-	else// If the leftMouseDown is clicked without moving, the tool should be applied to the pixelBuffer once
-  {
+  } else { // If the leftMouseDown is clicked without moving, the tool should be applied to the pixelBuffer once
     (*tools[m_curTool]).paintMask(x,y,&m_displayBuffer,ColorData(1, 0, 0),backColor);
   }
 	// Set the previous x and y values to fill the line
@@ -375,9 +404,8 @@ void MIAApp::leftMouseDown(int x, int y)
 	previousY = y;
 }
 
-void MIAApp::leftMouseUp(int x, int y)
-{
-    std::cout << "mouseReleased " << x << " " << y << std::endl;
+void MIAApp::leftMouseUp(int x, int y) {
+  std::cout << "mouseReleased " << x << " " << y << std::endl;
 }
 
 // Finds the next Y value given the slope of the line, the previous x and y values, and the new x value
@@ -400,18 +428,17 @@ void MIAApp::fillLine(float slope, int previousX, int previousY, int x, int y, i
 			nextCoord = getNextYValue(slope, previousX, i, previousY);
 			(*tools[m_curTool]).paintMask(i,nextCoord,&m_displayBuffer,ColorData(1, 0, 0),backColor);
 		}
-	}
-	else if (xy==1) {
+	} else if (xy==1) {
 		// Moving left on the canvas
 		for (i = previousY-stepSize; i > y; i-=stepSize) {
-                        nextCoord = getNextYValue(slope, previousY, i, previousX);
-                        (*tools[m_curTool]).paintMask(nextCoord,i,&m_displayBuffer,ColorData(1, 0, 0),backColor);
-                }
+      nextCoord = getNextYValue(slope, previousY, i, previousX);
+      (*tools[m_curTool]).paintMask(nextCoord,i,&m_displayBuffer,ColorData(1, 0, 0),backColor);
+    }
 		// Moving right on the canvas
-                for (i = previousY+stepSize; i < y; i+=stepSize) {
-                        nextCoord = getNextYValue(slope, previousY, i, previousX);
-                        (*tools[m_curTool]).paintMask(nextCoord,i,&m_displayBuffer,ColorData(1, 0, 0),backColor);
-                }
+    for (i = previousY+stepSize; i < y; i+=stepSize) {
+      nextCoord = getNextYValue(slope, previousY, i, previousX);
+      (*tools[m_curTool]).paintMask(nextCoord,i,&m_displayBuffer,ColorData(1, 0, 0),backColor);
+    }
 	}
 }
 
@@ -425,130 +452,119 @@ void MIAApp::storePixelBuffer() {
 }
 
 void MIAApp::initializeBuffers(ColorData backgroundColor, int width, int height) {
-    m_displayBuffer = new PixelBuffer(width, height, backgroundColor);
-    backColor = backgroundColor;
+  m_displayBuffer = new PixelBuffer(width, height, backgroundColor);
+  backColor = backgroundColor;
 }
 
-void MIAApp::initGlui()
-{
-    // Select first tool (this activates the first radio button in glui)
-    m_curTool = 0;
+void MIAApp::initGlui() {
+  // Select first tool (this activates the first radio button in glui)
+  m_curTool = 0;
 
-    new GLUI_Column(m_glui, false);
-    GLUI_Panel *toolPanel = new GLUI_Panel(m_glui, "Tool Type");
+  new GLUI_Column(m_glui, false);
+  GLUI_Panel *toolPanel = new GLUI_Panel(m_glui, "Tool Type");
+  {
+    GLUI_RadioGroup *radio = new GLUI_RadioGroup(toolPanel, &m_curTool, UI_TOOLTYPE, s_gluicallback);
+    // Create interface buttons for different tools:
+    new GLUI_RadioButton(radio, "Pen");
+    new GLUI_RadioButton(radio, "Arrow");
+  }
+
+
+  GLUI_Panel *filterPanel = new GLUI_Panel(m_glui, "Filters");
+  {
+    GLUI_Panel *sharpenPanel = new GLUI_Panel(filterPanel, "Sharpen");
     {
-        GLUI_RadioGroup *radio = new GLUI_RadioGroup(toolPanel, &m_curTool, UI_TOOLTYPE, s_gluicallback);
-        // Create interface buttons for different tools:
-        new GLUI_RadioButton(radio, "Pen");
-        new GLUI_RadioButton(radio, "Arrow");
+      GLUI_Spinner * filterSharpAmount = new GLUI_Spinner(sharpenPanel, "Amount:", &m_filterParameters.sharpen_amount);
+      filterSharpAmount->set_int_limits(1, 10);
+      filterSharpAmount->set_int_val(1);
+      filterSharpAmount->set_speed(0.1);
 
+      new GLUI_Button(sharpenPanel, "Apply", UI_APPLY_SHARP, s_gluicallback);
+    }
+    GLUI_Panel *edgeDetPanel = new GLUI_Panel(filterPanel, "Edge Detect");
+    {
+      new GLUI_Button(edgeDetPanel, "Apply", UI_APPLY_EDGE, s_gluicallback);
+    }
+    GLUI_Panel *thresPanel = new GLUI_Panel(filterPanel, "Threshold");
+    {
+      GLUI_Spinner * filterThresholdAmount = new GLUI_Spinner(thresPanel, "Level:", &m_filterParameters.threshold_amount);
+      filterThresholdAmount->set_float_limits(0, 1);
+      filterThresholdAmount->set_float_val(0.5);
+
+      new GLUI_Button(thresPanel, "Apply", UI_APPLY_THRESHOLD, s_gluicallback);
     }
 
-
-    GLUI_Panel *filterPanel = new GLUI_Panel(m_glui, "Filters");
+    GLUI_Panel *multiplyPanel = new GLUI_Panel(filterPanel, "Multiply RGB");
     {
-        GLUI_Panel *sharpenPanel = new GLUI_Panel(filterPanel, "Sharpen");
-        {
-            GLUI_Spinner * filterSharpAmount = new GLUI_Spinner(sharpenPanel, "Amount:", &m_filterParameters.sharpen_amount);
-            filterSharpAmount->set_int_limits(1, 10);
-            filterSharpAmount->set_int_val(1);
-            filterSharpAmount->set_speed(0.1);
+      GLUI_Spinner * filterChannelRed = new GLUI_Spinner(multiplyPanel, "R:", &m_filterParameters.multiply_colorRed);
+      GLUI_Spinner * filterChannelGreen = new GLUI_Spinner(multiplyPanel, "G:", &m_filterParameters.multiply_colorGreen);
+      GLUI_Spinner * filterChannelBlue = new GLUI_Spinner(multiplyPanel, "B:", &m_filterParameters.multiply_colorBlue);
 
-            new GLUI_Button(sharpenPanel, "Apply", UI_APPLY_SHARP, s_gluicallback);
-        }
-        GLUI_Panel *edgeDetPanel = new GLUI_Panel(filterPanel, "Edge Detect");
+      filterChannelRed->set_float_limits(0, 10);
+      filterChannelRed->set_float_val(1);
+      filterChannelGreen->set_float_limits(0, 10);
+      filterChannelGreen->set_float_val(1);
+      filterChannelBlue->set_float_limits(0, 10);
+      filterChannelBlue->set_float_val(1);
 
-        {
-            new GLUI_Button(edgeDetPanel, "Apply", UI_APPLY_EDGE, s_gluicallback);
-        }
-        GLUI_Panel *thresPanel = new GLUI_Panel(filterPanel, "Threshold");
-        {
-            GLUI_Spinner * filterThresholdAmount = new GLUI_Spinner(thresPanel, "Level:", &m_filterParameters.threshold_amount);
-            filterThresholdAmount->set_float_limits(0, 1);
-            filterThresholdAmount->set_float_val(0.5);
-
-            new GLUI_Button(thresPanel, "Apply", UI_APPLY_THRESHOLD, s_gluicallback);
-        }
-
-        GLUI_Panel *multiplyPanel = new GLUI_Panel(filterPanel, "Multiply RGB");
-        {
-            GLUI_Spinner * filterChannelRed = new GLUI_Spinner(multiplyPanel, "R:", &m_filterParameters.multiply_colorRed);
-            GLUI_Spinner * filterChannelGreen = new GLUI_Spinner(multiplyPanel, "G:", &m_filterParameters.multiply_colorGreen);
-            GLUI_Spinner * filterChannelBlue = new GLUI_Spinner(multiplyPanel, "B:", &m_filterParameters.multiply_colorBlue);
-
-            filterChannelRed->set_float_limits(0, 10);
-            filterChannelRed->set_float_val(1);
-            filterChannelGreen->set_float_limits(0, 10);
-            filterChannelGreen->set_float_val(1);
-            filterChannelBlue->set_float_limits(0, 10);
-            filterChannelBlue->set_float_val(1);
-
-            new GLUI_Button(multiplyPanel, "Apply", UI_APPLY_MULTIPLY_RGB, s_gluicallback);
-        }
-
-        GLUI_Panel *quantPanel = new GLUI_Panel(filterPanel, "Quantize");
-        {
-            GLUI_Spinner * filterQuantizeBins = new GLUI_Spinner(quantPanel, "Bins:", &m_filterParameters.quantize_bins);
-            filterQuantizeBins->set_int_limits(2, 256);
-            filterQuantizeBins->set_int_val(8);
-            filterQuantizeBins->set_speed(0.1);
-
-            new GLUI_Button(quantPanel, "Apply", UI_APPLY_QUANTIZE, s_gluicallback);
-        }
-
-        GLUI_Panel *grayPanel = new GLUI_Panel(filterPanel, "Grayscale");
-        {
-
-            new GLUI_Button(grayPanel, "Apply", UI_APPLY_GRAYSCALE, s_gluicallback);
-        }
-
-
-
-        // UNDO,REDO,QUIT
-        {
-            m_gluiControlHooks.undoButton = new GLUI_Button(m_glui, "Undo", UI_UNDO, s_gluicallback);
-            undoEnabled(true);
-            m_gluiControlHooks.redoButton  = new GLUI_Button(m_glui, "Redo", UI_REDO, s_gluicallback);
-            redoEnabled(true);
-
-            new GLUI_Separator(m_glui);
-            new GLUI_Button(m_glui, "Quit", UI_QUIT, (GLUI_Update_CB)exit);
-        }
+      new GLUI_Button(multiplyPanel, "Apply", UI_APPLY_MULTIPLY_RGB, s_gluicallback);
     }
 
-    new GLUI_Column(m_glui, true);
-
-    GLUI_Panel *imagePanel = new GLUI_Panel(m_glui, "Image I/O");
+    GLUI_Panel *quantPanel = new GLUI_Panel(filterPanel, "Quantize");
     {
-        m_gluiControlHooks.fileBrowser = new GLUI_FileBrowser(imagePanel, "Choose Image", false, UI_FILE_BROWSER, s_gluicallback);
+      GLUI_Spinner * filterQuantizeBins = new GLUI_Spinner(quantPanel, "Bins:", &m_filterParameters.quantize_bins);
+      filterQuantizeBins->set_int_limits(2, 256);
+      filterQuantizeBins->set_int_val(8);
+      filterQuantizeBins->set_speed(0.1);
 
-        m_gluiControlHooks.fileBrowser->set_h(400);
-
-        m_gluiControlHooks.fileNameBox = new     GLUI_EditText( imagePanel , "Image:", m_inFile, UI_FILE_NAME, s_gluicallback );
-        m_gluiControlHooks.fileNameBox->set_w(200);
-
-        new GLUI_Separator(imagePanel);
-
-        m_gluiControlHooks.currentFileLabel = new GLUI_StaticText(imagePanel, "Will load image: none");
-        m_gluiControlHooks.loadCanvasButton = new GLUI_Button(imagePanel, "Load Canvas", UI_LOAD_CANVAS_BUTTON, s_gluicallback);
-
-        new GLUI_Separator(imagePanel);
-
-        m_gluiControlHooks.saveFileLabel = new GLUI_StaticText(imagePanel, "Will save image: none");
-
-        m_gluiControlHooks.saveCanvasButton = new GLUI_Button(imagePanel, "Save Canvas", UI_SAVE_CANVAS_BUTTON, s_gluicallback);
-
-
-        m_gluiControlHooks.previousImageButton = new GLUI_Button(imagePanel, "Previous Image", UI_PREVIOUS_IMAGE_BUTTON, s_gluicallback);
-        m_gluiControlHooks.nextImageButton = new GLUI_Button(imagePanel, "Next Image", UI_NEXT_IMAGE_BUTTON, s_gluicallback);
-
-
-        loadCanvasEnabled(false);
-        saveCanvasEnabled(false);
-        nextImageEnabled(false);
-        previousImageEnabled(false);
+      new GLUI_Button(quantPanel, "Apply", UI_APPLY_QUANTIZE, s_gluicallback);
     }
-    return;
+
+    GLUI_Panel *grayPanel = new GLUI_Panel(filterPanel, "Grayscale");
+    {
+      new GLUI_Button(grayPanel, "Apply", UI_APPLY_GRAYSCALE, s_gluicallback);
+    }
+
+    // UNDO,REDO,QUIT
+    {
+      m_gluiControlHooks.undoButton = new GLUI_Button(m_glui, "Undo", UI_UNDO, s_gluicallback);
+      undoEnabled(true);
+      m_gluiControlHooks.redoButton  = new GLUI_Button(m_glui, "Redo", UI_REDO, s_gluicallback);
+      redoEnabled(true);
+      new GLUI_Separator(m_glui);
+      new GLUI_Button(m_glui, "Quit", UI_QUIT, (GLUI_Update_CB)exit);
+    }
+  }
+
+  new GLUI_Column(m_glui, true);
+
+  GLUI_Panel *imagePanel = new GLUI_Panel(m_glui, "Image I/O");
+  {
+    m_gluiControlHooks.fileBrowser = new GLUI_FileBrowser(imagePanel, "Choose Image", false, UI_FILE_BROWSER, s_gluicallback);
+
+    m_gluiControlHooks.fileBrowser->set_h(400);
+    m_gluiControlHooks.fileNameBox = new     GLUI_EditText( imagePanel , "Image:", m_inFile, UI_FILE_NAME, s_gluicallback );
+    m_gluiControlHooks.fileNameBox->set_w(200);
+
+    new GLUI_Separator(imagePanel);
+
+    m_gluiControlHooks.currentFileLabel = new GLUI_StaticText(imagePanel, "Will load image: none");
+    m_gluiControlHooks.loadCanvasButton = new GLUI_Button(imagePanel, "Load Canvas", UI_LOAD_CANVAS_BUTTON, s_gluicallback);
+
+    new GLUI_Separator(imagePanel);
+
+    m_gluiControlHooks.saveFileLabel = new GLUI_StaticText(imagePanel, "Will save image: none");
+    m_gluiControlHooks.saveCanvasButton = new GLUI_Button(imagePanel, "Save Canvas", UI_SAVE_CANVAS_BUTTON, s_gluicallback);
+
+    m_gluiControlHooks.previousImageButton = new GLUI_Button(imagePanel, "Previous Image", UI_PREVIOUS_IMAGE_BUTTON, s_gluicallback);
+    m_gluiControlHooks.nextImageButton = new GLUI_Button(imagePanel, "Next Image", UI_NEXT_IMAGE_BUTTON, s_gluicallback);
+
+    loadCanvasEnabled(false);
+    saveCanvasEnabled(false);
+    nextImageEnabled(false);
+    previousImageEnabled(false);
+  }
+  return;
 }
 
 void MIAApp::initGraphics() {
@@ -564,60 +580,58 @@ void MIAApp::initGraphics() {
 	glViewport(0, 0, m_width, m_height);
 }
 
-void MIAApp::gluiControl(int controlID)
-{
+void MIAApp::gluiControl(int controlID) {
+  switch (controlID) {
+    case UI_APPLY_SHARP:
+      applyFilterSharpen();
+      break;
+    case UI_APPLY_EDGE:
+      applyFilterEdgeDetect();
+      break;
+    case UI_APPLY_THRESHOLD:
+      applyFilterThreshold();
+      break;
+    case UI_APPLY_GRAYSCALE:
+      applyFilterGrayScale();
+      break;
+    case UI_APPLY_MULTIPLY_RGB:
+      applyFilterMultiplyRGB();
+      break;
+    case UI_APPLY_QUANTIZE:
+      applyFilterQuantize();
+      break;
+    case UI_FILE_BROWSER:
+      setImageFile(m_gluiControlHooks.fileBrowser->get_file());
+      break;
+    case UI_LOAD_CANVAS_BUTTON:
+      loadImageToCanvas();
+      break;
+    case UI_SAVE_CANVAS_BUTTON:
+      saveCanvasToFile();
+      // Reload the current directory:
+      m_gluiControlHooks.fileBrowser->fbreaddir(".");
+      break;
+    case UI_NEXT_IMAGE_BUTTON:
+      loadNextImage();
+      break;
+    case UI_PREVIOUS_IMAGE_BUTTON:
+      loadPreviousImage();
+      break;
+    case UI_FILE_NAME:
+      setImageFile(m_inFile);
+      break;
+    case UI_UNDO:
+      undoOperation();
+      break;
+    case UI_REDO:
+      redoOperation();
+      break;
+    default:
+      break;
+  }
 
-    switch (controlID) {
-        case UI_APPLY_SHARP:
-            applyFilterSharpen();
-            break;
-        case UI_APPLY_EDGE:
-            applyFilterEdgeDetect();
-            break;
-        case UI_APPLY_THRESHOLD:
-            applyFilterThreshold();
-            break;
-        case UI_APPLY_GRAYSCALE:
-            applyFilterGrayScale();
-            break;
-        case UI_APPLY_MULTIPLY_RGB:
-            applyFilterMultiplyRGB();
-            break;
-        case UI_APPLY_QUANTIZE:
-            applyFilterQuantize();
-            break;
-        case UI_FILE_BROWSER:
-            setImageFile(m_gluiControlHooks.fileBrowser->get_file());
-            break;
-        case UI_LOAD_CANVAS_BUTTON:
-            loadImageToCanvas();
-            break;
-        case UI_SAVE_CANVAS_BUTTON:
-            saveCanvasToFile();
-            // Reload the current directory:
-            m_gluiControlHooks.fileBrowser->fbreaddir(".");
-            break;
-        case UI_NEXT_IMAGE_BUTTON:
-            loadNextImage();
-            break;
-        case UI_PREVIOUS_IMAGE_BUTTON:
-            loadPreviousImage();
-            break;
-        case UI_FILE_NAME:
-            setImageFile(m_inFile);
-            break;
-        case UI_UNDO:
-            undoOperation();
-            break;
-        case UI_REDO:
-            redoOperation();
-            break;
-        default:
-            break;
-    }
-
-    // Forces canvas to update changes made in this function
-    m_glui->post_update_main_gfx();
+  // Forces canvas to update changes made in this function
+  m_glui->post_update_main_gfx();
 }
 
 // **********************
@@ -627,13 +641,10 @@ void MIAApp::gluiControl(int controlID)
 // for how MIAApp should respond to the
 // button presses.
 
-void MIAApp::loadImageToCanvas()
-{
+void MIAApp::loadImageToCanvas() {
 	cout << "Load Canvas has been clicked for file " << m_inFile << endl;
-	// TODO: Perform loading task
 
-	if (m_displayBuffer)
-	{
+	if (m_displayBuffer) {
     storePixelBuffer();
 		delete m_displayBuffer;
 	}
@@ -655,30 +666,23 @@ void MIAApp::loadImageToCanvas()
   }
 }
 
-void MIAApp::saveCanvasToFile()
-{
+void MIAApp::saveCanvasToFile() {
 	cout << "Save Canvas been clicked for file " << m_outFile << endl;
-	if (ImageHandler::saveImage(m_outFile, m_displayBuffer))
-	{
+	if (ImageHandler::saveImage(m_outFile, m_displayBuffer)) {
 		std::cout << "successfuly saved image" << std::endl;
-	}
-	else
-	{
+	} else {
 		std::cout << "failed to save image" << std::endl;
 	}
 }
 
-void MIAApp::applyFilterThreshold()
-{
+void MIAApp::applyFilterThreshold() {
 	storePixelBuffer();
 	thresh.setValue(m_filterParameters.threshold_amount);
 	thresh.applyFilter(m_displayBuffer);
 	cout << "Apply has been clicked for Threshold has been clicked with amount =" << m_filterParameters.threshold_amount << endl;
-
 }
 
-void MIAApp::applyFilterMultiplyRGB()
-{
+void MIAApp::applyFilterMultiplyRGB() {
 	storePixelBuffer();
 	channels.setR(m_filterParameters.multiply_colorRed);
 	channels.setG(m_filterParameters.multiply_colorGreen);
@@ -689,8 +693,7 @@ void MIAApp::applyFilterMultiplyRGB()
 	<< ", blue = " << m_filterParameters.multiply_colorBlue << endl;
 }
 
-void MIAApp::applyFilterGrayScale()
-{
+void MIAApp::applyFilterGrayScale() {
 	storePixelBuffer();
 	saturate.setValue(0.0);
 	saturate.applyFilter(m_displayBuffer);
@@ -698,22 +701,19 @@ void MIAApp::applyFilterGrayScale()
 }
 
 
-void MIAApp::applyFilterSharpen()
-{
+void MIAApp::applyFilterSharpen() {
 	storePixelBuffer();
 	sharpen->applyFilter(m_displayBuffer, m_filterParameters.sharpen_amount, -1);
 	cout << "Apply has been clicked for Sharpen with amount = " << m_filterParameters.sharpen_amount << endl;
 }
 
-void MIAApp::applyFilterEdgeDetect()
-{
+void MIAApp::applyFilterEdgeDetect() {
 	storePixelBuffer();
 	edgeDet->applyFilter(m_displayBuffer, -1, -1);
 	cout << "Apply has been clicked for Edge Detect" << endl;
 }
 
-void MIAApp::applyFilterQuantize()
-{
+void MIAApp::applyFilterQuantize() {
 	storePixelBuffer();
 	quantize.setBins(m_filterParameters.quantize_bins);
 	quantize.applyFilter(m_displayBuffer);
@@ -726,16 +726,14 @@ void MIAApp::applyFilterBlur() {
   cout << "Apply has been clicked for Blur with amount = " << m_filterParameters.blur_amount << endl;
 }
 
-void MIAApp::applyFilterSaturate()
-{
+void MIAApp::applyFilterSaturate() {
   storePixelBuffer();
 	saturate.setValue(m_filterParameters.saturation_amount);
 	saturate.applyFilter(m_displayBuffer);
   cout << "Apply has been clicked for Saturate with amount = " << m_filterParameters.saturation_amount << endl;
 }
 
-void MIAApp::undoOperation()
-{
+void MIAApp::undoOperation() {
 	PixelBuffer *myNewPixelBuffer = undoOp->restoreBuffer(m_displayBuffer, backColor, redoOp);
   if (&myNewPixelBuffer != NULL) {
     m_displayBuffer = myNewPixelBuffer;
@@ -743,8 +741,7 @@ void MIAApp::undoOperation()
   }
 }
 
-void MIAApp::redoOperation()
-{
+void MIAApp::redoOperation() {
 	PixelBuffer *myNewPixelBuffer = redoOp->restoreBuffer(m_displayBuffer, backColor, undoOp);
   if (&myNewPixelBuffer != NULL) {
     m_displayBuffer = myNewPixelBuffer;
@@ -760,160 +757,138 @@ void MIAApp::redoOperation()
 // GLUI interface.
 
 void MIAApp::buttonEnabled(GLUI_Button * button, bool enabled) {
-    if(enabled) button->enable();
-    else button->disable();
-    button->redraw();
+  if(enabled) {
+    button->enable();
+  } else {
+    button->disable();
+  }
+  button->redraw();
 }
 
-void MIAApp::redoEnabled(bool enabled)
-{
-    buttonEnabled(m_gluiControlHooks.redoButton, enabled);
+void MIAApp::redoEnabled(bool enabled) {
+  buttonEnabled(m_gluiControlHooks.redoButton, enabled);
 }
 
-void MIAApp::undoEnabled(bool enabled)
-{
-    buttonEnabled(m_gluiControlHooks.undoButton, enabled);
+void MIAApp::undoEnabled(bool enabled) {
+  buttonEnabled(m_gluiControlHooks.undoButton, enabled);
 }
 
-void MIAApp::saveCanvasEnabled(bool enabled)
-{
-    buttonEnabled(m_gluiControlHooks.saveCanvasButton, enabled);
+void MIAApp::saveCanvasEnabled(bool enabled) {
+  buttonEnabled(m_gluiControlHooks.saveCanvasButton, enabled);
 }
 
-void MIAApp::loadCanvasEnabled(bool enabled)
-{
-    buttonEnabled(m_gluiControlHooks.loadCanvasButton, enabled);
+void MIAApp::loadCanvasEnabled(bool enabled) {
+  buttonEnabled(m_gluiControlHooks.loadCanvasButton, enabled);
 }
 
 void MIAApp::previousImageEnabled(bool enabled) {
-    buttonEnabled(m_gluiControlHooks.previousImageButton, enabled);
+  buttonEnabled(m_gluiControlHooks.previousImageButton, enabled);
 }
 
 void MIAApp::nextImageEnabled(bool enabled) {
-    buttonEnabled(m_gluiControlHooks.nextImageButton, enabled);
+  buttonEnabled(m_gluiControlHooks.nextImageButton, enabled);
 }
 
-void MIAApp::loadNextImage()
-{
-    setImageFile(m_nextFileName);
-    loadImageToCanvas();
+void MIAApp::loadNextImage() {
+  setImageFile(m_nextFileName);
+  loadImageToCanvas();
 }
 
-void MIAApp::loadPreviousImage()
-{
-    setImageFile(m_prevFileName);
-    loadImageToCanvas();
+void MIAApp::loadPreviousImage() {
+  setImageFile(m_prevFileName);
+  loadImageToCanvas();
 }
-
 
 bool MIAApp::hasSuffix(const std::string & str, const std::string & suffix){
-    return str.find(suffix,str.length()-suffix.length()) != std::string::npos;
+  return str.find(suffix,str.length()-suffix.length()) != std::string::npos;
 }
 
 bool MIAApp::isValidImageFileName(const std::string & name) {
-
-    if (hasSuffix(name, ".png")
-        || hasSuffix(name, ".jpg")
-        || hasSuffix(name, ".jpeg")
-        )
-        return true;
-    else
-        return false;
+  if (hasSuffix(name, ".png") || hasSuffix(name, ".jpg") || hasSuffix(name, ".jpeg")) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 bool MIAApp::isValidImageFile(const std::string & name) {
-
-    FILE *f;
-    bool isValid = false;
-    if (isValidImageFileName(name)) {
-        if ((f = fopen( name.c_str(), "r"))) {
-            isValid = true;
-            fclose(f);
-        }
+  FILE *f;
+  bool isValid = false;
+  if (isValidImageFileName(name)) {
+    if ((f = fopen( name.c_str(), "r"))) {
+      isValid = true;
+      fclose(f);
     }
-
-
-    return isValid;
+  }
+  return isValid;
 }
 
-std::string MIAApp::getImageNamePlusSeqOffset(const std::string & currentFileName, int offset)
-{
+std::string MIAApp::getImageNamePlusSeqOffset(const std::string & currentFileName, int offset) {
+  int digitCount = 3;
+  std::string extension, name, number;
+  size_t dotPos = currentFileName.find_last_of(".");
+  if (dotPos ==  std::string::npos || dotPos == 0) {
+    return "";
+  }
 
-    int digitCount = 3;
+  extension = currentFileName.substr(dotPos+1);
+  name = currentFileName.substr(0,dotPos);
+  if (name.length() < digitCount) {
+    return "";
+  }
 
-    std::string extension, name, number;
-    size_t dotPos = currentFileName.find_last_of(".");
-    if (dotPos ==  std::string::npos || dotPos == 0) {
-        return "";
-    }
+  number = name.substr(name.length()-digitCount);
+  name = name.substr(0,name.length()-digitCount);
+  int num;
+  std::istringstream ( number ) >> num;
+  int output_num = num +offset;
+  if (output_num < 0) {
+    return "";
+  }
+  std::stringstream ss;
+  ss << output_num;
+  std::string output_number;
+  ss >> output_number;
 
-    extension = currentFileName.substr(dotPos+1);
-    name = currentFileName.substr(0,dotPos);
-    if (name.length() < digitCount) {
-        return "";
-    }
-
-    number = name.substr(name.length()-digitCount);
-    name = name.substr(0,name.length()-digitCount);
-    int num;
-    std::istringstream ( number ) >> num;
-    int output_num = num +offset;
-    if (output_num < 0) {
-        return "";
-    }
-    std::stringstream ss;
-    ss << output_num;
-    std::string output_number;
-    ss >> output_number;
-
-    // Append zero chars
-    size_t str_length = output_number.length();
-    for (int i = 0; i < digitCount - str_length; i++)
-        output_number = "0" + output_number;
-
-
-
-
-
-    return (name + output_number + "." + extension);
+  // Append zero chars
+  size_t str_length = output_number.length();
+  for (int i = 0; i < digitCount - str_length; i++) {
+    output_number = "0" + output_number;
+  }
+  return (name + output_number + "." + extension);
 }
 
-void MIAApp::setImageFile(const std::string & fileName)
-{
-    // If a directory was selected
-    // instead of a file, use the
-    // latest file typed or selected.
-    std::string imageFile = fileName;
-    if (!isValidImageFileName(imageFile)) {
-        imageFile = m_inFile;
-    }
+void MIAApp::setImageFile(const std::string & fileName) {
+  // If a directory was selected
+  // instead of a file, use the
+  // latest file typed or selected.
+  std::string imageFile = fileName;
+  if (!isValidImageFileName(imageFile)) {
+    imageFile = m_inFile;
+  }
 
+  // TOGGLE SAVE FEATURE
+  // If no file is selected or typed,
+  // don't allow file to be saved. If
+  // there is a file name, then allow
+  // file to be saved to that name.
+  if (!isValidImageFileName(imageFile)) {
+    m_gluiControlHooks.saveFileLabel->set_text("Will save image: none");
+    saveCanvasEnabled(false);
+  } else {
+    m_gluiControlHooks.saveFileLabel->set_text((std::string("Will save image: ") + imageFile).c_str());
+    saveCanvasEnabled(true);
+  }
 
-    // TOGGLE SAVE FEATURE
-    // If no file is selected or typed,
-    // don't allow file to be saved. If
-    // there is a file name, then allow
-    // file to be saved to that name.
-
-    if (!isValidImageFileName(imageFile)) {
-        m_gluiControlHooks.saveFileLabel->set_text("Will save image: none");
-        saveCanvasEnabled(false);
-    } else {
-        m_gluiControlHooks.saveFileLabel->set_text((std::string("Will save image: ") + imageFile).c_str());
-        saveCanvasEnabled(true);
-    }
-
-    // TOGGLE LOAD FEATURE
-
-    // If the file specified cannot be opened,
-    // then disable stamp and canvas loading.
-    if (isValidImageFile(imageFile)) {
-        loadCanvasEnabled(true);
-
-        m_gluiControlHooks.currentFileLabel->set_text((std::string("Will load: ") + imageFile).c_str());
-        m_gluiControlHooks.fileNameBox->set_text(imageFile);
-    } else {
-        loadCanvasEnabled(false);
-        m_gluiControlHooks.currentFileLabel->set_text("Will load: none");
-    }
+  // TOGGLE LOAD FEATURE
+  // If the file specified cannot be opened,
+  // then disable stamp and canvas loading.
+  if (isValidImageFile(imageFile)) {
+    loadCanvasEnabled(true);
+    m_gluiControlHooks.currentFileLabel->set_text((std::string("Will load: ") + imageFile).c_str());
+    m_gluiControlHooks.fileNameBox->set_text(imageFile);
+  } else {
+    loadCanvasEnabled(false);
+    m_gluiControlHooks.currentFileLabel->set_text("Will load: none");
+  }
 }

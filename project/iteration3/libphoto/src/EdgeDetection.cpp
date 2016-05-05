@@ -50,7 +50,7 @@ EdgeDetection::EdgeDetection() {
 EdgeDetection::~EdgeDetection() {
   for (int i = 0; i < kernelSize; i++) {
     delete[] xKernel[i];
-    delete[] Kernel[i];
+    delete[] yKernel[i];
   }
   delete[] xKernel;
   delete[] yKernel;
