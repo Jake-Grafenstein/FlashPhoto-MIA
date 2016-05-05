@@ -94,6 +94,7 @@ $(OBJECT_DIR):
 	mkdir -p $(OBJECT_DIR)
 
 $(EXECUTABLES)/: $(OBJFILES) $(GLUI_LIB) $(PNG_LIB) $(JPEG_LIB) $(LIBPHOTO_LIB) FlashPhoto.o
+	echo "Making executables"
 	$(CC)  $(LDFLAGS) $(LINK_LIBS) -o $@ $<
 
 $(OBJECT_DIR)/%.o: $(SOURCE_DIR)/%.cpp
