@@ -93,11 +93,14 @@ setup: | $(OBJECT_DIR)
 $(OBJECT_DIR):
 	mkdir -p $(OBJECT_DIR)
 
-$(EXECUTABLES)/: $(OBJECT_DIR)/%.o $(GLUI_LIB) $(PNG_LIB) $(JPEG_LIB) $(LIBPHOTO_LIB)
-	$(CC) $(LDFLAGS) $(OBJFILES) $(LINK_LIBS) -o $@ $<
+$(EXECUTABLES)/: $(OBJFILES) $(GLUI_LIB) $(PNG_LIB) $(JPEG_LIB) $(LIBPHOTO_LIB) FlashPhoto.o
+	$(CC)  $(LDFLAGS) $(LINK_LIBS) -o $@ $<
 
 $(OBJECT_DIR)/%.o: $(SOURCE_DIR)/%.cpp
 	$(CC) $(CFLAGS) $(INCLUDE)  -o $@ $<
+
+FlashPhoto.o: 
+	$(CC) $(CFLAGS) $(INCLUDE) -o FlashPhoto.o
 
 clean:
 	\rm -rf $(OBJECT_DIR) $(EXECUTABLE)
