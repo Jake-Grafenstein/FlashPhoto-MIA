@@ -21,30 +21,31 @@ BaseGfxApp::BaseGfxApp(int argc, char* argv[], int width, int height, int x, int
 	m_width = width;
 	m_height = height;
 
-	// Set window size and position
-	glutInitWindowSize(width, height);
-	glutInitWindowPosition(x, y);
-	glutInitDisplayMode(glutFlags);
+  if (createGLUIWin)
+	{
+		// Set window size and position
+		glutInitWindowSize(width, height);
+		glutInitWindowPosition(x, y);
+		glutInitDisplayMode(glutFlags);
 
-	if (! s_glutInitialized) {
-		glutInit(&argc, argv);
-		s_glutInitialized = true;
-	}
+		if (! s_glutInitialized) {
+			glutInit(&argc, argv);
+			s_glutInitialized = true;
+		}
 
-	m_glutWindowHandle = glutCreateWindow("Graphics Window");
+		m_glutWindowHandle = glutCreateWindow("Graphics Window");
 
-	glutReshapeFunc(s_reshape);
-	glutKeyboardFunc(s_keyboard);
-	glutKeyboardUpFunc(s_keyboardup);
-	glutSpecialFunc(s_keyboardspecial);
-	glutSpecialUpFunc(s_keyboardspecialup);
-	glutMotionFunc(s_mousemotion);
-	glutPassiveMotionFunc(s_mousemotion);
-	glutMouseFunc(s_mousebtn);
-	glutDisplayFunc(s_draw);
-	glutIdleFunc(s_idle);
+		glutReshapeFunc(s_reshape);
+		glutKeyboardFunc(s_keyboard);
+		glutKeyboardUpFunc(s_keyboardup);
+		glutSpecialFunc(s_keyboardspecial);
+		glutSpecialUpFunc(s_keyboardspecialup);
+		glutMotionFunc(s_mousemotion);
+		glutPassiveMotionFunc(s_mousemotion);
+		glutMouseFunc(s_mousebtn);
+		glutDisplayFunc(s_draw);
+		glutIdleFunc(s_idle);
 
-	if (createGLUIWin) {
 		m_glui = GLUI_Master.create_glui("Controls", 0, gluiWinX, gluiWinY);
 		m_glui->set_main_gfx_window(m_glutWindowHandle);
 		// Note: if using a glut idle func, it may need to be registered with glui rather than glut.

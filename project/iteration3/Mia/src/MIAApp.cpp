@@ -27,10 +27,7 @@
 using std::cout;
 using std::endl;
 
-MIAApp::MIAApp(int argc, char* argv[], int width, int height, ColorData backgroundColor) : BaseGfxApp(argc, argv, width, height, 50, 50, GLUT_RGB|GLUT_DOUBLE|GLUT_DEPTH, true, width+51, 50) {
-
-  // Set the name of the window
-  setCaption("Medical Image Analysis (MIA)");
+MIAApp::MIAApp(int argc, char* argv[], int width, int height, ColorData backgroundColor) : BaseGfxApp(argc, argv, width, height, 50, 50, GLUT_RGB|GLUT_DOUBLE|GLUT_DEPTH, argc <= 1, width+51, 50) {
 
   // Initialize Interface
   initializeBuffers(backgroundColor, width, height);
@@ -45,6 +42,8 @@ MIAApp::MIAApp(int argc, char* argv[], int width, int height, ColorData backgrou
     cout << "Your photos have been edited completely" << endl;
     exit(1);
   } else {
+    // Set the name of the window
+    setCaption("Medical Image Analysis (MIA)");
     isCommandLine = false;
     initGlui();
     initGraphics();
