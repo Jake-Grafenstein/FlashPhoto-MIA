@@ -10,11 +10,11 @@ int main(int argc,char *argv[])
 	prog->gluiControl(FlashPhotoApp::UI_LOAD_STAMP_BUTTON);//saves canvas
 	if (prog->compareBuffers())
 	{
-		printf("Testing: Pen\t SUCCESS\n");
+		printf("Testing: Pen\t\t SUCCESS\n");
 	}
 	else
 	{
-		printf("Testing: Pen\n FAIL\n");
+		printf("Testing: Pen\t\t FAIL\n");
 	}
 	return 0;
 }
