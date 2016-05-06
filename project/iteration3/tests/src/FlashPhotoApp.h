@@ -63,6 +63,19 @@ public:
     void loadImageTest(std::string image);
     int compareBuffers();
 
+struct {
+	float channel_colorRed;
+	float channel_colorGreen;
+	float channel_colorBlue;
+	float saturation_amount;
+	float threshold_amount;
+	float blur_amount;
+	float sharpen_amount;
+	float motionBlur_amount;
+	int motionBlur_direction;
+	int quantize_bins;
+} m_filterParameters;
+
     // GLUI INTERFACE ELEMENTS
     enum UIControlType {
         UI_TOOLTYPE,
@@ -144,19 +157,6 @@ private:
         DIR_NE_SW,
         DIR_NW_SE
     };
-
-    struct {
-        float channel_colorRed;
-        float channel_colorGreen;
-        float channel_colorBlue;
-        float saturation_amount;
-        float threshold_amount;
-        float blur_amount;
-        float sharpen_amount;
-        float motionBlur_amount;
-        int motionBlur_direction;
-        int quantize_bins;
-    } m_filterParameters;
 
     struct {
         GLUI_FileBrowser* fileBrowser;

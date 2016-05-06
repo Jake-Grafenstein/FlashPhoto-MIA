@@ -96,15 +96,15 @@ tests: $(EXECUTABLES)
 	./test_blur
 	./test_calligraphypen
 	./test_eraser
-#	./test_filterBlur
-#	./test_filterChannel
-#	./test_filterEdgeDetect
+	./test_filterBlur
+	./test_filterChannel
+	./test_filterEdgeDetect
 #	./test_filterMotionBlur
-#	./test_filterQuantize
+	./test_filterQuantize
 #	./test_filterSaturate
-#	./test_filterSharpen
+	./test_filterSharpen
 #	./test_filterSpecial
-#	./test_filterThreshold
+	./test_filterThreshold
 	./test_highlighter
 	./test_pen
 	./test_spraycan
