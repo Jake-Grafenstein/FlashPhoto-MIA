@@ -221,7 +221,6 @@ void MIAApp::traverseArguments(int argc, char* argv[]) {
     input = argv[i];
     if (!strcmp(input, "-sharpen")) {
       numFilters++;
-      cout << "Detected sharpen command" << endl;
       m_filterOrder.toSharpen = j;
       j++;
       m_filterParameters.sharpen_amount = atoi(argv[i+1]);
@@ -233,13 +232,11 @@ void MIAApp::traverseArguments(int argc, char* argv[]) {
       }
     } else if (!strcmp(argv[i], "-edgeDetect")) {
       numFilters++;
-      cout << "Detected edgeDetect command" << endl;
       m_filterOrder.toEdgeDetect = j;
       j++;
       i++;
     } else if (!strcmp(argv[i], "-thresh")) {
       numFilters++;
-      cout << "Detected thresh command" << endl;
       m_filterOrder.toThreshold = j;
       j++;
       m_filterParameters.threshold_amount = atof(argv[i+1]);
@@ -251,7 +248,6 @@ void MIAApp::traverseArguments(int argc, char* argv[]) {
       }
     } else if (!strcmp(argv[i], "-quantize")) {
       numFilters++;
-      cout << "Detected quantize command" << endl;
       m_filterOrder.toQuantize = j;
       j++;
       m_filterParameters.quantize_bins = atoi(argv[i+1]);
@@ -263,7 +259,6 @@ void MIAApp::traverseArguments(int argc, char* argv[]) {
       }
     } else if (!strcmp(argv[i], "-blur")) {
       numFilters++;
-      cout << "Detected blur command" << endl;
       m_filterOrder.toBlur = j;
       j++;
       m_filterParameters.blur_amount = atof(argv[i+1]);
@@ -275,7 +270,6 @@ void MIAApp::traverseArguments(int argc, char* argv[]) {
       }
     } else if (!strcmp(argv[i], "-saturate")) {
       numFilters++;
-      cout << "Detected saturate command" << endl;
       m_filterOrder.toSaturate = j;
       j++;
       m_filterParameters.saturation_amount = atof(argv[i+1]);
@@ -287,7 +281,6 @@ void MIAApp::traverseArguments(int argc, char* argv[]) {
       }
     } else if (!strcmp(argv[i], "-multrgb")) {
       numFilters++;
-      cout << "Detected multiplyRGB command" << endl;
       m_filterOrder.toMultiplyRGB = j;
       j++;
       getChannelParameters(argv[i+1]);
@@ -298,8 +291,8 @@ void MIAApp::traverseArguments(int argc, char* argv[]) {
         exit(1);
       }
     } else if (!strcmp(argv[i], "-compare")) {
-      cout << "Detected compare command" << endl;
       compareImages();
+      displayHelp();
       exit(1);
     } else {
       cout << "Detected either -h or incomprehensible input" << endl;
@@ -322,8 +315,6 @@ void MIAApp::getChannelParameters(const char *channelArgs) {
 }
 
 void MIAApp::compareImages() {
-  cout << "This is my_inFile: " << m_inFile << endl;
-  cout << "This is my_outFile: " << m_outFile << endl;
   PixelBuffer *tempInBuffer = ImageHandler::loadImage(m_inFile);
   PixelBuffer *tempOutBuffer = ImageHandler::loadImage(m_outFile);
   bool areEqual = tempInBuffer->compareBuffers(tempInBuffer,tempOutBuffer);
