@@ -376,6 +376,7 @@ void MIAApp::mouseMoved(int x, int y) {
 }
 
 void MIAApp::leftMouseDown(int x, int y) {
+printf("%d why?\n",&m_displayBuffer);
   storePixelBuffer();
   // if the current tool is the stamp tool
   if (m_curTool == 1) {
