@@ -18,7 +18,8 @@ MIAApp::MIAApp(int argc, char* argv[], int width, int height, ColorData backgrou
 
   // Initalize Filters
   initializeTools();
-
+  previousX = -1;
+  previousY = -1;
   // Determine if command line mode or graphical mode
   if (argc > 1) {
     isCommandLine = true;
