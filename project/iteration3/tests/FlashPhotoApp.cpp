@@ -565,6 +565,7 @@ void FlashPhotoApp::loadImageToStamp()
 
 void FlashPhotoApp::saveCanvasToFile()
 {
+	std::cout << m_fileName << std::endl;
 	if (ImageHandler::saveImage(m_fileName, m_displayBuffer))
 	{
 		std::cout << "successfuly saved image" << std::endl;

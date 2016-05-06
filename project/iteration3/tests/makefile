@@ -83,7 +83,7 @@ endif
 # or just remember to run "make rebuild" if you change a .h file.
 
 
-all: setup $(TESTS)
+all: setup $(EXECUTABLES)
 
 rebuild: clean all
 
@@ -114,13 +114,13 @@ $(TESTS): $(EXECUTABLES)
 
 
 
-$(EXECUTABLES): $(OBJFILES) FlashPhoto.o $(GLUI_LIB) $(PNG_LIB) $(JPEG_LIB) $(LIBPHOTO_LIB)
+$(EXECUTABLES):  $(OBJFILES) build/FlashPhoto.o $(GLUI_LIB) $(PNG_LIB) $(JPEG_LIB) $(LIBPHOTO_LIB)
 	$(CC) build/FlashPhoto.o $(LDFLAGS) $(LINK_LIBS) -o $@ $<
 
 $(OBJECT_DIR)/%.o: $(SOURCE_DIR)/%.cpp
 	$(CC) $(CFLAGS) $(INCLUDE)  -o $@ $<
 
-FlashPhoto.o: 
+build/FlashPhoto.o: 
 	$(CC) $(CFLAGS) $(INCLUDE) -o build/FlashPhoto.o FlashPhotoApp.cpp
 
 clean:
