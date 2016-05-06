@@ -82,7 +82,7 @@ endif
 # or just remember to run "make rebuild" if you change a .h file.
 
 
-all: setup tests
+all: setup $(EXECUTABLES)
 
 rebuild: clean all
 
@@ -93,6 +93,7 @@ $(OBJECT_DIR):
 	mkdir -p $(OBJECT_DIR)
 
 tests: $(EXECUTABLES)
+	echo "Testing FlashPhoto:"
 	./test_blur
 	./test_calligraphypen
 	./test_eraser
@@ -110,17 +111,21 @@ tests: $(EXECUTABLES)
 	./test_spraycan
 	./test_stamp
 	./test_xpen
+	echo "Testing Mia:"
 
 
 
-$(EXECUTABLES):  $(OBJFILES) build/FlashPhoto.o $(GLUI_LIB) $(PNG_LIB) $(JPEG_LIB) $(LIBPHOTO_LIB)
-	$(CC) build/FlashPhoto.o $(LDFLAGS) $(LINK_LIBS) -o $@ $(OBJECT_DIR)/$@.o
+$(EXECUTABLES):  $(OBJFILES) build/FlashPhoto.o build/Mia.o $(GLUI_LIB) $(PNG_LIB) $(JPEG_LIB) $(LIBPHOTO_LIB)
+	$(CC) build/FlashPhoto.o build/Mia.o $(LDFLAGS) $(LINK_LIBS) -o $@ $(OBJECT_DIR)/$@.o
 
 $(OBJECT_DIR)/%.o: $(SOURCE_DIR)/%.cpp
 	$(CC) $(CFLAGS) $(INCLUDE)  -o $@ $<
 
 build/FlashPhoto.o: 
 	$(CC) $(CFLAGS) $(INCLUDE) -o build/FlashPhoto.o FlashPhotoApp.cpp
+
+build/Mia.o:
+	$(CC) $(CFLAGS) $(INCLUDE) -o build/Mia.o MIAApp.cpp
 
 clean:
 	\rm -rf $(OBJECT_DIR) $(EXECUTABLE)
