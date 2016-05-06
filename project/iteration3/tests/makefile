@@ -115,7 +115,7 @@ $(TESTS): $(EXECUTABLES)
 
 
 $(EXECUTABLES):  $(OBJFILES) build/FlashPhoto.o $(GLUI_LIB) $(PNG_LIB) $(JPEG_LIB) $(LIBPHOTO_LIB)
-	$(CC) build/FlashPhoto.o $(LDFLAGS) $(LINK_LIBS) -o $@ $<
+	$(CC) build/FlashPhoto.o $(LDFLAGS) $(LINK_LIBS) -o $@ $(OBJECT_DIR)/$@.o
 
 $(OBJECT_DIR)/%.o: $(SOURCE_DIR)/%.cpp
 	$(CC) $(CFLAGS) $(INCLUDE)  -o $@ $<
