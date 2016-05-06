@@ -100,9 +100,9 @@ tests: $(EXECUTABLES)
 	./test_filterBlur
 	./test_filterChannel
 	./test_filterEdgeDetect
-#	./test_filterMotionBlur
+	./test_filterMotionBlur
 	./test_filterQuantize
-#	./test_filterSaturate
+	./test_filterSaturate
 	./test_filterSharpen
 #	./test_filterSpecial
 	./test_filterThreshold

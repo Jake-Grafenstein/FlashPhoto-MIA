@@ -558,13 +558,9 @@ void FlashPhotoApp::loadImageToCanvas()
 
 void FlashPhotoApp::loadImageToStamp()
 {
-	cout << m_fileName << endl;
 	stamp.setStampBuffer(ImageHandler::loadImage(m_fileName));
-  	cout << 1 << endl;
 	stampBuffer = stamp.getStampBuffer();
-  	cout << 2 << endl;
 	stampLoaded = true;
-	cout << "here" << endl;
 }
 
 void FlashPhotoApp::saveCanvasToFile()
