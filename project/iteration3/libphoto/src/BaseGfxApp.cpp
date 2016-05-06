@@ -20,6 +20,7 @@ BaseGfxApp::BaseGfxApp(int argc, char* argv[], int width, int height, int x, int
 	m_drag = false;
 	m_width = width;
 	m_height = height;
+	isCommandLine = createGLUIWin;
 
   if (createGLUIWin)
 	{
@@ -55,7 +56,9 @@ BaseGfxApp::BaseGfxApp(int argc, char* argv[], int width, int height, int x, int
 
 BaseGfxApp::~BaseGfxApp() {
 	s_currentApp = NULL;
-	glutDestroyWindow(m_glutWindowHandle);
+	if (isCommandLine) {
+		glutDestroyWindow(m_glutWindowHandle);
+	}
 }
 
 void BaseGfxApp::setCaption(const std::string& caption) {

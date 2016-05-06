@@ -39,8 +39,7 @@ MIAApp::MIAApp(int argc, char* argv[], int width, int height, ColorData backgrou
   if (argc > 1) {
     isCommandLine = true;
     commandLine(argc, argv);
-    cout << "Your photos have been edited completely" << endl;
-    exit(1);
+    return;
   } else {
     // Set the name of the window
     setCaption("Medical Image Analysis (MIA)");
@@ -86,9 +85,12 @@ void MIAApp::commandLine(int argc, char* argv[]) {
       if (isValidImageFileName(m_outFile)) {
         // Do Nothing
       } else {
-        cout << "Invalid output file name" << endl;
-        exit(1);
+        cout << "ERROR: Invalid output file name" << endl;
+        return;
       }
+    } else {
+      cout << "ERROR: Invalid input file name" << endl;
+      return;
     }
   }
   traverseArguments(argc, argv);
@@ -126,6 +128,8 @@ void MIAApp::commandLine(int argc, char* argv[]) {
             applyCommandLineFilters();
             saveCanvasToFile();
             m_outFile.clear();
+          } else {
+
           }
         }
       }
@@ -226,8 +230,9 @@ void MIAApp::traverseArguments(int argc, char* argv[]) {
       if (m_filterParameters.sharpen_amount > 0) {
         i += 2;
       } else {
-        perror("Invalid Integer value for Sharpen");
-        exit(1);
+        cout << "ERROR: Invalid Integer value for Sharpen" << endl;
+        displayHelp();
+        return;
       }
     } else if (!strcmp(argv[i], "-edgeDetect")) {
       numFilters++;
@@ -242,8 +247,9 @@ void MIAApp::traverseArguments(int argc, char* argv[]) {
       if (m_filterParameters.threshold_amount > 0.0) {
         i += 2;
       } else {
-        perror("Invalid Floating Point Value for Threshold");
-        exit(1);
+        cout << "ERROR: Invalid Floating Point Value for Threshold" << endl;
+        displayHelp();
+        return;
       }
     } else if (!strcmp(argv[i], "-quantize")) {
       numFilters++;
@@ -253,8 +259,9 @@ void MIAApp::traverseArguments(int argc, char* argv[]) {
       if (m_filterParameters.quantize_bins > 0) {
         i += 2;
       } else {
-        perror("Invalid Integer value for Quantize");
-        exit(1);
+        cout << "ERROR: Invalid Integer value for Quantize" << endl;
+        displayHelp();
+        return;
       }
     } else if (!strcmp(argv[i], "-blur")) {
       numFilters++;
@@ -264,8 +271,9 @@ void MIAApp::traverseArguments(int argc, char* argv[]) {
       if (m_filterParameters.blur_amount > 0.0) {
         i += 2;
       } else {
-        perror("Invalid Floating Point value to Blur");
-        exit(1);
+        cout << "ERROR: Invalid Floating Point value to Blur" << endl;
+        displayHelp();
+        return;
       }
     } else if (!strcmp(argv[i], "-saturate")) {
       numFilters++;
@@ -275,8 +283,9 @@ void MIAApp::traverseArguments(int argc, char* argv[]) {
       if (m_filterParameters.saturation_amount > 0.0) {
         i += 2;
       } else {
-        perror("Invalid Floating Point value for Saturate");
-        exit(1);
+        cout << "ERROR: Invalid Floating Point value for Saturate" << endl;
+        displayHelp();
+        return;
       }
     } else if (!strcmp(argv[i], "-multrgb")) {
       numFilters++;
@@ -286,17 +295,17 @@ void MIAApp::traverseArguments(int argc, char* argv[]) {
       if ((m_filterParameters.multiply_colorRed > 0.0) && (m_filterParameters.multiply_colorGreen > 0.0) && (m_filterParameters.multiply_colorBlue > 0.0)) {
         i += 2;
       } else {
-        perror("Invalid Floating Point value for multrgb");
-        exit(1);
+        cout << "ERROR: Invalid Floating Point value for multrgb" << endl;
+        displayHelp();
+        return;
       }
     } else if (!strcmp(argv[i], "-compare")) {
       compareImages();
-      displayHelp();
-      exit(1);
+      return;
     } else {
       cout << "Detected either -h or incomprehensible input" << endl;
       displayHelp();
-      exit(1);
+      return;
     }
   }
 }
@@ -632,7 +641,6 @@ void MIAApp::gluiControl(int controlID) {
 // button presses.
 
 void MIAApp::loadImageToCanvas() {
-	cout << "Load Canvas has been clicked for file " << m_inFile << endl;
 
 	if (m_displayBuffer) {
     storePixelBuffer();
@@ -657,9 +665,8 @@ void MIAApp::loadImageToCanvas() {
 }
 
 void MIAApp::saveCanvasToFile() {
-	cout << "Save Canvas been clicked for file " << m_outFile << endl;
 	if (ImageHandler::saveImage(m_outFile, m_displayBuffer)) {
-		std::cout << "successfuly saved image" << std::endl;
+
 	} else {
 		std::cout << "failed to save image" << std::endl;
 	}
@@ -669,7 +676,6 @@ void MIAApp::applyFilterThreshold() {
 	storePixelBuffer();
 	thresh.setValue(m_filterParameters.threshold_amount);
 	thresh.applyFilter(m_displayBuffer);
-	cout << "Apply has been clicked for Threshold has been clicked with amount =" << m_filterParameters.threshold_amount << endl;
 }
 
 void MIAApp::applyFilterMultiplyRGB() {
@@ -678,49 +684,40 @@ void MIAApp::applyFilterMultiplyRGB() {
 	channels.setG(m_filterParameters.multiply_colorGreen);
 	channels.setB(m_filterParameters.multiply_colorBlue);
 	channels.applyFilter(m_displayBuffer);
-	cout << "Apply has been clicked for Multiply RGB with red = " << m_filterParameters.multiply_colorRed
-	<< ", green = " << m_filterParameters.multiply_colorGreen
-	<< ", blue = " << m_filterParameters.multiply_colorBlue << endl;
 }
 
 void MIAApp::applyFilterGrayScale() {
 	storePixelBuffer();
 	saturate.setValue(0.0);
 	saturate.applyFilter(m_displayBuffer);
-	cout << "Apply has been clicked for Grayscale" << endl;
 }
 
 
 void MIAApp::applyFilterSharpen() {
 	storePixelBuffer();
 	sharpen->applyFilter(m_displayBuffer, m_filterParameters.sharpen_amount, -1);
-	cout << "Apply has been clicked for Sharpen with amount = " << m_filterParameters.sharpen_amount << endl;
 }
 
 void MIAApp::applyFilterEdgeDetect() {
 	storePixelBuffer();
 	edgeDet->applyFilter(m_displayBuffer, -1, -1);
-	cout << "Apply has been clicked for Edge Detect" << endl;
 }
 
 void MIAApp::applyFilterQuantize() {
 	storePixelBuffer();
 	quantize.setBins(m_filterParameters.quantize_bins);
 	quantize.applyFilter(m_displayBuffer);
-	cout << "Apply has been clicked for Quantize with bins = " << m_filterParameters.quantize_bins << endl;
 }
 
 void MIAApp::applyFilterBlur() {
   storePixelBuffer();
   blur->applyFilter(m_displayBuffer, m_filterParameters.blur_amount, -1);
-  cout << "Apply has been clicked for Blur with amount = " << m_filterParameters.blur_amount << endl;
 }
 
 void MIAApp::applyFilterSaturate() {
   storePixelBuffer();
 	saturate.setValue(m_filterParameters.saturation_amount);
 	saturate.applyFilter(m_displayBuffer);
-  cout << "Apply has been clicked for Saturate with amount = " << m_filterParameters.saturation_amount << endl;
 }
 
 void MIAApp::undoOperation() {

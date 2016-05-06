@@ -176,13 +176,9 @@ int FlashPhotoApp::getNextYValue(float slope, int previousX, int newX, int previ
 
 // A function for keeping the old pixelBuffer so that the undo/redo operations work properly
 void FlashPhotoApp::storePixelBuffer() {
-  // Store the current pixelBuffer in the undoStack
-	PixelBuffer *tempPixelBuffer = new PixelBuffer(canvasWidth,canvasHeight,backColor);
-	m_displayBuffer->copyPixelBuffer(m_displayBuffer, tempPixelBuffer);
-	undoStack.push_back(tempPixelBuffer);
-
-	// Empty the redoStack
-	redoStack.clear();
+  undoOp->addToUndoStack(m_displayBuffer, backColor);
+  	// Empty the redoStack
+  redoOp->clearStack();
 }
 
 void FlashPhotoApp::initializeBuffers(ColorData backgroundColor, int width, int height) {
@@ -207,6 +203,8 @@ void FlashPhotoApp::initializeTools() {
   motionBlur = new MotionBlur();
   blur = new BlurFilter();
   emboss = new Emboss();
+  undoOp = new Undo();
+  redoOp = new Redo();
 }
 
 void FlashPhotoApp::initGlui() {
@@ -584,42 +582,18 @@ void FlashPhotoApp::applyFilterSpecial() {
 }
 
 void FlashPhotoApp::undoOperation() {
-  if (!undoStack.empty()) {
-    cout << "Undoing..." << endl;
-  	// Pull tempPixelBuffer off the undostack
-    PixelBuffer *myNewPixelBuffer = undoStack.back();
-    undoStack.pop_back();
-  	// Put m_displayBuffer on redoStack
-    PixelBuffer *tempPixelBuffer = new PixelBuffer(canvasWidth,canvasHeight,backColor);
-  	m_displayBuffer->copyPixelBuffer(m_displayBuffer, tempPixelBuffer);
-  	redoStack.push_back(tempPixelBuffer);
-  	// Set m_displayBuffer to tempPixelBuffer
-    setWindowDimensions(myNewPixelBuffer->getWidth(),myNewPixelBuffer->getHeight());
-    canvasWidth=myNewPixelBuffer->getWidth();
-    canvasHeight=myNewPixelBuffer->getHeight();
+  PixelBuffer *myNewPixelBuffer = undoOp->restoreBuffer(m_displayBuffer, backColor, redoOp);
+  if (&myNewPixelBuffer != NULL) {
     m_displayBuffer = myNewPixelBuffer;
-  } else {
-    cout << "Nothing to undo" << endl;
+    setWindowDimensions(m_displayBuffer->getWidth(),m_displayBuffer->getHeight());
   }
 }
 
 void FlashPhotoApp::redoOperation() {
-  if (!redoStack.empty()) {
-    cout << "Redoing..." << endl;
-  	// Pull displayBuffer off of redoStack
-    PixelBuffer *myNewPixelBuffer = redoStack.back();
-    redoStack.pop_back();
-  	// Put m_displayBuffer on undoStack
-    PixelBuffer *tempPixelBuffer = new PixelBuffer(canvasWidth,canvasHeight,backColor);
-  	m_displayBuffer->copyPixelBuffer(m_displayBuffer, tempPixelBuffer);
-  	undoStack.push_back(tempPixelBuffer);
-  	// Set m_displayBuffer to displayBuffer
-    setWindowDimensions(myNewPixelBuffer->getWidth(),myNewPixelBuffer->getHeight());
-    canvasWidth=myNewPixelBuffer->getWidth();
-    canvasHeight=myNewPixelBuffer->getHeight();
+  PixelBuffer *myNewPixelBuffer = redoOp->restoreBuffer(m_displayBuffer, backColor, undoOp);
+  if (&myNewPixelBuffer != NULL) {
     m_displayBuffer = myNewPixelBuffer;
-  } else {
-    cout << "Nothing to redo" << endl;
+    setWindowDimensions(m_displayBuffer->getWidth(),m_displayBuffer->getHeight());
   }
 }
 // ** END OF CALLBACKS **

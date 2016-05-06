@@ -20,6 +20,8 @@
 #include "BlurFilter.h"
 #include "Emboss.h"
 #include "TStamp.h"
+#include "Undo.h"
+#include "Redo.h"
 #include <string>
 
 
@@ -42,7 +44,7 @@ public:
     void setFileName(const std::string & filename);
     void loadImageTest(std::string image);
     int compareBuffers();
-    
+
 private:
 
     // GLUI INTERFACE ELEMENTS
@@ -167,8 +169,6 @@ private:
     int m_curTool;
 
     std::vector<Tool*> tools;
-    std::vector<PixelBuffer*> undoStack;
-    std::vector<PixelBuffer*> redoStack;
 
     Threshold thresh;
     Saturate saturate;
@@ -181,6 +181,8 @@ private:
     BlurFilter* blur;
     Emboss* emboss;
     bool stampLoaded;
+    Redo *redoOp;
+    Undo *undoOp;
     int previousX;
     int previousY;
     int canvasWidth;

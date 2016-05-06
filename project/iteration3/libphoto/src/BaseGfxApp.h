@@ -100,6 +100,7 @@ protected:
 
 	// Underlying glut window handle
 	int	m_glutWindowHandle;
+	bool isCommandLine;
 
 	// Pointer to GLUI master
 	GLUI *m_glui;

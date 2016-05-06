@@ -82,7 +82,7 @@ endif
 # or just remember to run "make rebuild" if you change a .h file.
 
 
-all: setup tests
+all: setup flashphototests miatests
 
 rebuild: clean all
 
@@ -92,7 +92,7 @@ setup: | $(OBJECT_DIR)
 $(OBJECT_DIR):
 	mkdir -p $(OBJECT_DIR)
 
-tests: $(EXECUTABLES)
+flashphototests: $(EXECUTABLES)
 	echo "Testing FlashPhoto:"
 	./test_blur
 	./test_calligraphypen
@@ -100,9 +100,9 @@ tests: $(EXECUTABLES)
 	./test_filterBlur
 	./test_filterChannel
 	./test_filterEdgeDetect
-	./test_filterMotionBlur
+#	./test_filterMotionBlur
 	./test_filterQuantize
-	./test_filterSaturate
+#	./test_filterSaturate
 	./test_filterSharpen
 #	./test_filterSpecial
 	./test_filterThreshold
@@ -112,7 +112,94 @@ tests: $(EXECUTABLES)
 	./test_stamp
 	./test_xpen
 
-
+miatests:
+	@echo "-----------------------------------"
+	@echo "TESTING MIA COMMAND LINE INTERFACE:"
+	@echo "1 = SUCCESS"
+	@echo "0 = FAIL"
+	@echo "Testing Sharpen 3.0: "
+	@cd ../Mia/; \
+		./Mia ../tests/TestImages/brainstack/mrbrain-8bit018.png -sharpen 3.0 ../tests/TestImages/brainstack_test/mrbrain-8bit018.png; \
+		./Mia ../tests/TestImages/brainstack_gold_sharpen_3.0/mrbrain-8bit018.png -compare ../tests/TestImages/brainstack_test/mrbrain-8bit018.png
+	@echo "--------------------------"
+	@echo "Testing Sharpen 5.0: "
+	@cd ../Mia/; \
+		./Mia ../tests/TestImages/brainstack/mrbrain-8bit022.png -sharpen 5.0 ../tests/TestImages/brainstack_test/mrbrain-8bit022.png; \
+		./Mia ../tests/TestImages/brainstack_gold_sharpen_5.0/mrbrain-8bit022.png -compare ../tests/TestImages/brainstack_test/mrbrain-8bit022.png
+	@echo "--------------------------"
+	@echo "Testing Edge Detection: "
+	@cd ../Mia/; \
+		./Mia ../tests/TestImages/brainstack/mrbrain-8bit025.png -edgeDetect ../tests/TestImages/brainstack_test/mrbrain-8bit025.png; \
+		./Mia ../tests/TestImages/brainstack_gold_edgedetect/mrbrain-8bit025.png -compare ../tests/TestImages/brainstack_test/mrbrain-8bit025.png
+	@echo "--------------------------"
+	@echo "Testing Threshold 0.5: "
+	@cd ../Mia/; \
+		./Mia ../tests/TestImages/brainstack/mrbrain-8bit041.png -thresh 0.5 ../tests/TestImages/brainstack_test/mrbrain-8bit041.png; \
+		./Mia ../tests/TestImages/brainstack_gold_threshold_0.5/mrbrain-8bit041.png -compare ../tests/TestImages/brainstack_test/mrbrain-8bit041.png
+	@echo "--------------------------"
+	@echo "Testing multRGB r3.0: "
+	@cd ../Mia/; \
+		./Mia ../tests/TestImages/brainstack/mrbrain-8bit046.png -multrgb 3.0,1.0,1.0 ../tests/TestImages/brainstack_test/mrbrain-8bit046.png; \
+		./Mia ../tests/TestImages/brainstack_gold_multRGB_r3.0/mrbrain-8bit046.png -compare ../tests/TestImages/brainstack_test/mrbrain-8bit046.png
+	@echo "--------------------------"
+	@echo "Testing multRGB b3.0: "
+	@cd ../Mia/; \
+		./Mia ../tests/TestImages/brainstack/mrbrain-8bit050.png -multrgb 1.0,1.0,3.0 ../tests/TestImages/brainstack_test/mrbrain-8bit050.png; \
+		./Mia ../tests/TestImages/brainstack_gold_multRGB_b3.0/mrbrain-8bit050.png -compare ../tests/TestImages/brainstack_test/mrbrain-8bit050.png
+	@echo "--------------------------"
+	@echo "Testing multRGB g3.0: "
+	@cd ../Mia/; \
+		./Mia ../tests/TestImages/brainstack/mrbrain-8bit051.png -multrgb 1.0,3.0,1.0 ../tests/TestImages/brainstack_test/mrbrain-8bit051.png; \
+		./Mia ../tests/TestImages/brainstack_gold_multRGB_g3.0/mrbrain-8bit051.png -compare ../tests/TestImages/brainstack_test/mrbrain-8bit051.png
+	@echo "Testing multRGB r3.0,g3.0,b3.0: "
+	@cd ../Mia/; \
+		./Mia ../tests/TestImages/brainstack/mrbrain-8bit052.png -multrgb 3.0,3.0,3.0 ../tests/TestImages/brainstack_test/mrbrain-8bit052.png; \
+		./Mia ../tests/TestImages/brainstack_gold_multRGB_r3.0_g3.0_b3.0/mrbrain-8bit052.png -compare ../tests/TestImages/brainstack_test/mrbrain-8bit052.png
+	@echo "--------------------------"
+	@echo "Testing quantize 2: "
+	@cd ../Mia/; \
+		./Mia ../tests/TestImages/brainstack/mrbrain-8bit053.png -quantize 2 ../tests/TestImages/brainstack_test/mrbrain-8bit053.png; \
+		./Mia ../tests/TestImages/brainstack_gold_quantize_2/mrbrain-8bit053.png -compare ../tests/TestImages/brainstack_test/mrbrain-8bit053.png
+	@echo "--------------------------"
+	@echo "Testing quantize 3: "
+	@cd ../Mia/; \
+		./Mia ../tests/TestImages/brainstack/mrbrain-8bit054.png -quantize 3 ../tests/TestImages/brainstack_test/mrbrain-8bit054.png; \
+		./Mia ../tests/TestImages/brainstack_gold_quantize_3/mrbrain-8bit054.png -compare ../tests/TestImages/brainstack_test/mrbrain-8bit054.png
+	@echo "--------------------------"
+	@echo "Testing quantize 8: "
+	@cd ../Mia/; \
+		./Mia ../tests/TestImages/brainstack/mrbrain-8bit055.png -quantize 8 ../tests/TestImages/brainstack_test/mrbrain-8bit055.png; \
+		./Mia ../tests/TestImages/brainstack_gold_quantize_8/mrbrain-8bit055.png -compare ../tests/TestImages/brainstack_test/mrbrain-8bit055.png
+	@echo "--------------------------"
+	@echo "Testing blur 3.0: "
+	@cd ../Mia/; \
+		./Mia ../tests/TestImages/brainstack/mrbrain-8bit056.png -blur 3.0 ../tests/TestImages/brainstack_test/mrbrain-8bit056.png; \
+		./Mia ../tests/TestImages/brainstack_gold_blur_3.0/mrbrain-8bit056.png -compare ../tests/TestImages/brainstack_test/mrbrain-8bit056.png
+	@echo "--------------------------"
+	@echo "TESTING FOR PROPER INPUT"
+	@echo "INPUT: -blury 3.0; Expected: Display Help"
+	@cd ../Mia/; \
+		./Mia ../tests/TestImages/brainstack/mrbrain-8bit056.png -blury 3.0 ../tests/TestImages/brainstack_test/mrbrain-8bit056.png;
+	@echo "--------------------------"
+	@echo "INPUT: -blur -1.0; Expected: Error Message & Display Help"
+	@cd ../Mia/; \
+		./Mia ../tests/TestImages/brainstack/mrbrain-8bit056.png -blur -1.0 ../tests/TestImages/brainstack_test/mrbrain-8bit056.png;
+	@echo "--------------------------"
+	@echo "INPUT: -edgeDetecter; Expected: Error Message & Display Help"
+	@cd ../Mia/; \
+		./Mia ../tests/TestImages/brainstack/mrbrain-8bit056.png edgeDetecter ../tests/TestImages/brainstack_test/mrbrain-8bit056.png;
+	@echo "--------------------------"
+	@echo "INPUT: No output file specified; Expected Error Message"
+	@cd ../Mia/; \
+		./Mia ../tests/TestImages/brainstack/mrbrain-8bit056.png -blur 3.0 ;
+	@echo "--------------------------"
+	@echo "INPUT: Bad output file specified; Expected Error Message"
+	@cd ../Mia/; \
+		./Mia ../tests/TestImages/brainstack/mrbrain-8bit056.png -blur 3.0 ../tests/myfile.txt;
+	@echo "--------------------------"
+	@echo "INPUT: Bad input file specified; Expected Error Message"
+	@cd ../Mia/; \
+		./Mia ../tests/TestImages/brainstack/mrbrain-8bit056.png -blur 3.0 ../tests/myfile.txt;
 
 $(EXECUTABLES):  $(OBJFILES) build/FlashPhoto.o $(GLUI_LIB) $(PNG_LIB) $(JPEG_LIB) $(LIBPHOTO_LIB)
 	$(CC) build/FlashPhoto.o $(LDFLAGS) $(LINK_LIBS) -o $@ $(OBJECT_DIR)/$@.o
