@@ -1,6 +1,9 @@
 #include "MIAApp.h"
 #include "FlashPhotoApp.h"
 
+using std::cout;
+using std::endl;
+
 int main(int argc,char *argv[])
 {
 	MIAApp *prog = new MIAApp(argc, argv, 800,800,ColorData(1,1,0.95));
