@@ -78,14 +78,19 @@ void PixelBuffer::copyPixelBuffer(PixelBuffer * sourceBuffer, PixelBuffer * dest
 bool PixelBuffer::compareBuffers(PixelBuffer* firstBuffer, PixelBuffer* secondBuffer) {
   int i, j;
   int w, h;
+  int r,g,b,a;//booleans for equality of r, g, b
   w = firstBuffer->getWidth();
   h = firstBuffer->getHeight();
 
   for (i = 0; i < w; i++) {
   	for (j = 0; j < h; j++) {
-			ColorData firstPixel = firstBuffer->getPixel(i,j);
-			ColorData secondPixel = secondBuffer->getPixel(i,j);
-      if ((firstPixel.getRed() != secondPixel.getRed()) || (firstPixel.getGreen() != secondPixel.getGreen()) || (firstPixel.getBlue() != secondPixel.getBlue()) || (firstPixel.getAlpha() != secondPixel.getAlpha())) {
+		ColorData firstPixel = firstBuffer->getPixel(i,j);
+		ColorData secondPixel = secondBuffer->getPixel(i,j);
+		r = ((firstPixel.getRed() - secondPixel.getRed()) < 0.01) && ((secondPixel.getRed() - firstPixel.getRed()) < 0.01);
+		g = ((firstPixel.getGreen() - secondPixel.getGreen()) < 0.01) && ((secondPixel.getGreen() - firstPixel.getGreen()) < 0.01);
+		b = ((firstPixel.getBlue() - secondPixel.getBlue()) < 0.01) && ((secondPixel.getBlue() - firstPixel.getBlue()) < 0.01);
+		a = ((firstPixel.getAlpha() - secondPixel.getAlpha()) < 0.01) && ((secondPixel.getAlpha() - firstPixel.getAlpha()) < 0.01);
+      if (!(r && g && b && a)) {
 				return false;
 			}
     }
