@@ -104,7 +104,7 @@ flashphototests: $(EXECUTABLES)
 	./test_filterQuantize
 	./test_filterSaturate
 	./test_filterSharpen
-#	./test_filterSpecial
+	./test_filterSpecial
 	./test_filterThreshold
 	./test_highlighter
 	./test_pen
