@@ -6,6 +6,7 @@ setup:
 	make -C jpeg/jpeg-9b
 	make -C FlashPhoto/
 	make -C Mia/
+	make -C tests/
 
 
 clean:
